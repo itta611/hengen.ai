@@ -1,5 +1,6 @@
 import { PaperclipIcon } from "lucide-react"
 import { useRef, type Dispatch, type SetStateAction } from "react"
+import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 
 export type UploadedImage = {
@@ -12,6 +13,11 @@ export function addImageFiles(
   images: UploadedImage[],
   setImages: Dispatch<SetStateAction<UploadedImage[]>>
 ) {
+  if (files.some((file) => !file.type.startsWith("image/"))) {
+    toast.error("画像ファイルのみアップロードできます。")
+    return
+  }
+
   const fileKeys = new Set(
     images.map(({ file }) => `${file.name}-${file.size}-${file.lastModified}`)
   )

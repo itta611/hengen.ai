@@ -38,10 +38,9 @@ export function FileDropUpload({ images, setImages }: FileDropUploadProps) {
 
   const addFiles = useCallback(
     (files: File[]) => {
-      const imageFiles = files.filter((file) => file.type.startsWith("image/"))
-      if (imageFiles.length === 0) return
+      if (files.length === 0) return
 
-      addImageFiles(imageFiles, images, setImages)
+      addImageFiles(files, images, setImages)
     },
     [images, setImages]
   )

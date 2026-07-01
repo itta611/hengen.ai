@@ -60,9 +60,7 @@ export function PromptInput() {
             }
           }}
           onPaste={(event) => {
-            const files = Array.from(event.clipboardData.files).filter((file) =>
-              file.type.startsWith("image/")
-            )
+            const files = Array.from(event.clipboardData.files)
             if (files.length === 0) return
             event.preventDefault()
             addImageFiles(files, images, setImages)
