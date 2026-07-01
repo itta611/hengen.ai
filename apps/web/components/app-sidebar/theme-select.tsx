@@ -16,7 +16,7 @@ export function ThemeSelect() {
 
   return (
     <>
-      <span>テーマ</span>
+      <span>テーマ色</span>
       <Tabs onValueChange={setTheme} value={theme}>
         <TabsList>
           {themes.map(({ icon: Icon, label, value }) => (

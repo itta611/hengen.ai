@@ -20,6 +20,7 @@ export const env = createEnv({
     RESEND_FROM: z.string().min(1),
     MUTAR_WORKER_URL: z.string().url(),
     MUTAR_WORKER_SECRET: z.string().min(1),
+    STRIPE_SECRET_KEY: z.string().min(1).optional(),
   },
   client: {
     NEXT_PUBLIC_BETTER_AUTH_URL: z.string(),

@@ -8,7 +8,8 @@ import {
   useMemo,
   useState,
 } from "react"
-import { CheckIcon } from "lucide-react"
+import { CheckIcon, Loader2 } from "lucide-react"
+import { toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -17,6 +18,9 @@ import {
   DialogDescription,
   DialogTitle,
 } from "@/components/ui/dialog"
+import { apiClient } from "@/lib/api-client"
+
+type PricingPlan = "basic" | "premium"
 
 type PricingDialogContextValue = {
   close: () => void
@@ -80,13 +84,14 @@ function PricingDialog() {
           <DialogTitle className="text-2xl font-bold tracking-normal">
             プランをアップグレード
           </DialogTitle>
-          <DialogDescription className="text-base text-slate-600">
+          <DialogDescription className="text-base text-muted-foreground">
             プランを選択してください。
           </DialogDescription>
         </div>
 
         <div className="mt-6 grid gap-5 md:grid-cols-2">
           <PlanCard
+            plan="basic"
             name="ベーシック"
             price="3000"
             features={[
@@ -97,6 +102,7 @@ function PricingDialog() {
             ]}
           />
           <PlanCard
+            plan="premium"
             name="プレミアム"
             price="9000"
             features={[
@@ -110,7 +116,7 @@ function PricingDialog() {
 
         <div className="mt-6 text-center">
           <a
-            className="text-sm text-slate-400 underline underline-offset-4 transition-colors hover:text-slate-600"
+            className="text-sm text-muted-foreground underline underline-offset-4 transition-colors hover:opacity-80"
             href="/specified"
           >
             特定商取引に関する表示
@@ -122,45 +128,82 @@ function PricingDialog() {
 }
 
 function PlanCard({
+  plan,
   name,
   price,
   features,
 }: {
+  plan: PricingPlan
   name: string
   price: string
   features: string[]
 }) {
+  const [isRedirecting, setIsRedirecting] = useState(false)
+
+  const handleStartCheckout = async () => {
+    setIsRedirecting(true)
+
+    try {
+      const response = await apiClient.checkout.sessions.$post({
+        json: {
+          lookup_key: plan,
+        },
+      })
+
+      if (!response.ok) {
+        toast.error("決済ページを開けませんでした。")
+        return
+      }
+
+      const { url } = await response.json()
+
+      if (!url) {
+        toast.error("決済ページを開けませんでした。")
+        return
+      }
+
+      window.location.assign(url)
+    } catch {
+      toast.error("決済ページを開けませんでした。")
+    } finally {
+      setIsRedirecting(false)
+    }
+  }
+
   return (
-    <div className="rounded-3xl border-[8px] border-indigo-50/80 bg-white p-4 shadow-lg/5">
-      <div className="text-lg font-bold text-indigo-500">{name}</div>
+    <div className="rounded-3xl border-[8px] border-indigo-50/80 dark:border-indigo-950 bg-background dark:bg-white/5 p-4 shadow-lg/5">
+      <div className="text-lg font-bold text-primary">{name}</div>
       <div>
-        <span className="text-3xl font-bold mr-1 font-[ui-sans-serif,_system-ui,_sans-serif]">
+        <span className="text-3xl font-bold mr-1 font-[ui-sans-serif,system-ui,sans-serif]">
           ¥
         </span>
-        <span className="text-4xl font-bold mr-1 tracking-tight font-[ui-sans-serif,_system-ui,_sans-serif]">
+        <span className="text-4xl font-bold mr-1 tracking-tight font-[ui-sans-serif,system-ui,sans-serif]">
           {price}
         </span>
-        <span className="text-lg text-slate-500">/月</span>
+        <span className="text-lg text-muted-foreground">/月</span>
       </div>
 
       <ul className="mt-4 space-y-2">
-        {features.map((feature) => (
+        {features.map((feature, index) => (
           <li
-            className="flex items-center gap-2 text-base font-medium text-slate-600 sm:text-lg"
-            key={feature}
+            className="flex items-center gap-2 text-base font-medium text-muted-foreground sm:text-lg"
+            key={`${feature}-${index}`}
           >
-            <CheckIcon className="size-6 shrink-0 text-indigo-500" />
+            <CheckIcon className="size-6 shrink-0 text-primary" />
             <span className="text-sm">{feature}</span>
           </li>
         ))}
       </ul>
 
       <Button
+        disabled={isRedirecting}
+        onClick={handleStartCheckout}
         type="button"
         size="lg"
-        className="w-full shadow shadow-indigo-500/10 mt-4"
+        className="w-full shadow shadow-primary/10 mt-4"
       >
-        {name}プランを開始
+        {isRedirecting && <Loader2 className="animate-spin" />}
+        {`${name}プランを開始`}
       </Button>
     </div>
   )
