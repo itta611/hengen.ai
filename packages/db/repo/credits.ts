@@ -2,6 +2,7 @@ import { and, eq, gte, sql } from "drizzle-orm"
 
 import { db } from ".."
 import { creditLedger, users } from "../schema"
+import { getCreditQuotaByPlan } from "./plans"
 
 function daysInMonth(year: number, month: number) {
   return new Date(Date.UTC(year, month + 1, 0)).getUTCDate()
@@ -30,7 +31,10 @@ function getCreditPeriodStart(createdAt: Date, now = new Date()) {
 
 export async function getCreditUsageByUserId(userId: string) {
   const [user] = await db
-    .select({ createdAt: users.createdAt, creditQuota: users.creditQuota })
+    .select({
+      createdAt: users.createdAt,
+      plan: users.plan,
+    })
     .from(users)
     .where(eq(users.id, userId))
     .limit(1)
@@ -69,7 +73,8 @@ export async function getCreditUsageByUserId(userId: string) {
     )
 
   return {
-    quota: user.creditQuota,
+    plan: user.plan,
+    quota: getCreditQuotaByPlan(user.plan),
     periodStart,
     resetDay,
     used: usage?.used ?? 0,

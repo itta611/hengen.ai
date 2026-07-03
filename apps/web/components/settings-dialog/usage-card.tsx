@@ -30,6 +30,17 @@ function formatNextResetDate(periodStart: string, resetDay: number) {
   return `${month + 1}月${day}日`
 }
 
+function formatPlanName(plan: "free" | "basic" | "premium") {
+  switch (plan) {
+    case "basic":
+      return "ベーシックプラン"
+    case "premium":
+      return "プレミアムプラン"
+    default:
+      return "無料プラン"
+  }
+}
+
 function UsageCard() {
   const pricingDialog = usePricingDialog()
   const { data: creditUsage } = useQuery({
@@ -45,7 +56,9 @@ function UsageCard() {
 
   return (
     <div className="border rounded-xl px-5 space-y-4.5 py-4">
-      <div className="text-sm font-bold pb-2">無料プラン</div>
+      <div className="text-sm font-bold pb-2">
+        {creditUsage ? formatPlanName(creditUsage.plan) : "-"}
+      </div>
       <div className="flex items-center justify-between gap-3 text-sm">
         <span>
           {creditUsage ? `${creditUsage.used} / ${creditUsage.quota}` : "- / -"}

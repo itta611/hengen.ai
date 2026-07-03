@@ -120,6 +120,13 @@
       "when": 1782473922958,
       "tag": "0016_loving_colossus",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1782914681178,
+      "tag": "0017_chief_liz_osborn",
+      "breakpoints": true
     }
   ]
 }

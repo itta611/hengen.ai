@@ -22,8 +22,6 @@ export function CheckoutToast({ checkout }: { checkout?: string }) {
       hasShownToast.current = true
       if (checkout === "success") {
         toast.success("支払いに成功しました。")
-      } else {
-        toast.error("支払いに失敗しました。")
       }
       window.history.replaceState(window.history.state, "", "/home")
     }, 0)
