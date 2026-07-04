@@ -221,8 +221,9 @@ function PlanCard({
         size="lg"
         className="w-full shadow shadow-primary/10 mt-4"
       >
+        {isCurrentPlan && <CheckIcon />}
         {isRedirecting && <Loader2 className="animate-spin" />}
-        {isCurrentPlan ? "契約中のプラン" : `${name}プランを開始`}
+        {isCurrentPlan ? "利用中のプラン" : `${name}プランを開始`}
       </Button>
     </div>
   )

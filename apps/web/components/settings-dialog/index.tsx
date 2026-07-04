@@ -5,11 +5,17 @@ import { useState } from "react"
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
 import { cn } from "@/lib/utils"
 import { AccountSettingsPage } from "./account"
+import { BillingSettingsPage } from "./billing"
 import { GeneralSettingsPage } from "./general"
-import { Settings2Icon, User2Icon } from "lucide-react"
+import { CreditCardIcon, Settings2Icon, User2Icon } from "lucide-react"
 
 const navItems = [
   { title: "アカウント", component: <AccountSettingsPage />, Icon: User2Icon },
+  {
+    title: "支払い",
+    component: <BillingSettingsPage />,
+    Icon: CreditCardIcon,
+  },
   {
     title: "一般",
     component: <GeneralSettingsPage />,
