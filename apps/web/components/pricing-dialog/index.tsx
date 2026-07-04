@@ -18,15 +18,15 @@ import {
   DialogDescription,
   DialogTitle,
 } from "@/components/ui/dialog"
+import { useCurrentPlan, type UserPlan } from "@/hooks/use-current-plan"
 import { authClient } from "@/lib/auth-client"
 
 type PricingPlan = "basic" | "premium"
-type UserPlan = "free" | PricingPlan
 
 type PricingDialogContextValue = {
   close: () => void
   isOpen: boolean
-  open: (currentPlan?: UserPlan) => void
+  open: () => void
   setOpen: (open: boolean) => void
 }
 
@@ -36,16 +36,15 @@ const PricingDialogContext = createContext<PricingDialogContextValue | null>(
 
 function PricingDialogProvider({ children }: { children: ReactNode }) {
   const [isOpen, setOpen] = useState(false)
-  const [currentPlan, setCurrentPlan] = useState<UserPlan>("free")
+  const { data: currentPlan } = useCurrentPlan()
 
-  const open = useCallback((plan: UserPlan = "free") => {
-    if (plan === "premium") {
+  const open = useCallback(() => {
+    if (currentPlan === "premium") {
       return
     }
 
-    setCurrentPlan(plan)
     setOpen(true)
-  }, [])
+  }, [currentPlan])
 
   const close = useCallback(() => {
     setOpen(false)
@@ -223,7 +222,7 @@ function PlanCard({
       >
         {isCurrentPlan && <CheckIcon />}
         {isRedirecting && <Loader2 className="animate-spin" />}
-        {isCurrentPlan ? "利用中のプラン" : `${name}プランを開始`}
+        {isCurrentPlan ? "現在のプラン" : `${name}プランを開始`}
       </Button>
     </div>
   )

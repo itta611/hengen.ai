@@ -43,6 +43,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import { Skeleton } from "@/components/ui/skeleton"
+import { useCurrentPlan } from "@/hooks/use-current-plan"
 import { usePromptForm } from "@/hooks/use-prompt-form"
 import { useUpdateProjectStarred } from "@/hooks/use-update-project-starred"
 import { apiClient } from "@/lib/api-client"
@@ -63,16 +64,6 @@ async function listStarredProjects() {
   return data.projects
 }
 
-async function getCreditUsage() {
-  const response = await apiClient.credits.$get()
-
-  if (!response.ok) {
-    throw new Error("request_failed")
-  }
-
-  return response.json()
-}
-
 export function AppSidebar() {
   const [searchOpen, setSearchOpen] = useState(false)
   const [settingsOpen, setSettingsOpen] = useState(false)
@@ -88,12 +79,8 @@ export function AppSidebar() {
     queryFn: listStarredProjects,
     enabled: !!user,
   })
-  const { data: creditUsage } = useQuery({
-    queryKey: ["credit-usage"],
-    queryFn: getCreditUsage,
-    enabled: !!user,
-  })
-  const canUpgrade = creditUsage ? creditUsage.plan !== "premium" : false
+  const { data: currentPlan } = useCurrentPlan()
+  const canUpgrade = currentPlan !== "premium"
   const updateProjectStarredMutation = useUpdateProjectStarred()
 
   useEffect(() => {
@@ -249,9 +236,7 @@ export function AppSidebar() {
                 </div>
                 <div className="h-px bg-border my-1 mx-1" />
                 {canUpgrade && (
-                  <DropdownMenuItem
-                    onClick={() => pricingDialog.open(creditUsage?.plan)}
-                  >
+                  <DropdownMenuItem onClick={pricingDialog.open}>
                     <CircleArrowUpIcon />
                     アップグレード
                   </DropdownMenuItem>

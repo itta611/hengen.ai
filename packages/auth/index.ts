@@ -3,11 +3,12 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle"
 import { createAuthEndpoint } from "better-auth/api"
 import { setSessionCookie } from "better-auth/cookies"
 import { nextCookies } from "better-auth/next-js"
-import { magicLink } from "better-auth/plugins"
+import { customSession, magicLink } from "better-auth/plugins"
 import { stripe } from "@better-auth/stripe"
 import Stripe from "stripe"
 
 import { db } from "@mutar/db"
+import { getUserPlanById } from "@mutar/db/repo"
 import * as schema from "@mutar/db/schema"
 import { sendMagicLinkEmail } from "@mutar/email"
 import { env } from "@/lib/env"
@@ -113,6 +114,15 @@ export const auth = betterAuth({
       },
     }),
     ...stripePlugins,
+    customSession(async ({ session, user }) => {
+      return {
+        session,
+        user: {
+          ...user,
+          plan: await getUserPlanById(user.id),
+        },
+      }
+    }),
   ],
   advanced: {
     cookiePrefix: "mutar",

@@ -74,9 +74,7 @@ function UsageCard() {
           次回 {nextResetDate} にリセットされます。
         </span>
         {canUpgrade && (
-          <Button onClick={() => pricingDialog.open(creditUsage?.plan)}>
-            アップグレード
-          </Button>
+          <Button onClick={pricingDialog.open}>アップグレード</Button>
         )}
       </div>
     </div>

@@ -1,37 +1,22 @@
 "use client"
 
-import { useQuery } from "@tanstack/react-query"
 import { ArrowUpRightIcon, Loader2 } from "lucide-react"
 import { useState } from "react"
 import { toast } from "sonner"
 
 import { usePricingDialog } from "@/components/pricing-dialog"
 import { Button } from "@/components/ui/button"
-import { apiClient } from "@/lib/api-client"
+import { useCurrentPlan } from "@/hooks/use-current-plan"
 import { authClient } from "@/lib/auth-client"
 import { SettingSection } from "./setting-section"
 import { UsageCard } from "./usage-card"
-
-async function getCreditUsage() {
-  const response = await apiClient.credits.$get()
-
-  if (!response.ok) {
-    throw new Error("request_failed")
-  }
-
-  return response.json()
-}
 
 export function BillingSettingsPage() {
   const pricingDialog = usePricingDialog()
   const [openingPortalAction, setOpeningPortalAction] = useState<
     "billing" | "cancel" | null
   >(null)
-  const { data: creditUsage } = useQuery({
-    queryKey: ["credit-usage"],
-    queryFn: getCreditUsage,
-  })
-  const plan = creditUsage?.plan
+  const { data: plan } = useCurrentPlan()
   const isPaidPlan = plan === "basic" || plan === "premium"
   const canUpgrade = plan === "free" || plan === "basic"
 
@@ -90,7 +75,7 @@ export function BillingSettingsPage() {
       <SettingSection title="プラン">
         <div className="flex flex-wrap gap-2">
           {canUpgrade && (
-            <Button onClick={() => pricingDialog.open(plan)}>
+            <Button onClick={pricingDialog.open}>
               {plan === "basic" ? "プレミアムに変更" : "プランを選択"}
             </Button>
           )}
