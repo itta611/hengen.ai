@@ -1,8 +1,8 @@
-import { and, eq, gte, sql } from "drizzle-orm"
+import { and, desc, eq, gte, inArray, sql } from "drizzle-orm"
 
 import { db } from ".."
-import { creditLedger, users } from "../schema"
-import { getCreditQuotaByPlan } from "./plans"
+import { creditLedger, subscriptions, users } from "../schema"
+import { getCreditQuotaByPlan, isUserPlan, type UserPlan } from "./plans"
 
 function daysInMonth(year: number, month: number) {
   return new Date(Date.UTC(year, month + 1, 0)).getUTCDate()
@@ -33,7 +33,6 @@ export async function getCreditUsageByUserId(userId: string) {
   const [user] = await db
     .select({
       createdAt: users.createdAt,
-      plan: users.plan,
     })
     .from(users)
     .where(eq(users.id, userId))
@@ -42,6 +41,21 @@ export async function getCreditUsageByUserId(userId: string) {
   if (!user) {
     return null
   }
+
+  const [activeSubscription] = await db
+    .select({ plan: subscriptions.plan })
+    .from(subscriptions)
+    .where(
+      and(
+        eq(subscriptions.referenceId, userId),
+        inArray(subscriptions.status, ["active", "trialing"])
+      )
+    )
+    .orderBy(desc(subscriptions.createdAt))
+    .limit(1)
+  const plan: UserPlan = isUserPlan(activeSubscription?.plan)
+    ? activeSubscription.plan
+    : "free"
 
   const { periodStart, resetDay } = getCreditPeriodStart(user.createdAt)
   const [usage] = await db
@@ -73,8 +87,8 @@ export async function getCreditUsageByUserId(userId: string) {
     )
 
   return {
-    plan: user.plan,
-    quota: getCreditQuotaByPlan(user.plan),
+    plan,
+    quota: getCreditQuotaByPlan(plan),
     periodStart,
     resetDay,
     used: usage?.used ?? 0,

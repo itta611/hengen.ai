@@ -2,6 +2,7 @@ import {
   boolean,
   integer,
   jsonb,
+  index,
   pgTable,
   text,
   timestamp,
@@ -18,6 +19,7 @@ export const users = pgTable("user", {
     .$type<"free" | "basic" | "premium">()
     .notNull()
     .default("free"),
+  stripeCustomerId: text("stripeCustomerId"),
   creditQuota: integer("creditQuota").notNull().default(40),
   editorSettings: jsonb("editorSettings")
     .$type<{ snapToGrid: boolean }>()
@@ -95,3 +97,40 @@ export const verifications = pgTable("verification", {
     .notNull()
     .defaultNow(),
 })
+
+export const subscriptions = pgTable(
+  "subscription",
+  {
+    id: text("id").primaryKey(),
+    plan: text("plan").notNull(),
+    referenceId: text("referenceId")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    stripeCustomerId: text("stripeCustomerId"),
+    stripeSubscriptionId: text("stripeSubscriptionId"),
+    status: text("status").notNull().default("incomplete"),
+    periodStart: timestamp("periodStart", { withTimezone: true }),
+    periodEnd: timestamp("periodEnd", { withTimezone: true }),
+    trialStart: timestamp("trialStart", { withTimezone: true }),
+    trialEnd: timestamp("trialEnd", { withTimezone: true }),
+    cancelAtPeriodEnd: boolean("cancelAtPeriodEnd").default(false),
+    cancelAt: timestamp("cancelAt", { withTimezone: true }),
+    canceledAt: timestamp("canceledAt", { withTimezone: true }),
+    endedAt: timestamp("endedAt", { withTimezone: true }),
+    seats: integer("seats"),
+    billingInterval: text("billingInterval"),
+    stripeScheduleId: text("stripeScheduleId"),
+    createdAt: timestamp("createdAt", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updatedAt", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    index("subscription_reference_idx").on(table.referenceId),
+    uniqueIndex("subscription_stripe_subscription_idx").on(
+      table.stripeSubscriptionId
+    ),
+  ]
+)

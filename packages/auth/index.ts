@@ -4,11 +4,37 @@ import { createAuthEndpoint } from "better-auth/api"
 import { setSessionCookie } from "better-auth/cookies"
 import { nextCookies } from "better-auth/next-js"
 import { magicLink } from "better-auth/plugins"
+import { stripe } from "@better-auth/stripe"
+import Stripe from "stripe"
 
 import { db } from "@mutar/db"
 import * as schema from "@mutar/db/schema"
 import { sendMagicLinkEmail } from "@mutar/email"
 import { env } from "@/lib/env"
+
+const stripePlugins =
+  env.STRIPE_SECRET_KEY
+    ? [
+        stripe({
+          stripeClient: new Stripe(env.STRIPE_SECRET_KEY),
+          stripeWebhookSecret: env.STRIPE_WEBHOOK_SECRET ?? "",
+          createCustomerOnSignUp: true,
+          subscription: {
+            enabled: true,
+            plans: [
+              {
+                name: "basic",
+                lookupKey: "basic",
+              },
+              {
+                name: "premium",
+                lookupKey: "premium",
+              },
+            ],
+          },
+        }),
+      ]
+    : []
 
 const betaLogin = {
   id: "beta-login",
@@ -48,6 +74,7 @@ export const auth = betterAuth({
       session: schema.sessions,
       account: schema.accounts,
       verification: schema.verifications,
+      subscription: schema.subscriptions,
     },
   }),
   session: {
@@ -58,6 +85,14 @@ export const auth = betterAuth({
   user: {
     deleteUser: {
       enabled: true,
+    },
+    additionalFields: {
+      stripeCustomerId: {
+        type: "string",
+        required: false,
+        defaultValue: null,
+        input: false,
+      },
     },
   },
   emailAndPassword: {
@@ -77,6 +112,7 @@ export const auth = betterAuth({
         await sendMagicLinkEmail({ email, url })
       },
     }),
+    ...stripePlugins,
   ],
   advanced: {
     cookiePrefix: "mutar",

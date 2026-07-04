@@ -4,7 +4,6 @@ import { useQuery } from "@tanstack/react-query"
 import {
   ChevronDown,
   CircleArrowUpIcon,
-  GlobeIcon,
   HomeIcon,
   LogOutIcon,
   MonitorIcon,
@@ -64,6 +63,16 @@ async function listStarredProjects() {
   return data.projects
 }
 
+async function getCreditUsage() {
+  const response = await apiClient.credits.$get()
+
+  if (!response.ok) {
+    throw new Error("request_failed")
+  }
+
+  return response.json()
+}
+
 export function AppSidebar() {
   const [searchOpen, setSearchOpen] = useState(false)
   const [settingsOpen, setSettingsOpen] = useState(false)
@@ -79,6 +88,12 @@ export function AppSidebar() {
     queryFn: listStarredProjects,
     enabled: !!user,
   })
+  const { data: creditUsage } = useQuery({
+    queryKey: ["credit-usage"],
+    queryFn: getCreditUsage,
+    enabled: !!user,
+  })
+  const canUpgrade = creditUsage ? creditUsage.plan !== "premium" : false
   const updateProjectStarredMutation = useUpdateProjectStarred()
 
   useEffect(() => {
@@ -233,10 +248,14 @@ export function AppSidebar() {
                   </Tabs>
                 </div>
                 <div className="h-px bg-border my-1 mx-1" />
-                <DropdownMenuItem onClick={pricingDialog.open}>
-                  <CircleArrowUpIcon />
-                  アップグレード
-                </DropdownMenuItem>
+                {canUpgrade && (
+                  <DropdownMenuItem
+                    onClick={() => pricingDialog.open(creditUsage?.plan)}
+                  >
+                    <CircleArrowUpIcon />
+                    アップグレード
+                  </DropdownMenuItem>
+                )}
                 <DropdownMenuItem onClick={() => setSettingsOpen(true)}>
                   <SettingsIcon />
                   設定

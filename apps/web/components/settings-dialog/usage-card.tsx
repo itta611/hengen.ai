@@ -53,6 +53,7 @@ function UsageCard() {
   const nextResetDate = creditUsage
     ? formatNextResetDate(creditUsage.periodStart, creditUsage.resetDay)
     : "-"
+  const canUpgrade = creditUsage ? creditUsage.plan !== "premium" : false
 
   return (
     <div className="border rounded-xl px-5 space-y-4.5 py-4">
@@ -72,7 +73,11 @@ function UsageCard() {
         <span className="text-muted-foreground">
           次回 {nextResetDate} にリセットされます。
         </span>
-        <Button onClick={pricingDialog.open}>アップグレード</Button>
+        {canUpgrade && (
+          <Button onClick={() => pricingDialog.open(creditUsage?.plan)}>
+            アップグレード
+          </Button>
+        )}
       </div>
     </div>
   )

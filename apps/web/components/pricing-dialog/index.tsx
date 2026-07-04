@@ -18,14 +18,15 @@ import {
   DialogDescription,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { apiClient } from "@/lib/api-client"
+import { authClient } from "@/lib/auth-client"
 
 type PricingPlan = "basic" | "premium"
+type UserPlan = "free" | PricingPlan
 
 type PricingDialogContextValue = {
   close: () => void
   isOpen: boolean
-  open: () => void
+  open: (currentPlan?: UserPlan) => void
   setOpen: (open: boolean) => void
 }
 
@@ -35,8 +36,14 @@ const PricingDialogContext = createContext<PricingDialogContextValue | null>(
 
 function PricingDialogProvider({ children }: { children: ReactNode }) {
   const [isOpen, setOpen] = useState(false)
+  const [currentPlan, setCurrentPlan] = useState<UserPlan>("free")
 
-  const open = useCallback(() => {
+  const open = useCallback((plan: UserPlan = "free") => {
+    if (plan === "premium") {
+      return
+    }
+
+    setCurrentPlan(plan)
     setOpen(true)
   }, [])
 
@@ -57,7 +64,7 @@ function PricingDialogProvider({ children }: { children: ReactNode }) {
   return (
     <PricingDialogContext.Provider value={value}>
       {children}
-      <PricingDialog />
+      <PricingDialog currentPlan={currentPlan} />
     </PricingDialogContext.Provider>
   )
 }
@@ -74,7 +81,7 @@ function usePricingDialog() {
   return context
 }
 
-function PricingDialog() {
+function PricingDialog({ currentPlan }: { currentPlan: UserPlan }) {
   const { isOpen, setOpen } = usePricingDialog()
 
   return (
@@ -91,6 +98,7 @@ function PricingDialog() {
 
         <div className="mt-6 grid gap-5 md:grid-cols-2">
           <PlanCard
+            currentPlan={currentPlan}
             plan="basic"
             name="ベーシック"
             price="3000"
@@ -102,6 +110,7 @@ function PricingDialog() {
             ]}
           />
           <PlanCard
+            currentPlan={currentPlan}
             plan="premium"
             name="プレミアム"
             price="9000"
@@ -128,44 +137,54 @@ function PricingDialog() {
 }
 
 function PlanCard({
+  currentPlan,
   plan,
   name,
   price,
   features,
 }: {
+  currentPlan: UserPlan
   plan: PricingPlan
   name: string
   price: string
   features: string[]
 }) {
   const [isRedirecting, setIsRedirecting] = useState(false)
+  const isCurrentPlan = currentPlan === plan
 
   const handleStartCheckout = async () => {
+    if (isCurrentPlan) {
+      return
+    }
+
     setIsRedirecting(true)
 
     try {
-      const response = await apiClient.checkout.sessions.$post({
-        json: {
-          lookup_key: plan,
-        },
+      const result = await authClient.subscription.upgrade({
+        plan,
+        successUrl: "/home?checkout=success",
+        cancelUrl: "/home?checkout=cancel",
+        returnUrl: "/home",
+        disableRedirect: true,
       })
 
-      if (!response.ok) {
+      if (result.error) {
         toast.error("決済ページを開けませんでした。")
+        setIsRedirecting(false)
         return
       }
 
-      const { url } = await response.json()
+      const url = result.data?.url
 
       if (!url) {
         toast.error("決済ページを開けませんでした。")
+        setIsRedirecting(false)
         return
       }
 
       window.location.assign(url)
     } catch {
       toast.error("決済ページを開けませんでした。")
-    } finally {
       setIsRedirecting(false)
     }
   }
@@ -196,14 +215,14 @@ function PlanCard({
       </ul>
 
       <Button
-        disabled={isRedirecting}
+        disabled={isCurrentPlan || isRedirecting}
         onClick={handleStartCheckout}
         type="button"
         size="lg"
         className="w-full shadow shadow-primary/10 mt-4"
       >
         {isRedirecting && <Loader2 className="animate-spin" />}
-        {`${name}プランを開始`}
+        {isCurrentPlan ? "契約中のプラン" : `${name}プランを開始`}
       </Button>
     </div>
   )
