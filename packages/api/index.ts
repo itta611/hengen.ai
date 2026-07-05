@@ -1,6 +1,7 @@
 import { Hono } from "hono"
 
 import { accountRoutes } from "./account"
+import { billingRoutes } from "./billing"
 import { creditsRoutes } from "./credits"
 import { projectRoutes } from "./projects/[projectId]"
 import { projectImageRoutes } from "./projects/[projectId]/image"
@@ -9,6 +10,7 @@ import { projectsRoutes } from "./projects"
 
 const routes = new Hono()
   .route("/account", accountRoutes)
+  .route("/billing", billingRoutes)
   .route("/credits", creditsRoutes)
   .route("/projects", projectsRoutes)
   .route("/projects/:projectId", projectRoutes)
