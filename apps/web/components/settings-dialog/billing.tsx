@@ -42,6 +42,16 @@ async function getInvoices() {
   return response.json()
 }
 
+async function getSubscription() {
+  const response = await apiClient.billing.subscription.$get()
+
+  if (!response.ok) {
+    throw new Error("request_failed")
+  }
+
+  return response.json()
+}
+
 function formatInvoiceAmount(amount: number, currency: string) {
   const normalizedCurrency = currency.toLowerCase()
   const value = zeroDecimalCurrencies.has(normalizedCurrency)
@@ -81,13 +91,23 @@ function formatInvoiceStatus(status: string | null) {
 
 export function BillingSettingsPage() {
   const pricingDialog = usePricingDialog()
-  const [isCancelScheduled, setIsCancelScheduled] = useState(false)
   const [openingPortalAction, setOpeningPortalAction] = useState<
-    "billing" | "cancel" | null
+    "billing" | "cancel" | "restore" | null
   >(null)
   const { data: plan } = useCurrentPlan()
   const isPaidPlan = plan === "basic" || plan === "premium"
   const canUpgrade = plan === "free" || plan === "basic"
+  const subscriptionQuery = useQuery({
+    enabled: isPaidPlan,
+    queryKey: ["billing-subscription"],
+    queryFn: getSubscription,
+  })
+  const isPendingCancellation = isSubscriptionPendingCancellation(
+    subscriptionQuery.data?.subscription
+  )
+  const subscriptionEndsAt = getSubscriptionEndsAt(
+    subscriptionQuery.data?.subscription
+  )
 
   const handleOpenBillingPortal = async () => {
     setOpeningPortalAction("billing")
@@ -134,10 +154,31 @@ export function BillingSettingsPage() {
           ? `${endsAt} まで現在のプランを利用できます。`
           : "解約を受け付けました。"
       )
-      setIsCancelScheduled(true)
+      await subscriptionQuery.refetch()
       setOpeningPortalAction(null)
     } catch {
       toast.error("解約できませんでした。")
+      setOpeningPortalAction(null)
+    }
+  }
+
+  const handleRestoreSubscription = async () => {
+    setOpeningPortalAction("restore")
+
+    try {
+      const response = await apiClient.billing.subscription.restore.$post()
+
+      if (!response.ok) {
+        toast.error("プランを再開できませんでした。")
+        setOpeningPortalAction(null)
+        return
+      }
+
+      await subscriptionQuery.refetch()
+      toast.success("プランを再開しました。")
+      setOpeningPortalAction(null)
+    } catch {
+      toast.error("プランを再開できませんでした。")
       setOpeningPortalAction(null)
     }
   }
@@ -180,22 +221,66 @@ export function BillingSettingsPage() {
 
       {isPaidPlan && (
         <SettingSection
-          title="解約"
-          description="現在の請求期間の終了時に、契約を解約します。"
+          title={isPendingCancellation ? "プラン再開" : "解約"}
+          description={
+            isPendingCancellation && subscriptionEndsAt
+              ? `${subscriptionEndsAt} まで現在のプランを利用できます。`
+              : "現在の請求期間の終了時に、契約を解約します。"
+          }
         >
           <Button
-            disabled={openingPortalAction !== null || isCancelScheduled}
-            onClick={handleCancelSubscription}
-            variant="destructive"
+            disabled={
+              openingPortalAction !== null || subscriptionQuery.isLoading
+            }
+            onClick={
+              isPendingCancellation
+                ? handleRestoreSubscription
+                : handleCancelSubscription
+            }
+            variant={isPendingCancellation ? "default" : "destructive"}
           >
-            {openingPortalAction === "cancel" && (
+            {(openingPortalAction === "cancel" ||
+              openingPortalAction === "restore") && (
               <Loader2 className="animate-spin" />
             )}
-            {isCancelScheduled ? "解約予定" : "解約する"}
+            {isPendingCancellation ? "プランを再開" : "解約する"}
           </Button>
         </SettingSection>
       )}
     </div>
+  )
+}
+
+function getSubscriptionEndsAt(
+  subscription:
+    | {
+        cancelAt: string | null
+        periodEnd: string | null
+      }
+    | null
+    | undefined
+) {
+  const endsAt = subscription?.cancelAt ?? subscription?.periodEnd
+
+  return endsAt ? formatInvoiceDateFromIso(endsAt) : null
+}
+
+function isSubscriptionPendingCancellation(
+  subscription:
+    | {
+        cancelAt: string | null
+        cancelAtPeriodEnd: boolean
+        periodEnd: string | null
+      }
+    | null
+    | undefined
+) {
+  const endsAt = subscription?.cancelAt ?? subscription?.periodEnd
+
+  return Boolean(
+    subscription?.cancelAtPeriodEnd &&
+      endsAt &&
+      new Date(endsAt).getTime() > Date.now()
   )
 }
 

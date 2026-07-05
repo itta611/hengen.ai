@@ -13,6 +13,52 @@ function dateFromUnix(timestamp: number | null) {
   return timestamp ? new Date(timestamp * 1000) : null
 }
 
+function isoDate(date: Date | null) {
+  return date?.toISOString() ?? null
+}
+
+async function findCurrentSubscription(userId: string) {
+  const [subscription] = await db
+    .select({
+      cancelAt: subscriptions.cancelAt,
+      cancelAtPeriodEnd: subscriptions.cancelAtPeriodEnd,
+      id: subscriptions.id,
+      periodEnd: subscriptions.periodEnd,
+      status: subscriptions.status,
+      stripeSubscriptionId: subscriptions.stripeSubscriptionId,
+    })
+    .from(subscriptions)
+    .where(
+      and(
+        eq(subscriptions.referenceId, userId),
+        inArray(subscriptions.status, ["active", "trialing"])
+      )
+    )
+    .orderBy(
+      desc(subscriptions.periodStart),
+      desc(subscriptions.updatedAt),
+      desc(subscriptions.createdAt)
+    )
+    .limit(1)
+
+  return subscription
+}
+
+function serializeSubscription(
+  subscription: Awaited<ReturnType<typeof findCurrentSubscription>>
+) {
+  if (!subscription) {
+    return null
+  }
+
+  return {
+    cancelAt: isoDate(subscription.cancelAt),
+    cancelAtPeriodEnd: subscription.cancelAtPeriodEnd ?? false,
+    periodEnd: isoDate(subscription.periodEnd),
+    status: subscription.status,
+  }
+}
+
 export const billingRoutes = new Hono<SessionEnv>()
   .use(sessionMiddleware)
   .get("/invoices", async (c) => {
@@ -53,6 +99,17 @@ export const billingRoutes = new Hono<SessionEnv>()
       200
     )
   })
+  .get("/subscription", async (c) => {
+    const session = c.get("session")
+    const subscription = await findCurrentSubscription(session.user.id)
+
+    return c.json(
+      {
+        subscription: serializeSubscription(subscription),
+      },
+      200
+    )
+  })
   .post("/subscription/cancel", async (c) => {
     const session = c.get("session")
 
@@ -60,26 +117,7 @@ export const billingRoutes = new Hono<SessionEnv>()
       return c.json({ message: "Stripe is not configured" }, 503)
     }
 
-    const [subscription] = await db
-      .select({
-        cancelAtPeriodEnd: subscriptions.cancelAtPeriodEnd,
-        id: subscriptions.id,
-        periodEnd: subscriptions.periodEnd,
-        stripeSubscriptionId: subscriptions.stripeSubscriptionId,
-      })
-      .from(subscriptions)
-      .where(
-        and(
-          eq(subscriptions.referenceId, session.user.id),
-          inArray(subscriptions.status, ["active", "trialing"])
-        )
-      )
-      .orderBy(
-        desc(subscriptions.periodStart),
-        desc(subscriptions.updatedAt),
-        desc(subscriptions.createdAt)
-      )
-      .limit(1)
+    const subscription = await findCurrentSubscription(session.user.id)
 
     if (!subscription?.stripeSubscriptionId) {
       return c.json({ message: "Subscription not found" }, 404)
@@ -89,7 +127,7 @@ export const billingRoutes = new Hono<SessionEnv>()
       return c.json(
         {
           cancelAtPeriodEnd: true,
-          endsAt: subscription.periodEnd?.toISOString() ?? null,
+          endsAt: isoDate(subscription.periodEnd),
         },
         200
       )
@@ -121,10 +159,61 @@ export const billingRoutes = new Hono<SessionEnv>()
     return c.json(
       {
         cancelAtPeriodEnd: stripeSubscription.cancel_at_period_end,
-        endsAt:
-          cancelAt?.toISOString() ??
-          subscription.periodEnd?.toISOString() ??
-          null,
+        endsAt: isoDate(cancelAt) ?? isoDate(subscription.periodEnd),
+      },
+      200
+    )
+  })
+  .post("/subscription/restore", async (c) => {
+    const session = c.get("session")
+
+    if (!stripe) {
+      return c.json({ message: "Stripe is not configured" }, 503)
+    }
+
+    const subscription = await findCurrentSubscription(session.user.id)
+
+    if (!subscription?.stripeSubscriptionId) {
+      return c.json({ message: "Subscription not found" }, 404)
+    }
+
+    if (!subscription.cancelAtPeriodEnd && !subscription.cancelAt) {
+      return c.json(
+        {
+          subscription: serializeSubscription(subscription),
+        },
+        200
+      )
+    }
+
+    const updateParams: Stripe.SubscriptionUpdateParams = subscription.cancelAt
+      ? { cancel_at: "" }
+      : { cancel_at_period_end: false }
+    const stripeSubscription = await stripe.subscriptions.update(
+      subscription.stripeSubscriptionId,
+      updateParams
+    )
+
+    await db
+      .update(subscriptions)
+      .set({
+        cancelAt: null,
+        cancelAtPeriodEnd: stripeSubscription.cancel_at_period_end,
+        canceledAt: null,
+        endedAt: null,
+        status: stripeSubscription.status,
+        updatedAt: new Date(),
+      })
+      .where(eq(subscriptions.id, subscription.id))
+
+    return c.json(
+      {
+        subscription: {
+          cancelAt: null,
+          cancelAtPeriodEnd: stripeSubscription.cancel_at_period_end,
+          periodEnd: isoDate(subscription.periodEnd),
+          status: stripeSubscription.status,
+        },
       },
       200
     )
