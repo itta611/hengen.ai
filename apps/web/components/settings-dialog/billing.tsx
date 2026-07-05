@@ -81,6 +81,7 @@ function formatInvoiceStatus(status: string | null) {
 
 export function BillingSettingsPage() {
   const pricingDialog = usePricingDialog()
+  const [isCancelScheduled, setIsCancelScheduled] = useState(false)
   const [openingPortalAction, setOpeningPortalAction] = useState<
     "billing" | "cancel" | null
   >(null)
@@ -115,21 +116,28 @@ export function BillingSettingsPage() {
     setOpeningPortalAction("cancel")
 
     try {
-      const result = await authClient.subscription.cancel({
-        returnUrl: "/home",
-        disableRedirect: true,
-      })
-      const url = result.data?.url
+      const response = await apiClient.billing.subscription.cancel.$post()
 
-      if (result.error || !url) {
-        toast.error("解約手続きページを開けませんでした。")
+      if (!response.ok) {
+        toast.error("解約できませんでした。")
         setOpeningPortalAction(null)
         return
       }
 
-      window.location.assign(url)
+      const result = await response.json()
+      const endsAt = result.endsAt
+        ? formatInvoiceDateFromIso(result.endsAt)
+        : null
+
+      toast.success(
+        endsAt
+          ? `${endsAt} まで現在のプランを利用できます。`
+          : "解約を受け付けました。"
+      )
+      setIsCancelScheduled(true)
+      setOpeningPortalAction(null)
     } catch {
-      toast.error("解約手続きページを開けませんでした。")
+      toast.error("解約できませんでした。")
       setOpeningPortalAction(null)
     }
   }
@@ -173,22 +181,30 @@ export function BillingSettingsPage() {
       {isPaidPlan && (
         <SettingSection
           title="解約"
-          description="Stripeの確認画面に移動して、現在の契約を解約します。"
+          description="現在の請求期間の終了時に、契約を解約します。"
         >
           <Button
-            disabled={openingPortalAction !== null}
+            disabled={openingPortalAction !== null || isCancelScheduled}
             onClick={handleCancelSubscription}
             variant="destructive"
           >
             {openingPortalAction === "cancel" && (
               <Loader2 className="animate-spin" />
             )}
-            解約手続きへ
+            {isCancelScheduled ? "解約予定" : "解約する"}
           </Button>
         </SettingSection>
       )}
     </div>
   )
+}
+
+function formatInvoiceDateFromIso(value: string) {
+  return new Intl.DateTimeFormat("ja-JP", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  }).format(new Date(value))
 }
 
 function InvoiceHistory() {
