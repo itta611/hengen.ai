@@ -16,18 +16,10 @@ async function getCreditUsage() {
   return response.json()
 }
 
-function daysInMonth(year: number, month: number) {
-  return new Date(Date.UTC(year, month + 1, 0)).getUTCDate()
-}
+function formatResetDate(periodEnd: string) {
+  const date = new Date(periodEnd)
 
-function formatNextResetDate(periodStart: string, resetDay: number) {
-  const date = new Date(periodStart)
-  const nextMonth = date.getUTCMonth() + 1
-  const year = date.getUTCFullYear() + Math.floor(nextMonth / 12)
-  const month = nextMonth % 12
-  const day = Math.min(resetDay, daysInMonth(year, month))
-
-  return `${month + 1}月${day}日`
+  return `${date.getUTCMonth() + 1}月${date.getUTCDate()}日`
 }
 
 function formatPlanName(plan: "free" | "basic" | "premium") {
@@ -51,7 +43,7 @@ function UsageCard() {
     ? Math.min(100, (creditUsage.used / creditUsage.quota) * 100)
     : 0
   const nextResetDate = creditUsage
-    ? formatNextResetDate(creditUsage.periodStart, creditUsage.resetDay)
+    ? formatResetDate(creditUsage.periodEnd)
     : "-"
   const canUpgrade = creditUsage ? creditUsage.plan !== "premium" : false
 

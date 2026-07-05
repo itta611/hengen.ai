@@ -1,4 +1,4 @@
-import { and, desc, eq, gte, inArray, sql } from "drizzle-orm"
+import { and, desc, eq, gte, inArray, lt, sql } from "drizzle-orm"
 
 import { db } from ".."
 import { creditLedger, subscriptions, users } from "../schema"
@@ -14,8 +14,8 @@ function resetDate(year: number, month: number, resetDay: number) {
   )
 }
 
-function getCreditPeriodStart(createdAt: Date, now = new Date()) {
-  const resetDay = createdAt.getUTCDate()
+function getCreditPeriod(anchor: Date, now = new Date()) {
+  const resetDay = anchor.getUTCDate()
   let periodStart = resetDate(now.getUTCFullYear(), now.getUTCMonth(), resetDay)
 
   if (periodStart > now) {
@@ -26,7 +26,13 @@ function getCreditPeriodStart(createdAt: Date, now = new Date()) {
     )
   }
 
-  return { periodStart, resetDay }
+  const periodEnd = resetDate(
+    periodStart.getUTCFullYear(),
+    periodStart.getUTCMonth() + 1,
+    resetDay
+  )
+
+  return { periodEnd, periodStart, resetDay }
 }
 
 export async function getCreditUsageByUserId(userId: string) {
@@ -43,7 +49,10 @@ export async function getCreditUsageByUserId(userId: string) {
   }
 
   const [activeSubscription] = await db
-    .select({ plan: subscriptions.plan })
+    .select({
+      createdAt: subscriptions.createdAt,
+      plan: subscriptions.plan,
+    })
     .from(subscriptions)
     .where(
       and(
@@ -51,13 +60,21 @@ export async function getCreditUsageByUserId(userId: string) {
         inArray(subscriptions.status, ["active", "trialing"])
       )
     )
-    .orderBy(desc(subscriptions.createdAt))
+    .orderBy(
+      desc(subscriptions.periodStart),
+      desc(subscriptions.updatedAt),
+      desc(subscriptions.createdAt)
+    )
     .limit(1)
   const plan: UserPlan = isUserPlan(activeSubscription?.plan)
     ? activeSubscription.plan
     : "free"
+  const resetAnchor =
+    plan === "free"
+      ? user.createdAt
+      : (activeSubscription?.createdAt ?? user.createdAt)
 
-  const { periodStart, resetDay } = getCreditPeriodStart(user.createdAt)
+  const { periodEnd, periodStart, resetDay } = getCreditPeriod(resetAnchor)
   const [usage] = await db
     .select({
       used: sql<number>`
@@ -82,13 +99,15 @@ export async function getCreditUsageByUserId(userId: string) {
     .where(
       and(
         eq(creditLedger.userId, userId),
-        gte(creditLedger.createdAt, periodStart)
+        gte(creditLedger.createdAt, periodStart),
+        lt(creditLedger.createdAt, periodEnd)
       )
     )
 
   return {
     plan,
     quota: getCreditQuotaByPlan(plan),
+    periodEnd,
     periodStart,
     resetDay,
     used: usage?.used ?? 0,

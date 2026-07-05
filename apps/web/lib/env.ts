@@ -1,6 +1,20 @@
 import { createEnv } from "@t3-oss/env-nextjs"
 import { z } from "zod"
 
+const stripeWebhookSecretSchema = z
+  .string()
+  .min(1)
+  .optional()
+  .superRefine((value, ctx) => {
+    if (process.env.STRIPE_SECRET_KEY && !value) {
+      ctx.addIssue({
+        code: "custom",
+        message:
+          "STRIPE_WEBHOOK_SECRET is required when STRIPE_SECRET_KEY is set",
+      })
+    }
+  })
+
 export const env = createEnv({
   server: {
     OPENROUTER_API_KEY: z.string().min(1),
@@ -21,7 +35,7 @@ export const env = createEnv({
     MUTAR_WORKER_URL: z.string().url(),
     MUTAR_WORKER_SECRET: z.string().min(1),
     STRIPE_SECRET_KEY: z.string().min(1).optional(),
-    STRIPE_WEBHOOK_SECRET: z.string().min(1).optional(),
+    STRIPE_WEBHOOK_SECRET: stripeWebhookSecretSchema,
   },
   client: {
     NEXT_PUBLIC_BETTER_AUTH_URL: z.string(),

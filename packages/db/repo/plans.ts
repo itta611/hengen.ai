@@ -29,9 +29,11 @@ export async function getUserPlanById(userId: string) {
         inArray(subscriptions.status, ["active", "trialing"])
       )
     )
-    .orderBy(desc(subscriptions.createdAt))
+    .orderBy(
+      desc(subscriptions.periodStart),
+      desc(subscriptions.updatedAt),
+      desc(subscriptions.createdAt)
+    )
     .limit(1)
-  return isUserPlan(activeSubscription?.plan)
-    ? activeSubscription.plan
-    : "free"
+  return isUserPlan(activeSubscription?.plan) ? activeSubscription.plan : "free"
 }

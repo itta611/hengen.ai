@@ -22,6 +22,7 @@ import { useCurrentPlan, type UserPlan } from "@/hooks/use-current-plan"
 import { authClient } from "@/lib/auth-client"
 
 type PricingPlan = "basic" | "premium"
+type StripeSubscriptionStatus = "active" | "trialing"
 
 type PricingDialogContextValue = {
   close: () => void
@@ -33,6 +34,12 @@ type PricingDialogContextValue = {
 const PricingDialogContext = createContext<PricingDialogContextValue | null>(
   null
 )
+
+function isActiveSubscription(
+  status: string
+): status is StripeSubscriptionStatus {
+  return status === "active" || status === "trialing"
+}
 
 function PricingDialogProvider({ children }: { children: ReactNode }) {
   const [isOpen, setOpen] = useState(false)
@@ -159,8 +166,18 @@ function PlanCard({
     setIsRedirecting(true)
 
     try {
+      const subscriptionId =
+        currentPlan === "free" ? undefined : await getActiveSubscriptionId()
+
+      if (currentPlan !== "free" && !subscriptionId) {
+        toast.error("現在の契約情報を確認できませんでした。")
+        setIsRedirecting(false)
+        return
+      }
+
       const result = await authClient.subscription.upgrade({
         plan,
+        ...(subscriptionId ? { subscriptionId } : {}),
         successUrl: "/home?checkout=success",
         cancelUrl: "/home?checkout=cancel",
         returnUrl: "/home",
@@ -226,6 +243,20 @@ function PlanCard({
       </Button>
     </div>
   )
+}
+
+async function getActiveSubscriptionId() {
+  const result = await authClient.subscription.list()
+
+  if (result.error) {
+    return
+  }
+
+  const activeSubscription = result.data?.find((subscription) =>
+    isActiveSubscription(subscription.status)
+  )
+
+  return activeSubscription?.stripeSubscriptionId ?? undefined
 }
 
 export { PricingDialogProvider, usePricingDialog }
