@@ -58,7 +58,7 @@ function UsageCard() {
         </span>
         <Progress className="grow" value={creditPercent} />
         <span className="text-muted-foreground">
-          {creditPercent.toFixed(0)}%
+          {creditPercent.toFixed(0)}% 使用済み
         </span>
       </div>
       <div className="flex items-center justify-between">

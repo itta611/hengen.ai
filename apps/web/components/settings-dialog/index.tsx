@@ -12,14 +12,14 @@ import { CreditCardIcon, Settings2Icon, User2Icon } from "lucide-react"
 const navItems = [
   { title: "アカウント", component: <AccountSettingsPage />, Icon: User2Icon },
   {
-    title: "支払い",
-    component: <BillingSettingsPage />,
-    Icon: CreditCardIcon,
-  },
-  {
     title: "一般",
     component: <GeneralSettingsPage />,
     Icon: Settings2Icon,
+  },
+  {
+    title: "支払い",
+    component: <BillingSettingsPage />,
+    Icon: CreditCardIcon,
   },
 ]
 
