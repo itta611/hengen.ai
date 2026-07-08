@@ -1,5 +1,6 @@
 "use client"
 
+import { CheckIcon, Loader2 } from "lucide-react"
 import {
   createContext,
   type ReactNode,
@@ -8,7 +9,6 @@ import {
   useMemo,
   useState,
 } from "react"
-import { CheckIcon, Loader2 } from "lucide-react"
 import { toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
@@ -18,7 +18,7 @@ import {
   DialogDescription,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { useCurrentPlan, type UserPlan } from "@/hooks/use-current-plan"
+import { type UserPlan, useCurrentPlan } from "@/hooks/use-current-plan"
 import { authClient } from "@/lib/auth-client"
 
 type PricingPlan = "basic" | "premium"

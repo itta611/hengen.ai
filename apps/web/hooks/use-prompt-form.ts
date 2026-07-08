@@ -74,7 +74,11 @@ function setPromptSettingsCookie(settings: {
   )}; max-age=${promptSettingsMaxAge}; path=/; samesite=lax`
 }
 
-export function usePromptForm() {
+export function usePromptForm({
+  onInsufficientCredits,
+}: {
+  onInsufficientCredits?: () => void
+} = {}) {
   const initialSettings = getPromptSettingsCookie() ?? defaultPromptSettings
   const generateProject = useGenerateProject()
   const { openAuthDialog } = useAuthDialog()
@@ -128,12 +132,14 @@ export function usePromptForm() {
       setImages([])
       router.push(`/editor/${projectId}`)
     } catch (error) {
-      toast.error(
-        error instanceof Error && error.message === "insufficient_credits"
-          ? "クレジットが不足しています。"
-          : "生成に失敗しました。"
-      )
       setIsGenerating(false)
+
+      if (error instanceof Error && error.message === "insufficient_credits") {
+        onInsufficientCredits?.()
+        return
+      }
+
+      toast.error("生成に失敗しました。")
     }
   }
 

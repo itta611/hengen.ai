@@ -3,18 +3,19 @@
 import { SparklesIcon, XIcon } from "lucide-react"
 import Image from "next/image"
 import { useState } from "react"
+import { ImagePreview } from "@/components/image-preview"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Textarea } from "@/components/ui/textarea"
 import { usePromptForm } from "@/hooks/use-prompt-form"
-import { ImagePreview } from "@/components/image-preview"
+import { cn } from "@/lib/utils"
 import { AspectSelect } from "./aspect-select"
 import { CountSelect } from "./count-select"
 import { FileDropUpload } from "./file-drop-upload"
 import { addImageFiles, FileUpload } from "./file-upload"
+import { InsufficientCreditDialog } from "./insufficient-credit-dialog"
 import { StyleSelect } from "./style-select"
 import { Suggestion } from "./suggestion"
-import { cn } from "@/lib/utils"
 
 export function PromptInput() {
   const [previewImage, setPreviewImage] = useState<{
@@ -22,6 +23,8 @@ export function PromptInput() {
     src: string
     width: number
   } | null>(null)
+  const [isInsufficientCreditsOpen, setInsufficientCreditsOpen] =
+    useState(false)
   const {
     aspect,
     canGenerate,
@@ -36,7 +39,9 @@ export function PromptInput() {
     setPrompt,
     setStyle,
     style,
-  } = usePromptForm()
+  } = usePromptForm({
+    onInsufficientCredits: () => setInsufficientCreditsOpen(true),
+  })
   const { handleSubmit, register } = form
 
   return (
@@ -144,6 +149,10 @@ export function PromptInput() {
         />
       ) : null}
       <Suggestion onSelect={setPrompt} />
+      <InsufficientCreditDialog
+        isOpen={isInsufficientCreditsOpen}
+        onOpenChange={setInsufficientCreditsOpen}
+      />
     </>
   )
 }
