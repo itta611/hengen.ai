@@ -5,9 +5,14 @@ import { Hono } from "hono"
 import Stripe from "stripe"
 
 import { env } from "@/lib/env"
-import { sessionMiddleware, type SessionEnv } from "../session"
+import { type SessionEnv, sessionMiddleware } from "../session"
 
-const stripe = env.STRIPE_SECRET_KEY ? new Stripe(env.STRIPE_SECRET_KEY) : null
+const stripeConfig = {
+  apiVersion: "2026-06-24.dahlia",
+} as const
+const stripe = env.STRIPE_SECRET_KEY
+  ? new Stripe(env.STRIPE_SECRET_KEY, stripeConfig)
+  : null
 
 function dateFromUnix(timestamp: number | null) {
   return timestamp ? new Date(timestamp * 1000) : null

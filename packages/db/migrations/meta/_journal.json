@@ -134,6 +134,13 @@
       "when": 1783084013297,
       "tag": "0018_thin_madame_hydra",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1783511935231,
+      "tag": "0019_wide_white_queen",
+      "breakpoints": true
     }
   ]
 }

@@ -2,16 +2,19 @@ import { randomUUID } from "node:crypto"
 
 import { zValidator } from "@hono/zod-validator"
 import {
+  cancelProjectCredits,
   createProject,
   listDeletedImagesByUserId,
   listGeneratedImagesByUserId,
   listStarredImagesByUserId,
+  reserveCreditsForProjects,
+  updateProjectStatusByUserId,
 } from "@mutar/db/repo"
 import { Hono } from "hono"
 import { z } from "zod"
 
 import { env } from "@/lib/env"
-import { sessionMiddleware, type SessionEnv } from "../session"
+import { type SessionEnv, sessionMiddleware } from "../session"
 
 const createProjectBaseSchema = z.object({
   prompt: z.string().trim().max(1200),
@@ -56,27 +59,61 @@ export const projectsRoutes = new Hono<SessionEnv>()
     const { aspectRatio, count, prompt, referenceImages, style } =
       c.req.valid("json")
     const projectIds = Array.from({ length: count }, () => randomUUID())
+    const reservation = await reserveCreditsForProjects({
+      projectIds,
+      userId: session.user.id,
+    })
 
-    await Promise.all(
-      projectIds.map((projectId) =>
-        createProject({
-          id: projectId,
-          userId: session.user.id,
-          prompt,
-          title: "新規プロジェクト",
-          aspectRatio,
-          status: "generating",
-          width: 0,
-          height: 0,
-          analysis: { summary: "", boxes: [] },
-        })
+    if (!reservation.usage) {
+      return c.json({ message: "Not found" }, 404)
+    }
+
+    if (!reservation.reserved) {
+      return c.json(
+        {
+          message: "Insufficient credits",
+          usage: reservation.usage,
+        },
+        402
       )
-    )
+    }
 
     try {
-      const responses = await Promise.all(
+      await Promise.all(
         projectIds.map((projectId) =>
-          fetch(new URL("/generate", env.MUTAR_WORKER_URL), {
+          createProject({
+            id: projectId,
+            userId: session.user.id,
+            prompt,
+            title: "新規プロジェクト",
+            aspectRatio,
+            status: "generating",
+            width: 0,
+            height: 0,
+            analysis: { summary: "", boxes: [] },
+          })
+        )
+      )
+    } catch {
+      await cancelProjectCredits({ projectIds, userId: session.user.id })
+      await Promise.allSettled(
+        projectIds.map((projectId) =>
+          updateProjectStatusByUserId({
+            projectId,
+            status: "error",
+            userId: session.user.id,
+          })
+        )
+      )
+
+      return c.json({ message: "Generation failed" }, 502)
+    }
+
+    const results = await Promise.allSettled(
+      projectIds.map(async (projectId) => {
+        const response = await fetch(
+          new URL("/generate", env.MUTAR_WORKER_URL),
+          {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -89,16 +126,39 @@ export const projectsRoutes = new Hono<SessionEnv>()
               referenceImages,
               style,
             }),
+          }
+        )
+
+        if (!response.ok) {
+          throw new Error("worker_failed")
+        }
+
+        return projectId
+      })
+    )
+    const failedProjectIds = projectIds.filter((_, index) => {
+      return results[index]?.status === "rejected"
+    })
+
+    if (failedProjectIds.length > 0) {
+      await Promise.all(
+        failedProjectIds.map((projectId) =>
+          updateProjectStatusByUserId({
+            projectId,
+            status: "error",
+            userId: session.user.id,
           })
         )
       )
+    }
 
-      if (responses.some((response) => !response.ok)) {
-        return c.json({ message: "Generation failed" }, 502)
-      }
-    } catch {
+    const startedProjectIds = results.flatMap((result) =>
+      result.status === "fulfilled" ? [result.value] : []
+    )
+
+    if (startedProjectIds.length === 0) {
       return c.json({ message: "Generation failed" }, 502)
     }
 
-    return c.json({ projectIds }, 200)
+    return c.json({ projectIds: startedProjectIds }, 200)
   })

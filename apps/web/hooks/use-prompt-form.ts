@@ -117,7 +117,9 @@ export function usePromptForm() {
     setIsGenerating(true)
 
     try {
-      const referenceImages = images.map((image) => image.dataUrl!)
+      const referenceImages = images
+        .map((image) => image.dataUrl)
+        .filter((dataUrl): dataUrl is string => Boolean(dataUrl))
       const projectId = await generateProject({
         ...options,
         referenceImages,
@@ -125,8 +127,12 @@ export function usePromptForm() {
       })
       setImages([])
       router.push(`/editor/${projectId}`)
-    } catch {
-      toast.error("生成に失敗しました。")
+    } catch (error) {
+      toast.error(
+        error instanceof Error && error.message === "insufficient_credits"
+          ? "クレジットが不足しています。"
+          : "生成に失敗しました。"
+      )
       setIsGenerating(false)
     }
   }

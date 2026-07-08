@@ -2,6 +2,7 @@ import { and, desc, eq, inArray, isNotNull, isNull } from "drizzle-orm"
 
 import { db } from ".."
 import { projects } from "../schema"
+import { cancelProjectCredits, markProjectCreditSucceeded } from "./credits"
 
 type CreateProjectInput = {
   id: string
@@ -59,6 +60,14 @@ export async function updateProjectStatusByUserId({
       updatedAt: new Date(),
     })
     .where(and(eq(projects.id, projectId), eq(projects.userId, userId)))
+
+  if (status === "ready") {
+    await markProjectCreditSucceeded({ projectId, userId })
+  }
+
+  if (status === "error") {
+    await cancelProjectCredits({ projectIds: [projectId], userId })
+  }
 }
 
 export async function updateProjectStarredByUserId({

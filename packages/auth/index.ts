@@ -1,41 +1,43 @@
+import { stripe } from "@better-auth/stripe"
+import { db } from "@mutar/db"
+import { getUserPlanById } from "@mutar/db/repo"
+import * as schema from "@mutar/db/schema"
+import { sendMagicLinkEmail } from "@mutar/email"
 import { betterAuth } from "better-auth"
 import { drizzleAdapter } from "better-auth/adapters/drizzle"
 import { createAuthEndpoint } from "better-auth/api"
 import { setSessionCookie } from "better-auth/cookies"
 import { nextCookies } from "better-auth/next-js"
 import { customSession, magicLink } from "better-auth/plugins"
-import { stripe } from "@better-auth/stripe"
 import Stripe from "stripe"
-
-import { db } from "@mutar/db"
-import { getUserPlanById } from "@mutar/db/repo"
-import * as schema from "@mutar/db/schema"
-import { sendMagicLinkEmail } from "@mutar/email"
 import { env } from "@/lib/env"
 
-const stripePlugins =
-  env.STRIPE_SECRET_KEY
-    ? [
-        stripe({
-          stripeClient: new Stripe(env.STRIPE_SECRET_KEY),
-          stripeWebhookSecret: env.STRIPE_WEBHOOK_SECRET ?? "",
-          createCustomerOnSignUp: true,
-          subscription: {
-            enabled: true,
-            plans: [
-              {
-                name: "basic",
-                lookupKey: "basic",
-              },
-              {
-                name: "premium",
-                lookupKey: "premium",
-              },
-            ],
-          },
-        }),
-      ]
-    : []
+const stripeConfig = {
+  apiVersion: "2026-06-24.dahlia",
+} as const
+
+const stripePlugins = env.STRIPE_SECRET_KEY
+  ? [
+      stripe({
+        stripeClient: new Stripe(env.STRIPE_SECRET_KEY, stripeConfig),
+        stripeWebhookSecret: env.STRIPE_WEBHOOK_SECRET ?? "",
+        createCustomerOnSignUp: true,
+        subscription: {
+          enabled: true,
+          plans: [
+            {
+              name: "basic",
+              lookupKey: "basic",
+            },
+            {
+              name: "premium",
+              lookupKey: "premium",
+            },
+          ],
+        },
+      }),
+    ]
+  : []
 
 const betaLogin = {
   id: "beta-login",

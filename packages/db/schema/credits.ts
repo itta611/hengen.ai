@@ -18,6 +18,7 @@ export const creditLedger = pgTable(
       .defaultNow(),
   },
   (table) => [
+    index("credit_ledger_project_idx").on(table.projectId),
     index("credit_ledger_user_created_idx").on(table.userId, table.createdAt),
   ]
 )

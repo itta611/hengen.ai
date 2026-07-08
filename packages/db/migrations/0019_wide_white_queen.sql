@@ -1,0 +1,1 @@
+CREATE INDEX "credit_ledger_project_idx" ON "credit_ledger" USING btree ("projectId");

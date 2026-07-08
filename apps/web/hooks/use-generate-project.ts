@@ -3,12 +3,18 @@
 import { useMutation } from "@tanstack/react-query"
 import { apiClient } from "@/lib/api-client"
 
-export type GenerateProjectInput = NonNullable<Parameters<typeof apiClient.projects.$post>[0]>["json"]
+export type GenerateProjectInput = NonNullable<
+  Parameters<typeof apiClient.projects.$post>[0]
+>["json"]
 
 async function createProject(input: GenerateProjectInput) {
   const response = await apiClient.projects.$post({
     json: input,
   })
+
+  if (response.status === 402) {
+    throw new Error("insufficient_credits")
+  }
 
   if (!response.ok) {
     throw new Error("create_failed")
@@ -22,7 +28,12 @@ export function useGenerateProject() {
 
   return async function generateProject(input: GenerateProjectInput) {
     const data = await createProjectMutation.mutateAsync(input)
+    const projectId = data.projectIds.at(-1)
 
-    return data.projectIds.at(-1)!
+    if (!projectId) {
+      throw new Error("create_failed")
+    }
+
+    return projectId
   }
 }
