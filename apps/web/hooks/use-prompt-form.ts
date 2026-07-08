@@ -17,7 +17,6 @@ import {
 import { authClient } from "@/lib/auth-client"
 
 const promptSettingsCookieName = "prompt-settings"
-const promptSettingsVersion = 2
 const promptSettingsMaxAge = 60 * 60 * 24 * 365
 const promptImagesAtom = atom<UploadedImage[]>([])
 const defaultPromptSettings = {
@@ -46,16 +45,6 @@ function getPromptSettingsCookie() {
       aspectRatio?: EditorAspectRatio
       count?: GenerateProjectInput["count"]
       style?: PromptStyle
-      version?: number
-    }
-
-    if (
-      settings.version !== promptSettingsVersion &&
-      settings.style?.themeColor === "#6366F1" &&
-      !settings.style.texture &&
-      !settings.style.backgroundColor
-    ) {
-      return { ...settings, style: {} }
     }
 
     return settings
@@ -70,7 +59,7 @@ function setPromptSettingsCookie(settings: {
   style: PromptStyle
 }) {
   document.cookie = `${promptSettingsCookieName}=${encodeURIComponent(
-    JSON.stringify({ ...settings, version: promptSettingsVersion })
+    JSON.stringify(settings)
   )}; max-age=${promptSettingsMaxAge}; path=/; samesite=lax`
 }
 
