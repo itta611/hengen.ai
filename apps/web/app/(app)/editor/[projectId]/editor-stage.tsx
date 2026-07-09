@@ -30,7 +30,7 @@ type ImageElement = {
 }
 
 const defaultViewportPadding = 80
-const projectSwitcherHeight = 96
+const editorBottomControlsHeight = 168
 Konva.hitOnDragEnabled = true
 Konva.dragButtons = [0]
 
@@ -39,7 +39,9 @@ function getImageViewportSize(containerSize: Size) {
     width: Math.max(1, containerSize.width - defaultViewportPadding * 2),
     height: Math.max(
       1,
-      containerSize.height - projectSwitcherHeight - defaultViewportPadding * 2
+      containerSize.height -
+        editorBottomControlsHeight -
+        defaultViewportPadding * 2
     ),
   }
 }

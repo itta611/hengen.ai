@@ -61,25 +61,21 @@ export function CopyButton({
         <PopoverContent className="w-75 p-0" align="end">
           <Command>
             <CommandList>
-              <CommandItem onSelect={() => handleCopy(onCopyImage)}>
-                <div className="flex flex-col items-start gap-1 py-2 px-1">
+              <CommandItem onSelect={() => handleCopy(onCopyImage)} className="flex-col items-start gap-0.5 p-2!">
                   <div className="text-foreground text-xs font-bold">
                     画像としてコピー
                   </div>
                   <div className="text-xs text-muted-foreground">
                     画像形式でコピーします。
                   </div>
-                </div>
               </CommandItem>
-              <CommandItem onSelect={() => handleCopy(onCopySvg)}>
-                <div className="flex flex-col items-start gap-1 py-2 px-1">
+              <CommandItem onSelect={() => handleCopy(onCopySvg)} className="flex-col items-start gap-0.5 p-2!">
                   <div className="text-foreground text-xs font-bold">
                     SVG形式でコピー
                   </div>
                   <div className="text-xs text-muted-foreground">
                     Powerpoint等で編集できる形式でコピーします。
                   </div>
-                </div>
               </CommandItem>
             </CommandList>
           </Command>
