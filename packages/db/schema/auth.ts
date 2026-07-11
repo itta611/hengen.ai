@@ -15,10 +15,6 @@ export const users = pgTable("user", {
   email: text("email").notNull().unique(),
   emailVerified: boolean("emailVerified").notNull().default(false),
   image: text("image"),
-  plan: text("plan")
-    .$type<"free" | "basic" | "premium">()
-    .notNull()
-    .default("free"),
   stripeCustomerId: text("stripeCustomerId"),
   creditQuota: integer("creditQuota").notNull().default(40),
   editorSettings: jsonb("editorSettings")
