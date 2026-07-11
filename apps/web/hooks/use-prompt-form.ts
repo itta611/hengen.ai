@@ -2,7 +2,7 @@
 
 import { atom, useAtom } from "jotai"
 import { useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useSyncExternalStore } from "react"
 import { useForm, useWatch } from "react-hook-form"
 import { toast } from "sonner"
 
@@ -25,22 +25,35 @@ const defaultPromptSettings = {
   style: {} satisfies PromptStyle,
 }
 
-function getPromptSettingsCookie() {
+function subscribePromptSettingsCookie() {
+  return () => {}
+}
+
+function getServerPromptSettingsCookieValue() {
+  return ""
+}
+
+function getPromptSettingsCookieValue() {
   if (typeof document === "undefined") {
-    return null
+    return ""
   }
 
-  const cookie = document.cookie
-    .split("; ")
-    .find((cookie) => cookie.startsWith(`${promptSettingsCookieName}=`))
+  return (
+    document.cookie
+      .split("; ")
+      .find((cookie) => cookie.startsWith(`${promptSettingsCookieName}=`))
+      ?.split("=")[1] ?? ""
+  )
+}
 
-  if (!cookie) {
+function parsePromptSettingsCookie(cookieValue: string) {
+  if (!cookieValue) {
     return null
   }
 
   try {
     const settings = JSON.parse(
-      decodeURIComponent(cookie.split("=")[1] ?? "")
+      decodeURIComponent(cookieValue)
     ) as {
       aspectRatio?: EditorAspectRatio
       count?: GenerateProjectInput["count"]
@@ -70,12 +83,17 @@ export function usePromptForm({
   initialPrompt?: string
   onInsufficientCredits?: () => void
 } = {}) {
-  const initialSettings = getPromptSettingsCookie() ?? defaultPromptSettings
   const generateProject = useGenerateProject()
   const { openAuthDialog } = useAuthDialog()
   const router = useRouter()
   const session = authClient.useSession()
   const user = session.data?.user
+  const promptSettingsCookie = useSyncExternalStore(
+    subscribePromptSettingsCookie,
+    getPromptSettingsCookieValue,
+    getServerPromptSettingsCookieValue
+  )
+  const promptSettings = parsePromptSettingsCookie(promptSettingsCookie)
   const form = useForm<{
     aspectRatio: EditorAspectRatio
     count: GenerateProjectInput["count"]
@@ -83,17 +101,17 @@ export function usePromptForm({
   }>({
     defaultValues: {
       prompt: initialPrompt,
-      aspectRatio:
-        initialSettings.aspectRatio ?? defaultPromptSettings.aspectRatio,
-      count: initialSettings.count ?? defaultPromptSettings.count,
+      aspectRatio: defaultPromptSettings.aspectRatio,
+      count: defaultPromptSettings.count,
     },
   })
+  const { setValue } = form
   const prompt = useWatch({ control: form.control, name: "prompt" })
   const aspect = useWatch({ control: form.control, name: "aspectRatio" })
   const count = useWatch({ control: form.control, name: "count" })
-  const [style, setStyle] = useState<PromptStyle>(
-    initialSettings.style ?? defaultPromptSettings.style
-  )
+  const [styleOverride, setStyleOverride] = useState<PromptStyle | null>(null)
+  const style =
+    styleOverride ?? promptSettings?.style ?? defaultPromptSettings.style
   const [isGenerating, setIsGenerating] = useState(false)
   const [images, setImages] = useAtom(promptImagesAtom)
   const canGenerate =
@@ -189,8 +207,24 @@ export function usePromptForm({
   }
 
   useEffect(() => {
-    setPromptSettingsCookie({ aspectRatio: aspect, count, style })
-  }, [aspect, count, style])
+    setValue(
+      "aspectRatio",
+      promptSettings?.aspectRatio ?? defaultPromptSettings.aspectRatio
+    )
+    setValue("count", promptSettings?.count ?? defaultPromptSettings.count)
+  }, [promptSettings?.aspectRatio, promptSettings?.count, setValue])
+
+  function updatePromptSettingsCookie(settings: {
+    aspectRatio?: EditorAspectRatio
+    count?: GenerateProjectInput["count"]
+    style?: PromptStyle
+  }) {
+    setPromptSettingsCookie({
+      aspectRatio: settings.aspectRatio ?? aspect,
+      count: settings.count ?? count,
+      style: settings.style ?? style,
+    })
+  }
 
   return {
     aspect,
@@ -201,13 +235,22 @@ export function usePromptForm({
     handleGenerate,
     images,
     isGenerating,
-    setAspect: (aspect: EditorAspectRatio) =>
-      form.setValue("aspectRatio", aspect),
-    setCount: (count: number) =>
-      form.setValue("count", count as GenerateProjectInput["count"]),
+    setAspect: (aspect: EditorAspectRatio) => {
+      setValue("aspectRatio", aspect)
+      updatePromptSettingsCookie({ aspectRatio: aspect })
+    },
+    setCount: (count: number) => {
+      const nextCount = count as GenerateProjectInput["count"]
+
+      setValue("count", nextCount)
+      updatePromptSettingsCookie({ count: nextCount })
+    },
     setImages,
-    setPrompt: (prompt: string) => form.setValue("prompt", prompt),
-    setStyle,
+    setPrompt: (prompt: string) => setValue("prompt", prompt),
+    setStyle: (style: PromptStyle) => {
+      setStyleOverride(style)
+      updatePromptSettingsCookie({ style })
+    },
     style,
   }
 }
