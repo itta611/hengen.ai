@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button"
 import { editorProjectQuery } from "@/hooks/use-editor-project"
 import { useExport } from "@/hooks/use-export"
 import { CopyButton } from "./copy-button"
+import { EditButton } from "./edit"
 
 export function Navbar() {
   const router = useRouter()
@@ -50,6 +51,7 @@ export function Navbar() {
         <XIcon />
       </Button>
       <div className="grow w-0 truncate">{projectName}</div>
+      <EditButton disabled={disabled} projectId={projectId} />
       <CopyButton
         disabled={disabled}
         onCopyImage={async () => {
