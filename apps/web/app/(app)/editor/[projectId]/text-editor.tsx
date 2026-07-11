@@ -2,6 +2,11 @@
 
 import { Html } from "react-konva-utils"
 
+function selectTextarea(node: HTMLTextAreaElement | null) {
+  node?.focus()
+  node?.select()
+}
+
 export function TextEditor({
   color,
   fontFamily,
@@ -39,6 +44,7 @@ export function TextEditor({
         aria-label="Edit text"
         autoFocus
         className="absolute m-0 resize-none"
+        ref={selectTextarea}
         onBlur={(event) => onClose(event.currentTarget.value)}
         onChange={(event) => onChange(event.currentTarget.value)}
         onKeyDown={(event) => {
