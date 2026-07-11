@@ -16,7 +16,6 @@ export const users = pgTable("user", {
   emailVerified: boolean("emailVerified").notNull().default(false),
   image: text("image"),
   stripeCustomerId: text("stripeCustomerId"),
-  creditQuota: integer("creditQuota").notNull().default(40),
   editorSettings: jsonb("editorSettings")
     .$type<{ snapToGrid: boolean }>()
     .notNull()

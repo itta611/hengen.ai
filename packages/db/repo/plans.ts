@@ -4,7 +4,7 @@ import { db } from ".."
 import { subscriptions } from "../schema"
 
 export const PLAN_CREDIT_QUOTAS = {
-  free: 40,
+  free: 20,
   basic: 240,
   premium: 720,
 } as const
