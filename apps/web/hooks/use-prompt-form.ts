@@ -64,8 +64,10 @@ function setPromptSettingsCookie(settings: {
 }
 
 export function usePromptForm({
+  initialPrompt = "",
   onInsufficientCredits,
 }: {
+  initialPrompt?: string
   onInsufficientCredits?: () => void
 } = {}) {
   const initialSettings = getPromptSettingsCookie() ?? defaultPromptSettings
@@ -80,7 +82,7 @@ export function usePromptForm({
     prompt: string
   }>({
     defaultValues: {
-      prompt: "",
+      prompt: initialPrompt,
       aspectRatio:
         initialSettings.aspectRatio ?? defaultPromptSettings.aspectRatio,
       count: initialSettings.count ?? defaultPromptSettings.count,
@@ -103,7 +105,13 @@ export function usePromptForm({
     options: Omit<GenerateProjectInput, "referenceImages">
   ) {
     if (!user) {
-      openAuthDialog()
+      const prompt = options.prompt.trim()
+
+      openAuthDialog({
+        callbackURL: prompt
+          ? `/home?prompt=${encodeURIComponent(prompt)}`
+          : "/home",
+      })
       return
     }
 

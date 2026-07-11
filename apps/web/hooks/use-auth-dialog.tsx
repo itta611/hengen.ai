@@ -10,18 +10,21 @@ import {
 } from "react"
 
 type AuthDialogContextValue = {
+  authCallbackURL: string
   isAuthDialogOpen: boolean
   setAuthDialogOpen: (open: boolean) => void
-  openAuthDialog: () => void
+  openAuthDialog: (options?: { callbackURL?: string }) => void
   closeAuthDialog: () => void
 }
 
 const AuthDialogContext = createContext<AuthDialogContextValue | null>(null)
 
 export function AuthDialogProvider({ children }: { children: ReactNode }) {
+  const [authCallbackURL, setAuthCallbackURL] = useState("/home")
   const [isAuthDialogOpen, setAuthDialogOpen] = useState(false)
 
-  const openAuthDialog = useCallback(() => {
+  const openAuthDialog = useCallback((options?: { callbackURL?: string }) => {
+    setAuthCallbackURL(options?.callbackURL ?? "/home")
     setAuthDialogOpen(true)
   }, [])
 
@@ -31,12 +34,13 @@ export function AuthDialogProvider({ children }: { children: ReactNode }) {
 
   const value = useMemo(
     () => ({
+      authCallbackURL,
       isAuthDialogOpen,
       setAuthDialogOpen,
       openAuthDialog,
       closeAuthDialog,
     }),
-    [closeAuthDialog, isAuthDialogOpen, openAuthDialog]
+    [authCallbackURL, closeAuthDialog, isAuthDialogOpen, openAuthDialog]
   )
 
   return (

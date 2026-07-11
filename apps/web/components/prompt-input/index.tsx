@@ -2,7 +2,7 @@
 
 import { SparklesIcon, XIcon } from "lucide-react"
 import Image from "next/image"
-import { useState } from "react"
+import { useState, type Dispatch, type SetStateAction } from "react"
 import { ImagePreview } from "@/components/image-preview"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -15,16 +15,23 @@ import { FileDropUpload } from "./file-drop-upload"
 import { addImageFiles, FileUpload } from "./file-upload"
 import { InsufficientCreditDialog } from "./insufficient-credit-dialog"
 import { StyleSelect } from "./style-select"
-import { Suggestion } from "./suggestion"
 
-export function PromptInput() {
+type PromptInputController = ReturnType<typeof usePromptForm>
+
+export function PromptInputForm({
+  controller,
+  isInsufficientCreditsOpen,
+  setInsufficientCreditsOpen,
+}: {
+  controller: PromptInputController
+  isInsufficientCreditsOpen: boolean
+  setInsufficientCreditsOpen: Dispatch<SetStateAction<boolean>>
+}) {
   const [previewImage, setPreviewImage] = useState<{
     height: number
     src: string
     width: number
   } | null>(null)
-  const [isInsufficientCreditsOpen, setInsufficientCreditsOpen] =
-    useState(false)
   const {
     aspect,
     canGenerate,
@@ -36,12 +43,9 @@ export function PromptInput() {
     setAspect,
     setCount,
     setImages,
-    setPrompt,
     setStyle,
     style,
-  } = usePromptForm({
-    onInsufficientCredits: () => setInsufficientCreditsOpen(true),
-  })
+  } = controller
   const { handleSubmit, register } = form
 
   return (
@@ -148,11 +152,27 @@ export function PromptInput() {
           width={previewImage.width}
         />
       ) : null}
-      <Suggestion onSelect={setPrompt} />
       <InsufficientCreditDialog
         isOpen={isInsufficientCreditsOpen}
         onOpenChange={setInsufficientCreditsOpen}
       />
     </>
+  )
+}
+
+export function PromptInput({ initialPrompt = "" }: { initialPrompt?: string }) {
+  const [isInsufficientCreditsOpen, setInsufficientCreditsOpen] =
+    useState(false)
+  const controller = usePromptForm({
+    initialPrompt,
+    onInsufficientCredits: () => setInsufficientCreditsOpen(true),
+  })
+
+  return (
+    <PromptInputForm
+      controller={controller}
+      isInsufficientCreditsOpen={isInsufficientCreditsOpen}
+      setInsufficientCreditsOpen={setInsufficientCreditsOpen}
+    />
   )
 }

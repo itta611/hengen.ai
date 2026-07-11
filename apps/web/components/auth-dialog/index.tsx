@@ -27,7 +27,8 @@ function getNameFromEmail(email: string) {
 }
 
 export function AuthDialog() {
-  const { closeAuthDialog, isAuthDialogOpen } = useAuthDialog()
+  const { authCallbackURL, closeAuthDialog, isAuthDialogOpen } =
+    useAuthDialog()
   const [email, setEmail] = useState("")
   const [error, setError] = useState<string | null>(null)
   const [busyMode, setBusyMode] = useState<"email" | "google" | null>(null)
@@ -49,15 +50,13 @@ export function AuthDialog() {
     return null
   }
 
-  const callbackURL = "/home"
-
   async function handleGoogleLogin() {
     setBusyMode("google")
     setError(null)
 
     const result = await authClient.signIn.social({
       provider: "google",
-      callbackURL,
+      callbackURL: authCallbackURL,
     })
 
     setBusyMode(null)
@@ -84,7 +83,7 @@ export function AuthDialog() {
       })
 
       if (response.ok) {
-        window.location.href = callbackURL
+        window.location.href = authCallbackURL
         return
       }
 
@@ -96,7 +95,7 @@ export function AuthDialog() {
     const result = await authClient.signIn.magicLink({
       email: email.trim(),
       name: getNameFromEmail(email),
-      callbackURL,
+      callbackURL: authCallbackURL,
     })
 
     setBusyMode(null)
