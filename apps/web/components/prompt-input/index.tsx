@@ -40,6 +40,7 @@ export function PromptInputForm({
     handleGenerate,
     images,
     isGenerating,
+    isImageOnly,
     setAspect,
     setCount,
     setImages,
@@ -91,7 +92,7 @@ export function PromptInputForm({
             className="border-0"
           >
             <SparklesIcon data-icon="inline-end" />
-            {isGenerating ? "生成中" : "生成"}
+            {isGenerating ? "生成中" : isImageOnly ? "文字を編集する" : "生成"}
           </Button>
         </div>
       </form>

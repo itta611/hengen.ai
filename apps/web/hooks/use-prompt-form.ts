@@ -114,6 +114,7 @@ export function usePromptForm({
     styleOverride ?? promptSettings?.style ?? defaultPromptSettings.style
   const [isGenerating, setIsGenerating] = useState(false)
   const [images, setImages] = useAtom(promptImagesAtom)
+  const isImageOnly = images.length > 0 && prompt.trim().length === 0
   const canGenerate =
     !isGenerating &&
     images.every((image) => image.dataUrl) &&
@@ -185,6 +186,7 @@ export function usePromptForm({
     form,
     handleGenerate,
     images,
+    isImageOnly,
     isGenerating,
     setAspect: (aspect: EditorAspectRatio) => {
       setValue("aspectRatio", aspect)
