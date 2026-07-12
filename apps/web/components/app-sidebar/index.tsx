@@ -44,7 +44,6 @@ import {
 } from "@/components/ui/sidebar"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useCurrentPlan } from "@/hooks/use-current-plan"
-import { usePromptForm } from "@/hooks/use-prompt-form"
 import { useUpdateProjectStarred } from "@/hooks/use-update-project-starred"
 import { apiClient } from "@/lib/api-client"
 import { authClient } from "@/lib/auth-client"
@@ -71,7 +70,6 @@ export function AppSidebar() {
   const router = useRouter()
   const { setTheme } = useTheme()
   const pricingDialog = usePricingDialog()
-  const { attachProjectImage } = usePromptForm()
   const session = authClient.useSession()
   const user = session.data?.user
   const { data: starredProjects = [] } = useQuery({
@@ -161,9 +159,6 @@ export function AppSidebar() {
                     {project.title}
                     <ProjectDropdownMenu
                       project={project}
-                      onPromptAttach={(project) =>
-                        void attachProjectImage(project)
-                      }
                       onStarredChange={(project, isStarred) =>
                         updateProjectStarredMutation.mutate({
                           project,

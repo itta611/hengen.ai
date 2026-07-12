@@ -158,54 +158,6 @@ export function usePromptForm({
     }
   }
 
-  async function attachProjectImage(project: { id: string; title: string }) {
-    const image = {
-      file: new File([], `${project.title}.png`, {
-        lastModified: 0,
-        type: "image/png",
-      }),
-    }
-
-    setImages((current) => [...current, image])
-
-    let response: Response
-
-    try {
-      response = await fetch(`/api/projects/${project.id}/image?kind=original`)
-    } catch {
-      setImages((current) =>
-        current.filter((currentImage) => currentImage !== image)
-      )
-      toast.error("添付に失敗しました。")
-      return
-    }
-
-    if (!response.ok) {
-      setImages((current) =>
-        current.filter((currentImage) => currentImage !== image)
-      )
-      toast.error("添付に失敗しました。")
-      return
-    }
-
-    const blob = await response.blob()
-    const file = new File([blob], `${project.title}.png`, {
-      lastModified: 0,
-      type: blob.type,
-    })
-
-    const reader = new FileReader()
-    reader.onload = () =>
-      setImages((current) =>
-        current.map((currentImage) =>
-          currentImage === image
-            ? { file, dataUrl: reader.result as string }
-            : currentImage
-        )
-      )
-    reader.readAsDataURL(file)
-  }
-
   useEffect(() => {
     setValue(
       "aspectRatio",
@@ -228,7 +180,6 @@ export function usePromptForm({
 
   return {
     aspect,
-    attachProjectImage,
     canGenerate,
     count,
     form,
