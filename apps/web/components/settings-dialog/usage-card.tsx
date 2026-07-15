@@ -17,12 +17,6 @@ async function getCreditUsage() {
   return response.json()
 }
 
-function formatResetDate(periodEnd: string) {
-  const date = new Date(periodEnd)
-
-  return `${date.getUTCMonth() + 1}月${date.getUTCDate()}日`
-}
-
 function formatPlanName(plan: "free" | "basic" | "premium") {
   switch (plan) {
     case "basic":
@@ -43,9 +37,6 @@ function UsageCard() {
   const creditPercent = creditUsage
     ? Math.min(100, (creditUsage.used / creditUsage.quota) * 100)
     : 0
-  const nextResetDate = creditUsage
-    ? formatResetDate(creditUsage.periodEnd)
-    : "-"
   const canUpgrade = creditUsage ? creditUsage.plan !== "premium" : false
 
   return (
@@ -64,7 +55,7 @@ function UsageCard() {
       </div>
       <div className="flex items-center justify-between">
         <span className="text-muted-foreground">
-          次回 {nextResetDate} にリセットされます。
+          毎月1日にリセットされます。
         </span>
         {canUpgrade && (
           <Button onClick={pricingDialog.open}>アップグレード</Button>

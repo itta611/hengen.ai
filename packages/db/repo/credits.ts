@@ -6,41 +6,21 @@ import { db, sql as neonSql } from ".."
 import { creditLedger, subscriptions, users } from "../schema"
 import { getCreditQuotaByPlan, isUserPlan, type UserPlan } from "./plans"
 
-function daysInMonth(year: number, month: number) {
-  return new Date(Date.UTC(year, month + 1, 0)).getUTCDate()
-}
-
-function resetDate(year: number, month: number, resetDay: number) {
-  return new Date(
-    Date.UTC(year, month, Math.min(resetDay, daysInMonth(year, month)))
+function getCreditPeriod(now = new Date()) {
+  const periodStart = new Date(
+    Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1)
   )
-}
-
-function getCreditPeriod(anchor: Date, now = new Date()) {
-  const resetDay = anchor.getUTCDate()
-  let periodStart = resetDate(now.getUTCFullYear(), now.getUTCMonth(), resetDay)
-
-  if (periodStart > now) {
-    periodStart = resetDate(
-      now.getUTCFullYear(),
-      now.getUTCMonth() - 1,
-      resetDay
-    )
-  }
-
-  const periodEnd = resetDate(
-    periodStart.getUTCFullYear(),
-    periodStart.getUTCMonth() + 1,
-    resetDay
+  const periodEnd = new Date(
+    Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 1)
   )
 
-  return { periodEnd, periodStart, resetDay }
+  return { periodEnd, periodStart }
 }
 
 export async function getCreditUsageByUserId(userId: string) {
   const [user] = await db
     .select({
-      createdAt: users.createdAt,
+      id: users.id,
     })
     .from(users)
     .where(eq(users.id, userId))
@@ -52,7 +32,6 @@ export async function getCreditUsageByUserId(userId: string) {
 
   const [activeSubscription] = await db
     .select({
-      createdAt: subscriptions.createdAt,
       plan: subscriptions.plan,
     })
     .from(subscriptions)
@@ -71,12 +50,8 @@ export async function getCreditUsageByUserId(userId: string) {
   const plan: UserPlan = isUserPlan(activeSubscription?.plan)
     ? activeSubscription.plan
     : "free"
-  const resetAnchor =
-    plan === "free"
-      ? user.createdAt
-      : (activeSubscription?.createdAt ?? user.createdAt)
 
-  const { periodEnd, periodStart, resetDay } = getCreditPeriod(resetAnchor)
+  const { periodEnd, periodStart } = getCreditPeriod()
   const [usage] = await db
     .select({
       used: sql<number>`
@@ -109,9 +84,6 @@ export async function getCreditUsageByUserId(userId: string) {
   return {
     plan,
     quota: getCreditQuotaByPlan(plan),
-    periodEnd,
-    periodStart,
-    resetDay,
     used: usage?.used ?? 0,
   }
 }
@@ -141,6 +113,7 @@ export async function reserveCreditsForProjects({
     id: randomUUID(),
     projectId,
   }))
+  const { periodEnd, periodStart } = getCreditPeriod()
   const rows = await neonSql`
     with user_lock as (
       update "user"
@@ -164,8 +137,8 @@ export async function reserveCreditsForProjects({
           ), 0)
           from "credit_ledger"
           where "userId" = ${userId}
-            and "createdAt" >= ${usage.periodStart}
-            and "createdAt" < ${usage.periodEnd}
+            and "createdAt" >= ${periodStart}
+            and "createdAt" < ${periodEnd}
         ) + ${projectIds.length} <= ${usage.quota}
       returning "id"
     ),
