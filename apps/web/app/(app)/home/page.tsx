@@ -4,6 +4,7 @@ import LogoIcon from "@/components/logo-icon"
 import { CheckoutToast } from "./checkout-toast"
 import { PromptSection } from "./prompt-section"
 import { ProjectList } from "./project-list"
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 type PageProps = {
   searchParams: Promise<{
@@ -22,7 +23,19 @@ export default async function Page({ searchParams }: PageProps) {
       <Suspense fallback={null}>
         <CheckoutToast checkout={checkoutStatus} />
       </Suspense>
-      <div className="pt-36 pb-24 md:px-5 max-w-200 mx-auto">
+      <div className="pt-26 pb-24 md:px-5 max-w-200 mx-auto">
+        <div className="flex justify-center mb-6">
+          <Tabs>
+            <TabsList className="h-10! bg-indigo-50 rounded-lg">
+              <TabsTrigger className="px-3 rounded-md" value="generate">
+                資料を生成
+              </TabsTrigger>
+              <TabsTrigger className="px-3 rounded-md" value="edit">
+                画像から読み込む
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
+        </div>
         <div className="flex mx-auto mb-6 px-1.5 items-center gap-3">
           <LogoIcon width={30} />
           <div className="text-balance text-xl">何を作りますか？</div>

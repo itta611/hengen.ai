@@ -95,7 +95,7 @@ export function EditorLoader({ createdAt }: { createdAt: string | null }) {
         <div className="aspect-video w-full">
           <Image
             alt=""
-            className="h-full w-full rounded-md object-contain outline-8 outline-indigo-400/10"
+            className="h-full w-full rounded-md object-contain shadow-lg shadow-indigo-500/5"
             src={sample.src}
             width={960}
             height={540}
