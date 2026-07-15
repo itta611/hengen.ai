@@ -15,6 +15,7 @@ import {
   DialogTitle,
 } from "../ui/dialog"
 import LogoIcon from "../logo-icon"
+import GoogleIcon from "./google-icon"
 
 function getNameFromEmail(email: string) {
   const localPart = email.trim().split("@")[0]?.trim()
@@ -27,8 +28,7 @@ function getNameFromEmail(email: string) {
 }
 
 export function AuthDialog() {
-  const { authCallbackURL, closeAuthDialog, isAuthDialogOpen } =
-    useAuthDialog()
+  const { authCallbackURL, closeAuthDialog, isAuthDialogOpen } = useAuthDialog()
   const [email, setEmail] = useState("")
   const [error, setError] = useState<string | null>(null)
   const [busyMode, setBusyMode] = useState<"email" | "google" | null>(null)
@@ -135,7 +135,7 @@ export function AuthDialog() {
             onClick={handleGoogleLogin}
             disabled={busyMode === "google"}
           >
-            <Image src="/google-icon.svg" alt="" width={18} height={18} />
+            <GoogleIcon className="size-4.5" />
             Google アカウントでログイン
           </Button>
 
@@ -162,11 +162,7 @@ export function AuthDialog() {
               placeholder="you@example.com"
             />
 
-            <Button
-              type="submit"
-              size="lg"
-              disabled={busyMode === "email"}
-            >
+            <Button type="submit" size="lg" disabled={busyMode === "email"}>
               {busyMode === "email" ? "リンクを発行しています..." : "続ける"}
             </Button>
           </form>
