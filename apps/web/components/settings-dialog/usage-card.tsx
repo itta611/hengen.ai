@@ -54,9 +54,7 @@ function UsageCard() {
         </span>
       </div>
       <div className="flex items-center justify-between">
-        <span className="text-muted-foreground">
-          毎月1日にリセットされます。
-        </span>
+        <span className="text-muted-foreground">毎月1日にリセットされます</span>
         {canUpgrade && (
           <Button onClick={pricingDialog.open}>アップグレード</Button>
         )}
