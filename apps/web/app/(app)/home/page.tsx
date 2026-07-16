@@ -60,7 +60,7 @@ export default async function Page({ searchParams }: PageProps) {
                 height={151}
               />
               <div className="text-sm text-center w-full text-muted-foreground mt-4">
-                ChatGPT等の外部サービスを利用して生成した
+                ChatGPT等の外部サービスで生成した
                 <br />
                 画像をアップロードします
               </div>

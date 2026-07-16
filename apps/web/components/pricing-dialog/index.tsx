@@ -206,7 +206,7 @@ function PlanCard({
   }
 
   return (
-    <div className="rounded-3xl border-[8px] border-indigo-50/80 dark:border-indigo-950 bg-background dark:bg-white/5 p-4 shadow-lg/5">
+    <div className="rounded-3xl bg-background dark:bg-white/5 p-4 border border-border/30 shadow-xl/6">
       <div className="text-lg font-bold text-primary">{name}</div>
       <div>
         <span className="text-3xl font-bold mr-1 font-[ui-sans-serif,system-ui,sans-serif]">
