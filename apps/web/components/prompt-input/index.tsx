@@ -40,7 +40,6 @@ export function PromptInputForm({
     handleGenerate,
     images,
     isGenerating,
-    isImageOnly,
     setAspect,
     setCount,
     setImages,

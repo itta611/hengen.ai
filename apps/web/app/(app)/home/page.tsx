@@ -5,9 +5,8 @@ import { CheckoutToast } from "./checkout-toast"
 import { PromptSection } from "./prompt-section"
 import { ProjectList } from "./project-list"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Button } from "@/components/ui/button"
-import { PlusIcon } from "lucide-react"
 import Image from "next/image"
+import { ImageUploadSection } from "./image-upload-section"
 
 type PageProps = {
   searchParams: Promise<{
@@ -64,20 +63,7 @@ export default async function Page({ searchParams }: PageProps) {
                 <br />
                 画像をアップロードします
               </div>
-              <button
-                className="mt-6 border-dashed p-3 flex items-center justify-center gap-4 border w-full rounded-lg cursor-pointer active:scale-98 transition"
-                type="button"
-              >
-                <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
-                  <PlusIcon className="w-6 h-6 text-muted-foreground" />
-                </div>
-                <div className="flex flex-col text-left text-sm gap-0.5">
-                  <div className="text-primary font-bold">画像を追加</div>
-                  <div className="text-muted-foreground">
-                    PNG, JPG, WebP形式
-                  </div>
-                </div>
-              </button>
+              <ImageUploadSection />
             </div>
           </TabsContent>
         </Tabs>
