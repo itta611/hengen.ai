@@ -48,7 +48,14 @@ export default async function Page({ searchParams }: PageProps) {
               <Image
                 src="/image-upload.png"
                 alt=""
-                className="w-full"
+                className="w-full dark:hidden"
+                width={255}
+                height={151}
+              />
+              <Image
+                src="/image-upload-dark.png"
+                alt=""
+                className="hidden w-full dark:block"
                 width={255}
                 height={151}
               />

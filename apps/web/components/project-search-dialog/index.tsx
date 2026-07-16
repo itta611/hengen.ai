@@ -44,7 +44,7 @@ export function ProjectSearchDialog({
           <SearchIcon className="size-4 shrink-0 text-muted-foreground" />
           <Input
             autoFocus
-            className="h-auto border-0 px-0 text-lg focus-visible:ring-0"
+            className="h-auto border-0 px-0 text-lg focus-visible:ring-0 bg-transparent!"
             onChange={(event) => setQuery(event.target.value)}
             placeholder="検索"
             value={query}
