@@ -89,9 +89,7 @@ export function ImageUploadSection() {
           <PlusIcon className="size-6 text-muted-foreground" />
         </div>
         <div className="flex flex-col gap-0.5 text-left text-sm">
-          <div className="font-bold text-primary">
-            {isGenerating ? "生成中" : "画像を追加"}
-          </div>
+          <div className="font-bold text-primary">画像を追加</div>
           <div className="text-muted-foreground">PNG, JPG, WebP形式</div>
         </div>
       </button>
