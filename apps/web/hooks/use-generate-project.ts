@@ -37,3 +37,28 @@ export function useGenerateProject() {
     return projectId
   }
 }
+
+async function createProjectFromImage(referenceImage: string) {
+  const response = await apiClient.projects["from-image"].$post({
+    json: { referenceImage },
+  })
+
+  if (response.status === 402) {
+    throw new Error("insufficient_credits")
+  }
+
+  if (!response.ok) {
+    throw new Error("create_failed")
+  }
+
+  return response.json()
+}
+
+export function useGenerateProjectFromImage() {
+  const mutation = useMutation({ mutationFn: createProjectFromImage })
+
+  return async function generateProjectFromImage(referenceImage: string) {
+    const data = await mutation.mutateAsync(referenceImage)
+    return data.projectId
+  }
+}

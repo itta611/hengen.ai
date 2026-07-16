@@ -89,9 +89,11 @@ export async function getCreditUsageByUserId(userId: string) {
 }
 
 export async function reserveCreditsForProjects({
+  creditsPerProject = 1,
   projectIds,
   userId,
 }: {
+  creditsPerProject?: number
   projectIds: string[]
   userId: string
 }) {
@@ -105,7 +107,9 @@ export async function reserveCreditsForProjects({
     return { reserved: true, usage }
   }
 
-  if (usage.used + projectIds.length > usage.quota) {
+  const creditAmount = projectIds.length * creditsPerProject
+
+  if (usage.used + creditAmount > usage.quota) {
     return { reserved: false, usage }
   }
 
@@ -139,7 +143,7 @@ export async function reserveCreditsForProjects({
           where "userId" = ${userId}
             and "createdAt" >= ${periodStart}
             and "createdAt" < ${periodEnd}
-        ) + ${projectIds.length} <= ${usage.quota}
+        ) + ${creditAmount} <= ${usage.quota}
       returning "id"
     ),
     requested as (
@@ -161,7 +165,7 @@ export async function reserveCreditsForProjects({
         requested."id",
         ${userId},
         requested."projectId",
-        1,
+        ${creditsPerProject},
         'project_generation',
         'loading'
       from requested

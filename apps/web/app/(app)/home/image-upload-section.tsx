@@ -7,7 +7,7 @@ import { toast } from "sonner"
 
 import { InsufficientCreditDialog } from "@/components/prompt-input/insufficient-credit-dialog"
 import { useAuthDialog } from "@/hooks/use-auth-dialog"
-import { useGenerateProject } from "@/hooks/use-generate-project"
+import { useGenerateProjectFromImage } from "@/hooks/use-generate-project"
 import { authClient } from "@/lib/auth-client"
 
 function fileToDataUrl(file: File) {
@@ -25,7 +25,7 @@ export function ImageUploadSection() {
   const [isInsufficientCreditsOpen, setInsufficientCreditsOpen] =
     useState(false)
   const { openAuthDialog } = useAuthDialog()
-  const generateProject = useGenerateProject()
+  const generateProjectFromImage = useGenerateProjectFromImage()
   const router = useRouter()
   const user = authClient.useSession().data?.user
 
@@ -49,13 +49,7 @@ export function ImageUploadSection() {
 
     try {
       const referenceImage = await fileToDataUrl(file)
-      const projectId = await generateProject({
-        aspectRatio: "auto",
-        count: 1,
-        prompt: "",
-        referenceImages: [referenceImage],
-        style: {},
-      })
+      const projectId = await generateProjectFromImage(referenceImage)
       router.push(`/editor/${projectId}`)
     } catch (error) {
       setIsGenerating(false)

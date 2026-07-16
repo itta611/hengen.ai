@@ -30,14 +30,104 @@ const createProjectBaseSchema = z.object({
     .optional(),
 })
 
-const createProjectSchema = z.union([
-  createProjectBaseSchema.extend({
-    prompt: z.string().trim().min(1).max(1200),
-  }),
-  createProjectBaseSchema.extend({
-    referenceImages: z.array(z.string().startsWith("data:image/")).min(1),
-  }),
-])
+const createProjectSchema = createProjectBaseSchema.extend({
+  prompt: z.string().trim().min(1).max(1200),
+})
+
+const createProjectFromImageSchema = z.object({
+  referenceImage: z.string().startsWith("data:image/"),
+})
+
+async function startProjectGeneration({
+  aspectRatio,
+  projectIds,
+  prompt,
+  referenceImages,
+  style,
+  userId,
+}: {
+  aspectRatio: z.infer<typeof createProjectBaseSchema>["aspectRatio"]
+  projectIds: string[]
+  prompt: string
+  referenceImages?: string[]
+  style?: z.infer<typeof createProjectBaseSchema>["style"]
+  userId: string
+}) {
+  try {
+    await Promise.all(
+      projectIds.map((projectId) =>
+        createProject({
+          id: projectId,
+          userId,
+          prompt,
+          title: "新規プロジェクト",
+          aspectRatio,
+          status: "generating",
+          width: 0,
+          height: 0,
+          analysis: { summary: "", boxes: [] },
+        })
+      )
+    )
+  } catch {
+    await cancelProjectCredits({ projectIds, userId })
+    await Promise.allSettled(
+      projectIds.map((projectId) =>
+        updateProjectStatusByUserId({
+          projectId,
+          status: "error",
+          userId,
+        })
+      )
+    )
+
+    return []
+  }
+
+  const results = await Promise.allSettled(
+    projectIds.map(async (projectId) => {
+      const response = await fetch(new URL("/generate", env.MUTAR_WORKER_URL), {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${env.MUTAR_WORKER_SECRET}`,
+        },
+        body: JSON.stringify({
+          projectId,
+          prompt,
+          aspectRatio,
+          referenceImages,
+          style,
+        }),
+      })
+
+      if (!response.ok) {
+        throw new Error("worker_failed")
+      }
+
+      return projectId
+    })
+  )
+  const failedProjectIds = projectIds.filter((_, index) => {
+    return results[index]?.status === "rejected"
+  })
+
+  if (failedProjectIds.length > 0) {
+    await Promise.all(
+      failedProjectIds.map((projectId) =>
+        updateProjectStatusByUserId({
+          projectId,
+          status: "error",
+          userId,
+        })
+      )
+    )
+  }
+
+  return results.flatMap((result) =>
+    result.status === "fulfilled" ? [result.value] : []
+  )
+}
 
 export const projectsRoutes = new Hono<SessionEnv>()
   .use(sessionMiddleware)
@@ -53,6 +143,48 @@ export const projectsRoutes = new Hono<SessionEnv>()
 
     return c.json({ projects }, 200)
   })
+  .post(
+    "/from-image",
+    zValidator("json", createProjectFromImageSchema),
+    async (c) => {
+      const session = c.get("session")
+      const { referenceImage } = c.req.valid("json")
+      const projectId = randomUUID()
+      const reservation = await reserveCreditsForProjects({
+        creditsPerProject: 5,
+        projectIds: [projectId],
+        userId: session.user.id,
+      })
+
+      if (!reservation.usage) {
+        return c.json({ message: "Not found" }, 404)
+      }
+
+      if (!reservation.reserved) {
+        return c.json(
+          {
+            message: "Insufficient credits",
+            usage: reservation.usage,
+          },
+          402
+        )
+      }
+
+      const startedProjectIds = await startProjectGeneration({
+        aspectRatio: "auto",
+        projectIds: [projectId],
+        prompt: "",
+        referenceImages: [referenceImage],
+        userId: session.user.id,
+      })
+
+      if (startedProjectIds.length === 0) {
+        return c.json({ message: "Generation failed" }, 502)
+      }
+
+      return c.json({ projectId }, 200)
+    }
+  )
   .post("/", zValidator("json", createProjectSchema), async (c) => {
     const session = c.get("session")
 
@@ -78,83 +210,14 @@ export const projectsRoutes = new Hono<SessionEnv>()
       )
     }
 
-    try {
-      await Promise.all(
-        projectIds.map((projectId) =>
-          createProject({
-            id: projectId,
-            userId: session.user.id,
-            prompt,
-            title: "新規プロジェクト",
-            aspectRatio,
-            status: "generating",
-            width: 0,
-            height: 0,
-            analysis: { summary: "", boxes: [] },
-          })
-        )
-      )
-    } catch {
-      await cancelProjectCredits({ projectIds, userId: session.user.id })
-      await Promise.allSettled(
-        projectIds.map((projectId) =>
-          updateProjectStatusByUserId({
-            projectId,
-            status: "error",
-            userId: session.user.id,
-          })
-        )
-      )
-
-      return c.json({ message: "Generation failed" }, 502)
-    }
-
-    const results = await Promise.allSettled(
-      projectIds.map(async (projectId) => {
-        const response = await fetch(
-          new URL("/generate", env.MUTAR_WORKER_URL),
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${env.MUTAR_WORKER_SECRET}`,
-            },
-            body: JSON.stringify({
-              projectId,
-              prompt,
-              aspectRatio,
-              referenceImages,
-              style,
-            }),
-          }
-        )
-
-        if (!response.ok) {
-          throw new Error("worker_failed")
-        }
-
-        return projectId
-      })
-    )
-    const failedProjectIds = projectIds.filter((_, index) => {
-      return results[index]?.status === "rejected"
+    const startedProjectIds = await startProjectGeneration({
+      aspectRatio,
+      projectIds,
+      prompt,
+      referenceImages,
+      style,
+      userId: session.user.id,
     })
-
-    if (failedProjectIds.length > 0) {
-      await Promise.all(
-        failedProjectIds.map((projectId) =>
-          updateProjectStatusByUserId({
-            projectId,
-            status: "error",
-            userId: session.user.id,
-          })
-        )
-      )
-    }
-
-    const startedProjectIds = results.flatMap((result) =>
-      result.status === "fulfilled" ? [result.value] : []
-    )
 
     if (startedProjectIds.length === 0) {
       return c.json({ message: "Generation failed" }, 502)
