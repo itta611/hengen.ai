@@ -1,34 +1,13 @@
 "use client"
 
 import Rive from "@rive-app/react-canvas"
-import Image from "next/image"
 import { useEffect, useState } from "react"
 
+import Beams from "@/components/Beams"
+import Grainient from "@/components/Grainient"
+import Silk from "@/components/Silk"
+
 const countdownSeconds = 4 * 60
-const projectSamples = [
-  {
-    prompt:
-      "「中小企業向け決済プラットフォームの投資家向けスライド資料の表紙を作成。」",
-    src: "/project-sample-1.png",
-  },
-  // {
-  //   prompt: "「知的YouTube番組のサムネイルを作成」",
-  //   src: "/project-sample-2.png",
-  // },
-  {
-    prompt:
-      "「プロダクトローンチのロードマップ資料を作成。それぞれのステップにアイコンと説明文。」",
-    src: "/project-sample-3.png",
-  },
-  {
-    prompt: "「ローンチ準備・実行ロードマップを作成。Q1からQ4を4列で配置。」",
-    src: "/project-sample-4.png",
-  },
-  {
-    prompt: "「会場情報まで入れたギャラリー展示ポスターを作成。」",
-    src: "/project-sample-5.png",
-  },
-]
 
 function getRemainingSeconds(createdAt: string | null, now: number) {
   if (!createdAt) {
@@ -53,14 +32,67 @@ function formatRemainingTime(seconds: number) {
   return `${minutes}:${remainingSeconds.toString().padStart(2, "0")}`
 }
 
-export function EditorLoader({ createdAt }: { createdAt: string | null }) {
+function LoadingPattern({ projectId }: { projectId: string }) {
+  const patternIndex =
+    Array.from(projectId).reduce(
+      (hash, character) => hash + character.charCodeAt(0),
+      0
+    ) % 3
+
+  if (patternIndex === 0) {
+    return (
+      <Beams
+        beamHeight={18}
+        beamNumber={10}
+        beamWidth={2.2}
+        lightColor="#A5B4FC"
+        noiseIntensity={1.5}
+        rotation={25}
+        scale={0.18}
+        speed={1.4}
+      />
+    )
+  }
+
+  if (patternIndex === 1) {
+    return (
+      <Silk
+        color="#5B56A6"
+        noiseIntensity={1.2}
+        rotation={0.2}
+        scale={1.1}
+        speed={4}
+      />
+    )
+  }
+
+  return (
+    <Grainient
+      color1="#A5B4FC"
+      color2="#6366F1"
+      color3="#1E1B4B"
+      contrast={1.2}
+      grainAmount={0.08}
+      timeSpeed={0.18}
+      warpFrequency={4.5}
+      warpSpeed={1.2}
+      warpStrength={1.2}
+    />
+  )
+}
+
+export function EditorLoader({
+  createdAt,
+  projectId,
+}: {
+  createdAt: string | null
+  projectId: string
+}) {
   const [now, setNow] = useState(() => Date.now())
-  const [sampleIndex, setSampleIndex] = useState(0)
   const remainingSeconds = getRemainingSeconds(createdAt, now)
   const remainingTime = formatRemainingTime(remainingSeconds)
   const loadingMessage =
     remainingSeconds === 0 ? "お待たせしています..." : "画像を生成しています"
-  const sample = projectSamples[sampleIndex]
 
   useEffect(() => {
     const intervalId = window.setInterval(() => {
@@ -70,17 +102,9 @@ export function EditorLoader({ createdAt }: { createdAt: string | null }) {
     return () => window.clearInterval(intervalId)
   }, [])
 
-  useEffect(() => {
-    const intervalId = window.setInterval(() => {
-      setSampleIndex((current) => (current + 1) % projectSamples.length)
-    }, 10000)
-
-    return () => window.clearInterval(intervalId)
-  }, [])
-
   return (
     <div className="flex overflow-hidden bg-background dark:bg-muted h-full w-full rounded-2xl justify-center">
-      <div className="md:w-1/2 h-full flex flex-col justify-center items-center">
+      <div className="flex h-full w-full flex-col items-center justify-center md:w-1/2">
         <div className="flex items-center justify-center gap-4">
           <Rive className="size-10 dark:invert" src="/loading.riv" />
           <div className="font-bold text-5xl leading-none tabular-nums tracking-tight">
@@ -91,19 +115,8 @@ export function EditorLoader({ createdAt }: { createdAt: string | null }) {
           {loadingMessage}
         </div>
       </div>
-      <div className="w-1/2 h-full p-[7%] bg-linear-to-b flex justify-center flex-col items-center from-indigo-500/50 to-background dark:to-muted max-md:hidden">
-        <div className="aspect-video w-full">
-          <Image
-            alt=""
-            className="h-full w-full rounded-md object-contain shadow-lg shadow-indigo-500/5"
-            src={sample.src}
-            width={960}
-            height={540}
-          />
-        </div>
-        <div className="text-center text-sm leading-tight text-muted-foreground mt-7">
-          {sample.prompt}
-        </div>
+      <div className="hidden h-full w-1/2 overflow-hidden md:block">
+        <LoadingPattern projectId={projectId} />
       </div>
     </div>
   )

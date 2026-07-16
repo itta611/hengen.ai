@@ -243,7 +243,10 @@ export function EditorStage({
               width: placeholderScale * placeholderWidth,
             }}
           >
-            <EditorLoader createdAt={createdAt} />
+            <EditorLoader
+              createdAt={createdAt}
+              projectId={activeProjectId}
+            />
           </div>
         )}
       </div>

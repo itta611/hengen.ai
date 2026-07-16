@@ -28,10 +28,10 @@ export default async function Page({ searchParams }: PageProps) {
       <div className="pt-20 pb-20 md:px-5 max-w-200 mx-auto">
         <Tabs>
           <TabsList className="h-10! rounded-lg mx-auto">
-            <TabsTrigger className="px-3 rounded-md" value="generate">
+            <TabsTrigger className="px-3" value="generate">
               資料を生成
             </TabsTrigger>
-            <TabsTrigger className="px-3 rounded-md" value="edit">
+            <TabsTrigger className="px-3" value="edit">
               画像を読み込む
             </TabsTrigger>
           </TabsList>
@@ -59,9 +59,9 @@ export default async function Page({ searchParams }: PageProps) {
                 height={151}
               />
               <div className="text-sm text-center w-full text-muted-foreground mt-4">
-                ChatGPT等の外部サービスで生成した
+                ChatGPT等の外部サービスで生成した画像を
                 <br />
-                画像を編集可能にします
+                編集可能にします
               </div>
               <ImageUploadSection />
             </div>

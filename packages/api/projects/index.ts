@@ -40,6 +40,7 @@ const createProjectFromImageSchema = z.object({
 
 async function startProjectGeneration({
   aspectRatio,
+  image,
   projectIds,
   prompt,
   referenceImages,
@@ -47,6 +48,7 @@ async function startProjectGeneration({
   userId,
 }: {
   aspectRatio: z.infer<typeof createProjectBaseSchema>["aspectRatio"]
+  image?: string
   projectIds: string[]
   prompt: string
   referenceImages?: string[]
@@ -86,20 +88,27 @@ async function startProjectGeneration({
 
   const results = await Promise.allSettled(
     projectIds.map(async (projectId) => {
-      const response = await fetch(new URL("/generate", env.MUTAR_WORKER_URL), {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${env.MUTAR_WORKER_SECRET}`,
-        },
-        body: JSON.stringify({
-          projectId,
-          prompt,
-          aspectRatio,
-          referenceImages,
-          style,
-        }),
-      })
+      const response = await fetch(
+        new URL(image ? "/api/from-image" : "/generate", env.MUTAR_WORKER_URL),
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${env.MUTAR_WORKER_SECRET}`,
+          },
+          body: JSON.stringify(
+            image
+              ? { projectId, image }
+              : {
+                  projectId,
+                  prompt,
+                  aspectRatio,
+                  referenceImages,
+                  style,
+                }
+          ),
+        }
+      )
 
       if (!response.ok) {
         throw new Error("worker_failed")
@@ -172,9 +181,9 @@ export const projectsRoutes = new Hono<SessionEnv>()
 
       const startedProjectIds = await startProjectGeneration({
         aspectRatio: "auto",
+        image: referenceImage,
         projectIds: [projectId],
         prompt: "",
-        referenceImages: [referenceImage],
         userId: session.user.id,
       })
 
