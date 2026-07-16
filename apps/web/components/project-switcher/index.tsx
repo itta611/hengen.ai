@@ -55,8 +55,10 @@ export function ProjectSwitcher() {
       .slice(Math.max(0, currentIndex - 3), currentIndex + 4)
       .filter((project) => project.id !== currentProjectId)
       .forEach((project) => {
-        queryClient.prefetchQuery(editorProjectQuery(project.id))
-        preloadProjectImage(project.id)
+        if (project.status === "ready") {
+          queryClient.prefetchQuery(editorProjectQuery(project.id))
+          preloadProjectImage(project.id)
+        }
       })
   }, [currentProjectId, projects, queryClient])
 

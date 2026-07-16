@@ -5,6 +5,8 @@ import { useEffect } from "react"
 
 import { authClient } from "@/lib/auth-client"
 
+const publicPaths = new Set(["/privacy", "/specified", "/terms"])
+
 export function AuthRedirect({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   const router = useRouter()
@@ -21,7 +23,7 @@ export function AuthRedirect({ children }: { children: React.ReactNode }) {
       return
     }
 
-    if (!user && pathname !== "/") {
+    if (!user && pathname !== "/" && !publicPaths.has(pathname)) {
       router.replace("/")
     }
   }, [pathname, router, session.isPending, user])

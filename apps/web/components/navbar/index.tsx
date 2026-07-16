@@ -1,6 +1,5 @@
 "use client"
 
-import { useQuery } from "@tanstack/react-query"
 import { useAtomValue } from "jotai"
 import { DownloadIcon, XIcon } from "lucide-react"
 import { useParams, useRouter } from "next/navigation"
@@ -8,7 +7,7 @@ import { toast } from "sonner"
 
 import { editorBoxesAtom } from "@/atom/generate"
 import { Button } from "@/components/ui/button"
-import { editorProjectQuery } from "@/hooks/use-editor-project"
+import { useEditorProjectData } from "@/hooks/use-editor-project"
 import { useExport } from "@/hooks/use-export"
 import { CopyButton } from "./copy-button"
 import { EditButton } from "./edit"
@@ -17,11 +16,10 @@ export function Navbar() {
   const router = useRouter()
   const { projectId } = useParams<{ projectId: string }>()
   const boxes = useAtomValue(editorBoxesAtom)
-  const { data: project } = useQuery(editorProjectQuery(projectId))
-  const imageSize =
-    project?.status === "ready"
-      ? ([project.width, project.height] as [number, number])
-      : null
+  const { project } = useEditorProjectData(projectId)
+  const imageSize = project
+    ? ([project.width, project.height] as [number, number])
+    : null
   const projectName = project?.title ?? ""
   const { copyPng, copySvg, downloadPng } = useExport({
     boxes,

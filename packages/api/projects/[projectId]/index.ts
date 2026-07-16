@@ -1,7 +1,8 @@
 import { zValidator } from "@hono/zod-validator"
 import {
   deleteProjectByUserId,
-  findProjectDimensionsByUserId,
+  findProjectForEditorByUserId,
+  findProjectStatusByUserId,
   restoreProjectByUserId,
   updateProjectAnalysisByUserId,
 } from "@mutar/db/repo"
@@ -17,11 +18,24 @@ const updateProjectSchema = z.object({
 
 export const projectRoutes = new Hono<SessionEnv>()
   .use(sessionMiddleware)
+  .get("/status", zValidator("param", projectParamsSchema), async (c) => {
+    const session = c.get("session")
+    const { projectId } = c.req.valid("param")
+    const project = await findProjectStatusByUserId({
+      projectId,
+      userId: session.user.id,
+    })
+
+    if (!project) {
+      return c.json({ message: "Not found" }, 404)
+    }
+
+    return c.json(project, 200)
+  })
   .get("/", zValidator("param", projectParamsSchema), async (c) => {
     const session = c.get("session")
-
     const { projectId } = c.req.valid("param")
-    const project = await findProjectDimensionsByUserId({
+    const project = await findProjectForEditorByUserId({
       projectId,
       userId: session.user.id,
     })
@@ -31,16 +45,7 @@ export const projectRoutes = new Hono<SessionEnv>()
     }
 
     if (project.status !== "ready") {
-      return c.json(
-        {
-          id: project.id,
-          title: project.title,
-          status: project.status,
-          prompt: project.prompt,
-          createdAt: project.createdAt,
-        },
-        200
-      )
+      return c.json({ message: "Project is not ready" }, 409)
     }
 
     return c.json(project, 200)

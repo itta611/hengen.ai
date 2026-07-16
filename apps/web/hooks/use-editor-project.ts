@@ -17,24 +17,21 @@ import { apiClient } from "@/lib/api-client"
 
 type ProjectBox = EditorBox & { lineHeight?: number }
 
-type EditorProject =
-  | {
-      analysis: { boxes: ProjectBox[]; summary: string }
-      createdAt: string
-      height: number
-      id: string
-      prompt: string
-      status: "ready"
-      title: string
-      width: number
-    }
-  | {
-      createdAt: string
-      id: string
-      prompt: string
-      status: "generating" | "analyzing" | "erasing" | "error"
-      title: string
-    }
+type EditorProject = {
+  analysis: { boxes: ProjectBox[]; summary: string }
+  height: number
+  id: string
+  prompt: string
+  status: "ready"
+  title: string
+  width: number
+}
+
+type EditorProjectStatus = {
+  createdAt: string
+  prompt: string
+  status: "generating" | "analyzing" | "erasing" | "ready" | "error"
+}
 
 async function getProject(projectId: string) {
   const response = await apiClient.projects[":projectId"].$get({
@@ -48,6 +45,18 @@ async function getProject(projectId: string) {
   return (await response.json()) as EditorProject
 }
 
+async function getProjectStatus(projectId: string) {
+  const response = await apiClient.projects[":projectId"].status.$get({
+    param: { projectId },
+  })
+
+  if (!response.ok) {
+    throw new Error("request_failed")
+  }
+
+  return (await response.json()) as EditorProjectStatus
+}
+
 export function editorProjectQuery(projectId: string) {
   return {
     queryKey: ["editor-project", projectId] as const,
@@ -56,24 +65,43 @@ export function editorProjectQuery(projectId: string) {
   }
 }
 
-export function useEditorProject(projectId: string) {
-  const queryClient = useQueryClient()
-  const setBoxes = useSetAtom(editorBoxesAtom)
-  const setSelectedIndex = useSetAtom(editorSelectedBoxIndexAtom)
-  const setSelectedIndexes = useSetAtom(editorSelectedBoxIndexesAtom)
-  const query = useQuery({
-    ...editorProjectQuery(projectId),
-    refetchOnMount: "always",
+export function editorProjectStatusQuery(projectId: string) {
+  return {
+    queryKey: ["editor-project-status", projectId] as const,
+    queryFn: () => getProjectStatus(projectId),
+  }
+}
+
+export function useEditorProjectData(projectId: string) {
+  const statusQuery = useQuery({
+    ...editorProjectStatusQuery(projectId),
     refetchInterval: (query) => {
       const status = query.state.data?.status
 
       return status && status !== "ready" && status !== "error" ? 5000 : false
     },
   })
-  const project = query.data
+  const projectQuery = useQuery({
+    ...editorProjectQuery(projectId),
+    enabled: statusQuery.data?.status === "ready",
+  })
+
+  return {
+    isError: statusQuery.isError || projectQuery.isError,
+    project: projectQuery.data,
+    projectStatus: statusQuery.data,
+  }
+}
+
+export function useEditorProject(projectId: string) {
+  const queryClient = useQueryClient()
+  const setBoxes = useSetAtom(editorBoxesAtom)
+  const setSelectedIndex = useSetAtom(editorSelectedBoxIndexAtom)
+  const setSelectedIndexes = useSetAtom(editorSelectedBoxIndexesAtom)
+  const { isError, project, projectStatus } = useEditorProjectData(projectId)
 
   useEffect(() => {
-    if (project?.status !== "error") {
+    if (projectStatus?.status !== "error") {
       return
     }
 
@@ -84,13 +112,13 @@ export function useEditorProject(projectId: string) {
       { queryKey: ["projects"] },
       (projects) => projects?.filter((project) => project.id !== projectId)
     )
-  }, [project?.status, projectId, queryClient])
+  }, [projectStatus?.status, projectId, queryClient])
 
   useEffect(() => {
     setSelectedIndex(null)
     setSelectedIndexes([])
 
-    if (!project || query.isError || project.status !== "ready") {
+    if (!project || isError) {
       setBoxes([])
       return
     }
@@ -111,11 +139,11 @@ export function useEditorProject(projectId: string) {
   }, [
     project,
     projectId,
-    query.isError,
+    isError,
     setBoxes,
     setSelectedIndex,
     setSelectedIndexes,
   ])
 
-  return query
+  return { data: project, isError, projectStatus }
 }

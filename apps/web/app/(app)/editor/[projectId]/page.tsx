@@ -203,13 +203,12 @@ function Editor({ projectId }: { projectId: string }) {
   const boxes = useAtomValue(editorBoxesAtom)
   const setBoxes = useSetAtom(editorBoxesAtom)
   const setSaveBoxes = useSetAtom(editorSaveBoxesAtom)
-  const { data: project } = useEditorProject(projectId)
+  const { data: project, projectStatus } = useEditorProject(projectId)
   const { data: settings } = useEditorSettings()
   const snapToGrid = settings?.editorSettings.snapToGrid ?? true
-  const isProjectReady = project?.status === "ready"
-  const readyProject = isProjectReady ? project : null
-  const imageSize: ImageSize | null = readyProject
-    ? [readyProject.width, readyProject.height]
+  const isProjectReady = Boolean(project)
+  const imageSize: ImageSize | null = project
+    ? [project.width, project.height]
     : null
   const textRefs = useRef(new Map<number, Konva.Text>())
   const hoverTransformerRef = useRef<Konva.Transformer>(null)
@@ -785,12 +784,12 @@ function Editor({ projectId }: { projectId: string }) {
   return (
     <EditorStage
       activeProjectId={projectId}
-      createdAt={project?.createdAt ?? null}
+      createdAt={projectStatus?.createdAt ?? null}
       imageElement={imageElement}
       imageSize={imageSize}
-      prompt={project?.prompt ?? null}
+      prompt={projectStatus?.prompt ?? null}
       resizeFocusPoint={resizeFocusPoint}
-      showThumbnail={!project || isProjectReady}
+      showThumbnail={projectStatus?.status === "ready"}
       onClick={clearTextSelection}
       onMouseDown={startSelection}
       onMouseMove={updateSelection}

@@ -139,8 +139,27 @@ export async function findProjectDimensionsByUserId({
       status: projects.status,
       width: projects.width,
       height: projects.height,
-      prompt: projects.prompt,
       createdAt: projects.createdAt,
+    })
+    .from(projects)
+    .where(and(eq(projects.id, projectId), eq(projects.userId, userId)))
+    .limit(1)
+
+  return project
+}
+
+export async function findProjectStatusByUserId({
+  projectId,
+  userId,
+}: {
+  projectId: string
+  userId: string
+}) {
+  const [project] = await db
+    .select({
+      createdAt: projects.createdAt,
+      prompt: projects.prompt,
+      status: projects.status,
     })
     .from(projects)
     .where(and(eq(projects.id, projectId), eq(projects.userId, userId)))
@@ -177,7 +196,9 @@ export async function findProjectForEditorByUserId({
   const [project] = await db
     .select({
       id: projects.id,
+      title: projects.title,
       prompt: projects.prompt,
+      status: projects.status,
       width: projects.width,
       height: projects.height,
       analysis: projects.analysis,
