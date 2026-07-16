@@ -67,7 +67,20 @@ export function Gallery({ initialImages, queryKey }: GeneratedImagesViewProps) {
   if (images.length === 0) {
     return (
       <div className="flex min-h-80 flex-col items-center justify-center gap-4 text-muted-foreground">
-        <Image src="/empty-state.png" alt="" width={160} height={187} />
+        <Image
+          src="/empty-state.png"
+          alt=""
+          width={160}
+          height={187}
+          className="dark:hidden"
+        />
+        <Image
+          src="/empty-state-dark.png"
+          alt=""
+          width={160}
+          height={187}
+          className="hidden dark:block"
+        />
         <p className="text-sm">プロジェクトがありません</p>
       </div>
     )
