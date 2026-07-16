@@ -23,6 +23,7 @@ type EditorProject =
       createdAt: string
       height: number
       id: string
+      prompt: string
       status: "ready"
       title: string
       width: number
@@ -30,6 +31,7 @@ type EditorProject =
   | {
       createdAt: string
       id: string
+      prompt: string
       status: "generating" | "analyzing" | "erasing" | "error"
       title: string
     }

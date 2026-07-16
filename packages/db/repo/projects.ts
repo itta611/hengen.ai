@@ -139,6 +139,7 @@ export async function findProjectDimensionsByUserId({
       status: projects.status,
       width: projects.width,
       height: projects.height,
+      prompt: projects.prompt,
       createdAt: projects.createdAt,
     })
     .from(projects)

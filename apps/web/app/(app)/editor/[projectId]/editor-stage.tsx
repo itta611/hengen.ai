@@ -99,6 +99,7 @@ export function EditorStage({
   createdAt,
   imageElement,
   imageSize,
+  prompt,
   resizeFocusPoint,
   showThumbnail,
   onClick,
@@ -112,6 +113,7 @@ export function EditorStage({
   createdAt: string | null
   imageElement: ImageElement | null
   imageSize: [width: number, height: number] | null
+  prompt: string | null
   resizeFocusPoint: Point | null
   showThumbnail: boolean
   onClick: (event: Konva.KonvaEventObject<Event>) => void
@@ -246,6 +248,7 @@ export function EditorStage({
             <EditorLoader
               createdAt={createdAt}
               projectId={activeProjectId}
+              prompt={prompt}
             />
           </div>
         )}

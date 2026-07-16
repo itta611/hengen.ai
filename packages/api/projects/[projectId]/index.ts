@@ -36,6 +36,7 @@ export const projectRoutes = new Hono<SessionEnv>()
           id: project.id,
           title: project.title,
           status: project.status,
+          prompt: project.prompt,
           createdAt: project.createdAt,
         },
         200

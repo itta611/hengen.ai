@@ -7,9 +7,14 @@ import Beams from "@/components/Beams"
 import Grainient from "@/components/Grainient"
 import Silk from "@/components/Silk"
 
-const countdownSeconds = 4 * 60
+const generationCountdownSeconds = 4 * 60
+const imageImportCountdownSeconds = 2 * 60
 
-function getRemainingSeconds(createdAt: string | null, now: number) {
+function getRemainingSeconds(
+  countdownSeconds: number,
+  createdAt: string | null,
+  now: number
+) {
   if (!createdAt) {
     return countdownSeconds
   }
@@ -84,12 +89,18 @@ function LoadingPattern({ projectId }: { projectId: string }) {
 export function EditorLoader({
   createdAt,
   projectId,
+  prompt,
 }: {
   createdAt: string | null
   projectId: string
+  prompt: string | null
 }) {
   const [now, setNow] = useState(() => Date.now())
-  const remainingSeconds = getRemainingSeconds(createdAt, now)
+  const countdownSeconds =
+    prompt?.trim().length === 0
+      ? imageImportCountdownSeconds
+      : generationCountdownSeconds
+  const remainingSeconds = getRemainingSeconds(countdownSeconds, createdAt, now)
   const remainingTime = formatRemainingTime(remainingSeconds)
   const loadingMessage =
     remainingSeconds === 0 ? "お待たせしています..." : "画像を生成しています"

@@ -788,6 +788,7 @@ function Editor({ projectId }: { projectId: string }) {
       createdAt={project?.createdAt ?? null}
       imageElement={imageElement}
       imageSize={imageSize}
+      prompt={project?.prompt ?? null}
       resizeFocusPoint={resizeFocusPoint}
       showThumbnail={!project || isProjectReady}
       onClick={clearTextSelection}
