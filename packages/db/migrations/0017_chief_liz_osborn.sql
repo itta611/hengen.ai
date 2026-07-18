@@ -1,1 +1,1 @@
-ALTER TABLE "user" ADD COLUMN "plan" text DEFAULT 'free' NOT NULL;
+ALTER TABLE "user" ADD COLUMN IF NOT EXISTS "plan" text DEFAULT 'free' NOT NULL;

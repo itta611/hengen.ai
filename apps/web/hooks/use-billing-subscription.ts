@@ -2,21 +2,25 @@
 
 import { useQuery } from "@tanstack/react-query"
 
-import { apiClient } from "@/lib/api-client"
+import { authClient } from "@/lib/auth-client"
 
 async function getBillingSubscription() {
-  const response = await apiClient.billing.subscription.$get()
+  const { data, error } = await authClient.subscription.list({})
 
-  if (!response.ok) {
-    throw new Error("request_failed")
+  if (error) {
+    throw new Error(error.message)
   }
 
-  return response.json()
+  return (
+    data?.find(
+      (subscription) =>
+        subscription.status === "active" || subscription.status === "trialing"
+    ) ?? null
+  )
 }
 
-function useBillingSubscription(enabled: boolean) {
+function useBillingSubscription() {
   return useQuery({
-    enabled,
     queryKey: ["billing-subscription"],
     queryFn: getBillingSubscription,
   })

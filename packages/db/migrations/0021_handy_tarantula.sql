@@ -1,1 +1,1 @@
-ALTER TABLE "user" DROP COLUMN "creditQuota";
+ALTER TABLE "user" DROP COLUMN IF EXISTS "creditQuota";

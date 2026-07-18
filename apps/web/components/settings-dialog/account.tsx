@@ -104,19 +104,19 @@ export function AccountSettingsPage() {
       </SettingSection>
       <SettingSection
         title="アカウント削除"
-        description="アカウントと作成したプロジェクトを削除します。"
+        description="アカウント、作成したプロジェクト、契約情報を削除します。"
       >
         <Button onClick={() => setConfirmOpen(true)} variant="destructive">
           アカウントを削除
         </Button>
       </SettingSection>
       <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
-        <DialogContent className="max-w-100!">
+        <DialogContent className="max-w-100!" forceRenderOverlay>
           <DialogTitle className="text-lg">
             アカウントを削除しますか？
           </DialogTitle>
           <p className="text-sm text-muted-foreground">
-            この操作は取り消せません。
+            作成したプロジェクトはすべて削除されます。この操作は取り消せません。
           </p>
           {error && <p className="text-sm text-destructive">{error}</p>}
           <div className="flex justify-end gap-2">

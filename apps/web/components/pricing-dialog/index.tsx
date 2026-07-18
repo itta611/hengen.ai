@@ -2,14 +2,7 @@
 
 import { useQueryClient } from "@tanstack/react-query"
 import { CheckIcon, Loader2 } from "lucide-react"
-import {
-  createContext,
-  type ReactNode,
-  useCallback,
-  useContext,
-  useMemo,
-  useState,
-} from "react"
+import { createContext, type ReactNode, useContext, useState } from "react"
 import { toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
@@ -20,8 +13,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { useBillingSubscription } from "@/hooks/use-billing-subscription"
-import { type UserPlan, useCurrentPlan } from "@/hooks/use-current-plan"
-import { apiClient } from "@/lib/api-client"
+import type { UserPlan } from "@/hooks/use-current-plan"
 import { authClient } from "@/lib/auth-client"
 
 type PricingPlan = "basic" | "premium"
@@ -39,38 +31,30 @@ const PricingDialogContext = createContext<PricingDialogContextValue | null>(
 
 function PricingDialogProvider({ children }: { children: ReactNode }) {
   const [isOpen, setOpen] = useState(false)
-  const { data: sessionPlan } = useCurrentPlan()
-  const isPaidPlan = sessionPlan === "basic" || sessionPlan === "premium"
-  const subscriptionQuery = useBillingSubscription(isPaidPlan)
-  const currentPlan =
-    isPaidPlan && subscriptionQuery.isPending
-      ? undefined
-      : (subscriptionQuery.data?.subscription?.plan ?? sessionPlan)
+  const subscriptionQuery = useBillingSubscription()
+  const currentPlan = subscriptionQuery.isPending
+    ? undefined
+    : ((subscriptionQuery.data?.plan ?? "free") as UserPlan)
 
-  const open = useCallback(() => {
+  const open = () => {
     setOpen(true)
-  }, [])
+    void subscriptionQuery.refetch()
+  }
 
-  const close = useCallback(() => {
+  const close = () => {
     setOpen(false)
-  }, [])
+  }
 
-  const value = useMemo(
-    () => ({
-      close,
-      isOpen,
-      open,
-      setOpen,
-    }),
-    [close, isOpen, open]
-  )
+  const value = { close, isOpen, open, setOpen }
 
   return (
     <PricingDialogContext.Provider value={value}>
       {children}
       <PricingDialog
         currentPlan={currentPlan}
-        isPlanLoading={isPaidPlan && subscriptionQuery.isPending}
+        subscriptionId={
+          subscriptionQuery.data?.stripeSubscriptionId ?? undefined
+        }
       />
     </PricingDialogContext.Provider>
   )
@@ -90,10 +74,10 @@ function usePricingDialog() {
 
 function PricingDialog({
   currentPlan,
-  isPlanLoading,
+  subscriptionId,
 }: {
   currentPlan: UserPlan | undefined
-  isPlanLoading: boolean
+  subscriptionId: string | undefined
 }) {
   const { isOpen, setOpen } = usePricingDialog()
 
@@ -112,19 +96,19 @@ function PricingDialog({
         <div className="mt-6 grid gap-5 md:grid-cols-2">
           <PlanCard
             currentPlan={currentPlan}
-            isPlanLoading={isPlanLoading}
             plan="basic"
             name="ベーシック"
             price="3000"
             credits="240"
+            subscriptionId={subscriptionId}
           />
           <PlanCard
             currentPlan={currentPlan}
-            isPlanLoading={isPlanLoading}
             plan="premium"
             name="プレミアム"
             price="9000"
             credits="720"
+            subscriptionId={subscriptionId}
           />
         </div>
 
@@ -144,7 +128,7 @@ function PricingDialog({
 function FeatureItem({ children }: { children: ReactNode }) {
   return (
     <li className="flex items-center gap-2 text-base font-medium text-muted-foreground sm:text-lg">
-      <CheckIcon className="size-6 shrink-0 text-primary" />
+      <CheckIcon className="size-5 shrink-0 text-primary" />
       <span className="text-sm">{children}</span>
     </li>
   )
@@ -152,18 +136,18 @@ function FeatureItem({ children }: { children: ReactNode }) {
 
 function PlanCard({
   currentPlan,
-  isPlanLoading,
   plan,
   name,
   price,
   credits,
+  subscriptionId,
 }: {
   currentPlan: UserPlan | undefined
-  isPlanLoading: boolean
   plan: PricingPlan
   name: string
   price: string
   credits: string
+  subscriptionId: string | undefined
 }) {
   const [isRedirecting, setIsRedirecting] = useState(false)
   const { close } = usePricingDialog()
@@ -179,15 +163,26 @@ function PlanCard({
     setIsRedirecting(true)
 
     try {
+      const { data, error } = await authClient.subscription.upgrade({
+        plan,
+        subscriptionId,
+        successUrl: `${window.location.origin}/home?checkout=success`,
+        cancelUrl: `${window.location.origin}/home?checkout=cancel`,
+        returnUrl: `${window.location.origin}/home`,
+        scheduleAtPeriodEnd: isDowngrade,
+        disableRedirect: true,
+      })
+
+      if (error) {
+        await queryClient.invalidateQueries({
+          queryKey: ["billing-subscription"],
+        })
+        toast.error(error.message || "プランを変更できませんでした。")
+        setIsRedirecting(false)
+        return
+      }
+
       if (isDowngrade) {
-        const succeeded = await downgradeToBasic()
-
-        if (!succeeded) {
-          toast.error("プランを変更できませんでした。")
-          setIsRedirecting(false)
-          return
-        }
-
         await queryClient.invalidateQueries({
           queryKey: ["billing-subscription"],
         })
@@ -197,18 +192,13 @@ function PlanCard({
         return
       }
 
-      const url =
-        currentPlan === "basic" && plan === "premium"
-          ? await upgradeToPremium()
-          : await startSubscriptionCheckout(plan)
-
-      if (!url) {
-        toast.error("決済ページを開けませんでした。")
-        setIsRedirecting(false)
+      if (data?.url) {
+        window.location.assign(data.url)
         return
       }
 
-      window.location.assign(url)
+      toast.error("決済ページを開けませんでした。")
+      setIsRedirecting(false)
     } catch {
       toast.error("決済ページを開けませんでした。")
       setIsRedirecting(false)
@@ -234,7 +224,7 @@ function PlanCard({
         <FeatureItem>商用利用可能</FeatureItem>
         <FeatureItem>
           <a
-            href="httpps://x.com/IttaFunahashi"
+            href="https://x.com/IttaFunahashi"
             target="_blank"
             rel="noopener noreferrer"
             className="underline underline-offset-4"
@@ -246,7 +236,7 @@ function PlanCard({
       </ul>
 
       <Button
-        disabled={isPlanLoading || isCurrentPlan || isRedirecting}
+        disabled={isCurrentPlan || isRedirecting}
         onClick={handleStartCheckout}
         type="button"
         size="lg"
@@ -262,42 +252,6 @@ function PlanCard({
       </Button>
     </div>
   )
-}
-
-async function upgradeToPremium() {
-  const response = await apiClient.billing.subscription.upgrade.$post()
-
-  if (!response.ok) {
-    return
-  }
-
-  const result = await response.json()
-  return result.url
-}
-
-async function downgradeToBasic() {
-  const result = await authClient.subscription.upgrade({
-    plan: "basic",
-    successUrl: "/home?checkout=success",
-    cancelUrl: "/home?checkout=cancel",
-    returnUrl: "/home",
-    scheduleAtPeriodEnd: true,
-    disableRedirect: true,
-  })
-
-  return !result.error
-}
-
-async function startSubscriptionCheckout(plan: PricingPlan) {
-  const result = await authClient.subscription.upgrade({
-    plan,
-    successUrl: "/home?checkout=success",
-    cancelUrl: "/home?checkout=cancel",
-    returnUrl: "/home",
-    disableRedirect: true,
-  })
-
-  return result.error ? undefined : result.data?.url
 }
 
 export { PricingDialogProvider, usePricingDialog }

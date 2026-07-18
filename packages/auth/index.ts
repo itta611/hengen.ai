@@ -11,6 +11,7 @@ import { nextCookies } from "better-auth/next-js"
 import { customSession, magicLink } from "better-auth/plugins"
 import Stripe from "stripe"
 import { env } from "@/lib/env"
+import { deleteUserData } from "./delete-user-data"
 
 const stripeConfig = {
   apiVersion: "2026-06-24.dahlia",
@@ -32,6 +33,7 @@ const stripePlugins = env.STRIPE_SECRET_KEY
             {
               name: "premium",
               lookupKey: "premium",
+              prorationBehavior: "always_invoice",
             },
           ],
         },
@@ -87,6 +89,7 @@ export const auth = betterAuth({
   },
   user: {
     deleteUser: {
+      beforeDelete: deleteUserData,
       enabled: true,
     },
     additionalFields: {

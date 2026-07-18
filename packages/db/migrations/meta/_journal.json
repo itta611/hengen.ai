@@ -155,6 +155,20 @@
       "when": 1783768661456,
       "tag": "0021_handy_tarantula",
       "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "7",
+      "when": 1784377083070,
+      "tag": "0022_broad_husk",
+      "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "7",
+      "when": 1784379484430,
+      "tag": "0023_deep_warstar",
+      "breakpoints": true
     }
   ]
 }

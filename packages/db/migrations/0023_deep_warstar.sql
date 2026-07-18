@@ -1,0 +1,1 @@
+DROP TABLE "billing_mutation_lock" CASCADE;

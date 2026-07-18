@@ -1,6 +1,5 @@
 "use client"
 
-import Image from "next/image"
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
 
@@ -109,7 +108,7 @@ export function AuthDialog() {
 
     setEmail("")
     toast.success(
-      "マジックリンクをメールで送信しました。受信ボックスを確認してください。"
+      "マジックリンクをメールで送信しました。\n受信ボックスを確認してください。"
     )
   }
 

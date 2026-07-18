@@ -42,21 +42,16 @@ function DialogOverlay({
 function DialogContent({
   className,
   children,
-  overlayClassName,
   forceRenderOverlay = false,
   showCloseButton = true,
   ...props
 }: DialogPrimitive.Popup.Props & {
   forceRenderOverlay?: boolean
-  overlayClassName?: string
   showCloseButton?: boolean
 }) {
   return (
     <DialogPortal>
-      <DialogOverlay
-        className={overlayClassName}
-        forceRender={forceRenderOverlay}
-      />
+      <DialogOverlay forceRender={forceRenderOverlay} />
       <DialogPrimitive.Popup
         data-slot="dialog-content"
         className={cn(

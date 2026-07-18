@@ -23,8 +23,7 @@ const cancellationReasons = [
   { label: "その他", value: "other" },
 ] as const
 
-export type CancellationFeedback =
-  (typeof cancellationReasons)[number]["value"]
+export type CancellationFeedback = (typeof cancellationReasons)[number]["value"]
 
 export function CancellationDialog({
   isSubmitting,
@@ -51,7 +50,6 @@ export function CancellationDialog({
       <DialogContent
         className="z-[61] max-h-[calc(100dvh-2rem)] overflow-y-auto sm:max-w-lg"
         forceRenderOverlay
-        overlayClassName="z-[60] bg-black/25"
       >
         <form
           className="space-y-6"
