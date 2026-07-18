@@ -28,9 +28,16 @@ function getNameFromEmail(email: string) {
 
 export function AuthDialog() {
   const { authCallbackURL, closeAuthDialog, isAuthDialogOpen } = useAuthDialog()
+  const user = authClient.useSession().data?.user
   const [email, setEmail] = useState("")
   const [error, setError] = useState<string | null>(null)
   const [busyMode, setBusyMode] = useState<"email" | "google" | null>(null)
+
+  useEffect(() => {
+    if (isAuthDialogOpen && user) {
+      closeAuthDialog()
+    }
+  }, [closeAuthDialog, isAuthDialogOpen, user])
 
   useEffect(() => {
     if (!isAuthDialogOpen) {
