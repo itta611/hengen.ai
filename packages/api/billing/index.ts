@@ -27,6 +27,7 @@ const cancelSubscriptionSchema = z.object({
     "unused",
   ]),
 })
+type UserPlan = "free" | "basic" | "premium"
 
 function dateFromUnix(timestamp: number | null) {
   return timestamp ? new Date(timestamp * 1000) : null
@@ -34,6 +35,14 @@ function dateFromUnix(timestamp: number | null) {
 
 function isoDate(date: Date | null) {
   return date?.toISOString() ?? null
+}
+
+function normalizePlan(plan: string): UserPlan {
+  if (plan === "basic" || plan === "premium") {
+    return plan
+  }
+
+  return "free"
 }
 
 async function findCurrentSubscription(userId: string) {
@@ -45,6 +54,7 @@ async function findCurrentSubscription(userId: string) {
       periodEnd: subscriptions.periodEnd,
       plan: subscriptions.plan,
       status: subscriptions.status,
+      stripeScheduleId: subscriptions.stripeScheduleId,
       stripeSubscriptionId: subscriptions.stripeSubscriptionId,
     })
     .from(subscriptions)
@@ -65,7 +75,8 @@ async function findCurrentSubscription(userId: string) {
 }
 
 function serializeSubscription(
-  subscription: Awaited<ReturnType<typeof findCurrentSubscription>>
+  subscription: Awaited<ReturnType<typeof findCurrentSubscription>>,
+  scheduledPlan: UserPlan | null = null
 ) {
   if (!subscription) {
     return null
@@ -75,8 +86,51 @@ function serializeSubscription(
     cancelAt: isoDate(subscription.cancelAt),
     cancelAtPeriodEnd: subscription.cancelAtPeriodEnd ?? false,
     periodEnd: isoDate(subscription.periodEnd),
+    plan: normalizePlan(subscription.plan),
+    scheduledPlan,
     status: subscription.status,
   }
+}
+
+async function getScheduledPlan(
+  subscription: Awaited<ReturnType<typeof findCurrentSubscription>>
+): Promise<UserPlan | null> {
+  if (!subscription) {
+    return null
+  }
+
+  if (subscription.cancelAtPeriodEnd || subscription.cancelAt) {
+    return "free"
+  }
+
+  if (!stripe || !subscription.stripeScheduleId) {
+    return null
+  }
+
+  const schedule = await stripe.subscriptionSchedules.retrieve(
+    subscription.stripeScheduleId,
+    { expand: ["phases.items.price"] }
+  )
+
+  if (schedule.status !== "active" && schedule.status !== "not_started") {
+    return null
+  }
+
+  const nextPhase = schedule.phases.at(-1)
+
+  for (const item of nextPhase?.items ?? []) {
+    const price = item.price
+
+    if (typeof price === "string" || price.deleted) {
+      continue
+    }
+
+    if (price.lookup_key === "basic" || price.lookup_key === "premium") {
+      return price.lookup_key
+    }
+  }
+
+  return null
 }
 
 export const billingRoutes = new Hono<SessionEnv>()
@@ -122,10 +176,11 @@ export const billingRoutes = new Hono<SessionEnv>()
   .get("/subscription", async (c) => {
     const session = c.get("session")
     const subscription = await findCurrentSubscription(session.user.id)
+    const scheduledPlan = await getScheduledPlan(subscription)
 
     return c.json(
       {
-        subscription: serializeSubscription(subscription),
+        subscription: serializeSubscription(subscription, scheduledPlan),
       },
       200
     )
@@ -141,6 +196,14 @@ export const billingRoutes = new Hono<SessionEnv>()
 
     if (!subscription?.stripeSubscriptionId) {
       return c.json({ message: "Subscription not found" }, 404)
+    }
+
+    if (
+      subscription.cancelAtPeriodEnd ||
+      subscription.cancelAt ||
+      subscription.stripeScheduleId
+    ) {
+      return c.json({ message: "Subscription has a scheduled change" }, 409)
     }
 
     if (subscription.plan !== "basic") {
@@ -257,6 +320,16 @@ export const billingRoutes = new Hono<SessionEnv>()
         )
       }
 
+      if (subscription.stripeScheduleId) {
+        const schedule = await stripe.subscriptionSchedules.retrieve(
+          subscription.stripeScheduleId
+        )
+
+        if (schedule.status === "active" || schedule.status === "not_started") {
+          await stripe.subscriptionSchedules.release(schedule.id)
+        }
+      }
+
       const stripeSubscription = await stripe.subscriptions.update(
         subscription.stripeSubscriptionId,
         {
@@ -277,6 +350,7 @@ export const billingRoutes = new Hono<SessionEnv>()
           canceledAt,
           endedAt,
           status: stripeSubscription.status,
+          stripeScheduleId: null,
           updatedAt: new Date(),
         })
         .where(eq(subscriptions.id, subscription.id))

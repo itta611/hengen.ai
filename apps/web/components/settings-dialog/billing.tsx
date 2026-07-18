@@ -1,14 +1,17 @@
 "use client"
 
-import { ArrowUpRightIcon, FileTextIcon, Loader2 } from "lucide-react"
 import { useQuery } from "@tanstack/react-query"
+import { ArrowUpRightIcon, FileTextIcon, InfoIcon, Loader2 } from "lucide-react"
 import { useState } from "react"
 import { toast } from "sonner"
 
 import { usePricingDialog } from "@/components/pricing-dialog"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
+import { useBillingSubscription } from "@/hooks/use-billing-subscription"
 import { useCurrentPlan } from "@/hooks/use-current-plan"
 import { apiClient } from "@/lib/api-client"
+import { authClient } from "@/lib/auth-client"
 import {
   CancellationDialog,
   type CancellationFeedback,
@@ -18,16 +21,6 @@ import { UsageCard } from "./usage-card"
 
 async function getInvoices() {
   const response = await apiClient.billing.invoices.$get()
-
-  if (!response.ok) {
-    throw new Error("request_failed")
-  }
-
-  return response.json()
-}
-
-async function getSubscription() {
-  const response = await apiClient.billing.subscription.$get()
 
   if (!response.ok) {
     throw new Error("request_failed")
@@ -75,15 +68,17 @@ export function BillingSettingsPage() {
   const pricingDialog = usePricingDialog()
   const [isCancellationDialogOpen, setCancellationDialogOpen] = useState(false)
   const [openingPortalAction, setOpeningPortalAction] = useState<
-    "cancel" | "restore" | null
+    "cancel" | "downgrade" | "restore" | null
   >(null)
   const { data: plan } = useCurrentPlan()
   const isPaidPlan = plan === "basic" || plan === "premium"
-  const subscriptionQuery = useQuery({
-    enabled: isPaidPlan,
-    queryKey: ["billing-subscription"],
-    queryFn: getSubscription,
-  })
+  const subscriptionQuery = useBillingSubscription(isPaidPlan)
+  const currentPlan = subscriptionQuery.isPending
+    ? null
+    : (subscriptionQuery.data?.subscription?.plan ?? plan)
+  const scheduledPlan = subscriptionQuery.data?.subscription?.scheduledPlan
+  const isPendingDowngrade =
+    currentPlan === "premium" && scheduledPlan === "basic"
   const isPendingCancellation = isSubscriptionPendingCancellation(
     subscriptionQuery.data?.subscription
   )
@@ -145,45 +140,105 @@ export function BillingSettingsPage() {
     }
   }
 
-  const cancelButton = isPaidPlan ? (
-    <Button
-      disabled={openingPortalAction !== null || subscriptionQuery.isLoading}
-      onClick={
-        isPendingCancellation
-          ? handleRestoreSubscription
-          : () => setCancellationDialogOpen(true)
+  const handleCancelDowngrade = async () => {
+    setOpeningPortalAction("downgrade")
+
+    try {
+      const result = await authClient.subscription.restore({})
+
+      if (result.error) {
+        toast.error("プレミアムプランを再開できませんでした。")
+        setOpeningPortalAction(null)
+        return
       }
-      variant={isPendingCancellation ? "default" : "outline"}
-    >
-      {(openingPortalAction === "cancel" ||
-        openingPortalAction === "restore") && (
-        <Loader2 className="animate-spin" />
-      )}
-      {isPendingCancellation ? "プランを再開" : "プランを解約する"}
-    </Button>
-  ) : null
+
+      await subscriptionQuery.refetch()
+      toast.success("プレミアムプランを再開しました。")
+      setOpeningPortalAction(null)
+    } catch {
+      toast.error("プレミアムプランを再開できませんでした。")
+      setOpeningPortalAction(null)
+    }
+  }
 
   return (
     <div className="space-y-12">
       <SettingSection title="クレジット使用量">
         <UsageCard />
       </SettingSection>
-
-      <SettingSection title="プランを解約・再開">
-        <div className="space-y-2">
-          <div className="flex flex-wrap gap-2">
-            {plan === "free" && (
-              <Button onClick={pricingDialog.open}>プランを選択</Button>
+      {isPaidPlan && !isPendingCancellation && (
+        <SettingSection title="プランを変更">
+          <div className="space-y-3">
+            {isPendingDowngrade && subscriptionEndsAt && (
+              <Alert>
+                <InfoIcon />
+                <AlertTitle>
+                  {subscriptionEndsAt}までプレミアムプランを利用できます
+                </AlertTitle>
+                <AlertDescription>
+                  {subscriptionEndsAt}からベーシックプランになります。
+                </AlertDescription>
+              </Alert>
             )}
-            {cancelButton}
+            {isPendingDowngrade ? (
+              <Button
+                disabled={openingPortalAction === "downgrade"}
+                onClick={handleCancelDowngrade}
+                variant="outline"
+              >
+                {openingPortalAction === "downgrade" && (
+                  <Loader2 className="animate-spin" />
+                )}
+                プレミアムプランを再開
+              </Button>
+            ) : (
+              <Button onClick={pricingDialog.open} variant="outline">
+                プランを変更
+              </Button>
+            )}
           </div>
-          {isPendingCancellation && subscriptionEndsAt && (
-            <p className="text-sm text-muted-foreground">
-              {subscriptionEndsAt} まで現在のプランを利用できます。
-            </p>
-          )}
-        </div>
-      </SettingSection>
+        </SettingSection>
+      )}
+
+      {isPaidPlan && isPendingCancellation ? (
+        <SettingSection title="プランを再開">
+          <div className="space-y-3">
+            {subscriptionEndsAt && (
+              <Alert>
+                <InfoIcon />
+                <AlertTitle>
+                  {subscriptionEndsAt}まで
+                  {formatPlanName(currentPlan)}を利用できます
+                </AlertTitle>
+                <AlertDescription>
+                  {subscriptionEndsAt}から無料プランになります。
+                </AlertDescription>
+              </Alert>
+            )}
+            <Button
+              disabled={openingPortalAction === "restore"}
+              onClick={handleRestoreSubscription}
+            >
+              {openingPortalAction === "restore" && (
+                <Loader2 className="animate-spin" />
+              )}
+              プランを再開
+            </Button>
+          </div>
+        </SettingSection>
+      ) : null}
+
+      {isPaidPlan && !isPendingCancellation ? (
+        <SettingSection title="プランを解約">
+          <Button
+            disabled={subscriptionQuery.isLoading}
+            onClick={() => setCancellationDialogOpen(true)}
+            variant="outline"
+          >
+            プランを解約する
+          </Button>
+        </SettingSection>
+      ) : null}
 
       {isCancellationDialogOpen ? (
         <CancellationDialog
@@ -242,6 +297,19 @@ function formatInvoiceDateFromIso(value: string) {
     month: "long",
     year: "numeric",
   }).format(new Date(value))
+}
+
+function formatPlanName(plan: "free" | "basic" | "premium" | null) {
+  switch (plan) {
+    case "free":
+      return "無料プラン"
+    case "basic":
+      return "ベーシックプラン"
+    case "premium":
+      return "プレミアムプラン"
+    default:
+      return "-"
+  }
 }
 
 function InvoiceHistory() {

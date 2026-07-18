@@ -7,13 +7,12 @@ import {
 } from "next/font/google"
 
 import "./globals.css"
-import { ThemeProvider } from "@/components/theme-provider"
-import { cn } from "@/lib/utils"
 import { AuthDialog } from "@/components/auth-dialog"
-import { AuthDialogProvider } from "@/hooks/use-auth-dialog"
-import { PricingDialogProvider } from "@/components/pricing-dialog"
+import { ThemeProvider } from "@/components/theme-provider"
 import { SidebarProvider } from "@/components/ui/sidebar"
 import { Toaster } from "@/components/ui/sonner"
+import { AuthDialogProvider } from "@/hooks/use-auth-dialog"
+import { cn } from "@/lib/utils"
 import { AuthRedirect } from "./auth-redirect"
 
 const manrope = Manrope({
@@ -84,13 +83,11 @@ export default function RootLayout({
           }
         >
           <AuthDialogProvider>
-            <PricingDialogProvider>
-              <ThemeProvider>
-                <AuthRedirect>{children}</AuthRedirect>
-                <AuthDialog />
-                <Toaster position="bottom-center" />
-              </ThemeProvider>
-            </PricingDialogProvider>
+            <ThemeProvider>
+              <AuthRedirect>{children}</AuthRedirect>
+              <AuthDialog />
+              <Toaster position="bottom-center" />
+            </ThemeProvider>
           </AuthDialogProvider>
         </SidebarProvider>
       </body>
