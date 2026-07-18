@@ -59,9 +59,9 @@ export default async function Page({ searchParams }: PageProps) {
                 height={151}
               />
               <div className="text-sm text-center w-full text-muted-foreground mt-4">
-                ChatGPT等の外部サービスで生成した画像を
+                ChatGPT等の外部サービスで生成した画像の
                 <br />
-                編集可能にします
+                テキストを編集可能にします
               </div>
               <ImageUploadSection />
             </div>
