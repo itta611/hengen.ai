@@ -89,7 +89,7 @@ async function startProjectGeneration({
   const results = await Promise.allSettled(
     projectIds.map(async (projectId) => {
       const response = await fetch(
-        new URL(image ? "/api/from-image" : "/generate", env.MUTAR_WORKER_URL),
+        new URL(image ? "/from-image" : "/generate", env.MUTAR_WORKER_URL),
         {
           method: "POST",
           headers: {
