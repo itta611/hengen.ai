@@ -78,9 +78,7 @@ export function ImageUploadSection() {
       }
 
       const image = Array.from(event.clipboardData?.items ?? [])
-        .find(
-          (item) => item.kind === "file" && item.type.startsWith("image/")
-        )
+        .find((item) => item.kind === "file" && item.type.startsWith("image/"))
         ?.getAsFile()
 
       if (!image) return
@@ -123,9 +121,7 @@ export function ImageUploadSection() {
         </div>
         <div className="flex flex-col gap-0.5 text-left text-sm">
           <div className="font-bold text-primary">画像を追加</div>
-          <div className="text-muted-foreground">
-            PNG, JPG, WebP形式・貼り付け
-          </div>
+          <div className="text-muted-foreground">PNG, JPG, WebP形式</div>
         </div>
       </button>
       <InsufficientCreditDialog
