@@ -9,6 +9,10 @@ import { usePricingDialog } from "@/components/pricing-dialog"
 import { Button } from "@/components/ui/button"
 import { useCurrentPlan } from "@/hooks/use-current-plan"
 import { apiClient } from "@/lib/api-client"
+import {
+  CancellationDialog,
+  type CancellationFeedback,
+} from "./cancellation-dialog"
 import { SettingSection } from "./setting-section"
 import { UsageCard } from "./usage-card"
 
@@ -69,6 +73,7 @@ function formatInvoiceStatus(status: string | null) {
 
 export function BillingSettingsPage() {
   const pricingDialog = usePricingDialog()
+  const [isCancellationDialogOpen, setCancellationDialogOpen] = useState(false)
   const [openingPortalAction, setOpeningPortalAction] = useState<
     "cancel" | "restore" | null
   >(null)
@@ -86,11 +91,13 @@ export function BillingSettingsPage() {
     subscriptionQuery.data?.subscription
   )
 
-  const handleCancelSubscription = async () => {
+  const handleCancelSubscription = async (feedback: CancellationFeedback) => {
     setOpeningPortalAction("cancel")
 
     try {
-      const response = await apiClient.billing.subscription.cancel.$post()
+      const response = await apiClient.billing.subscription.cancel.$post({
+        json: { feedback },
+      })
 
       if (!response.ok) {
         toast.error("解約できませんでした。")
@@ -109,6 +116,7 @@ export function BillingSettingsPage() {
           : "解約を受け付けました。"
       )
       await subscriptionQuery.refetch()
+      setCancellationDialogOpen(false)
       setOpeningPortalAction(null)
     } catch {
       toast.error("解約できませんでした。")
@@ -143,7 +151,7 @@ export function BillingSettingsPage() {
       onClick={
         isPendingCancellation
           ? handleRestoreSubscription
-          : handleCancelSubscription
+          : () => setCancellationDialogOpen(true)
       }
       variant={isPendingCancellation ? "default" : "outline"}
     >
@@ -177,12 +185,20 @@ export function BillingSettingsPage() {
         </div>
       </SettingSection>
 
+      {isCancellationDialogOpen ? (
+        <CancellationDialog
+          isSubmitting={openingPortalAction === "cancel"}
+          onConfirm={handleCancelSubscription}
+          onOpenChange={setCancellationDialogOpen}
+          open
+        />
+      ) : null}
+
       {isPaidPlan && (
         <SettingSection title="請求履歴">
           <InvoiceHistory />
         </SettingSection>
       )}
-
     </div>
   )
 }

@@ -1,8 +1,10 @@
+import { zValidator } from "@hono/zod-validator"
 import { db } from "@mutar/db"
 import { subscriptions, users } from "@mutar/db/schema"
 import { and, desc, eq, inArray } from "drizzle-orm"
 import { Hono } from "hono"
 import Stripe from "stripe"
+import { z } from "zod"
 
 import { env } from "@/lib/env"
 import { type SessionEnv, sessionMiddleware } from "../session"
@@ -13,6 +15,18 @@ const stripeConfig = {
 const stripe = env.STRIPE_SECRET_KEY
   ? new Stripe(env.STRIPE_SECRET_KEY, stripeConfig)
   : null
+const cancelSubscriptionSchema = z.object({
+  feedback: z.enum([
+    "customer_service",
+    "low_quality",
+    "missing_features",
+    "other",
+    "switched_service",
+    "too_complex",
+    "too_expensive",
+    "unused",
+  ]),
+})
 
 function dateFromUnix(timestamp: number | null) {
   return timestamp ? new Date(timestamp * 1000) : null
@@ -115,60 +129,66 @@ export const billingRoutes = new Hono<SessionEnv>()
       200
     )
   })
-  .post("/subscription/cancel", async (c) => {
-    const session = c.get("session")
+  .post(
+    "/subscription/cancel",
+    zValidator("json", cancelSubscriptionSchema),
+    async (c) => {
+      const session = c.get("session")
+      const { feedback } = c.req.valid("json")
 
-    if (!stripe) {
-      return c.json({ message: "Stripe is not configured" }, 503)
-    }
+      if (!stripe) {
+        return c.json({ message: "Stripe is not configured" }, 503)
+      }
 
-    const subscription = await findCurrentSubscription(session.user.id)
+      const subscription = await findCurrentSubscription(session.user.id)
 
-    if (!subscription?.stripeSubscriptionId) {
-      return c.json({ message: "Subscription not found" }, 404)
-    }
+      if (!subscription?.stripeSubscriptionId) {
+        return c.json({ message: "Subscription not found" }, 404)
+      }
 
-    if (subscription.cancelAtPeriodEnd) {
+      if (subscription.cancelAtPeriodEnd) {
+        return c.json(
+          {
+            cancelAtPeriodEnd: true,
+            endsAt: isoDate(subscription.periodEnd),
+          },
+          200
+        )
+      }
+
+      const stripeSubscription = await stripe.subscriptions.update(
+        subscription.stripeSubscriptionId,
+        {
+          cancel_at_period_end: true,
+          cancellation_details: { feedback },
+        }
+      )
+
+      const cancelAt = dateFromUnix(stripeSubscription.cancel_at)
+      const canceledAt = dateFromUnix(stripeSubscription.canceled_at)
+      const endedAt = dateFromUnix(stripeSubscription.ended_at)
+
+      await db
+        .update(subscriptions)
+        .set({
+          cancelAt,
+          cancelAtPeriodEnd: stripeSubscription.cancel_at_period_end,
+          canceledAt,
+          endedAt,
+          status: stripeSubscription.status,
+          updatedAt: new Date(),
+        })
+        .where(eq(subscriptions.id, subscription.id))
+
       return c.json(
         {
-          cancelAtPeriodEnd: true,
-          endsAt: isoDate(subscription.periodEnd),
+          cancelAtPeriodEnd: stripeSubscription.cancel_at_period_end,
+          endsAt: isoDate(cancelAt) ?? isoDate(subscription.periodEnd),
         },
         200
       )
     }
-
-    const stripeSubscription = await stripe.subscriptions.update(
-      subscription.stripeSubscriptionId,
-      {
-        cancel_at_period_end: true,
-      }
-    )
-
-    const cancelAt = dateFromUnix(stripeSubscription.cancel_at)
-    const canceledAt = dateFromUnix(stripeSubscription.canceled_at)
-    const endedAt = dateFromUnix(stripeSubscription.ended_at)
-
-    await db
-      .update(subscriptions)
-      .set({
-        cancelAt,
-        cancelAtPeriodEnd: stripeSubscription.cancel_at_period_end,
-        canceledAt,
-        endedAt,
-        status: stripeSubscription.status,
-        updatedAt: new Date(),
-      })
-      .where(eq(subscriptions.id, subscription.id))
-
-    return c.json(
-      {
-        cancelAtPeriodEnd: stripeSubscription.cancel_at_period_end,
-        endsAt: isoDate(cancelAt) ?? isoDate(subscription.periodEnd),
-      },
-      200
-    )
-  })
+  )
   .post("/subscription/restore", async (c) => {
     const session = c.get("session")
 
