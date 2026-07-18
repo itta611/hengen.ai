@@ -201,6 +201,7 @@ export const projectsRoutes = new Hono<SessionEnv>()
       c.req.valid("json")
     const projectIds = Array.from({ length: count }, () => randomUUID())
     const reservation = await reserveCreditsForProjects({
+      creditsPerProject: 10,
       projectIds,
       userId: session.user.id,
     })
