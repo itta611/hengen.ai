@@ -20,9 +20,9 @@ import {
 } from "@/components/ui/dialog"
 import { type UserPlan, useCurrentPlan } from "@/hooks/use-current-plan"
 import { authClient } from "@/lib/auth-client"
+import { apiClient } from "@/lib/api-client"
 
 type PricingPlan = "basic" | "premium"
-type StripeSubscriptionStatus = "active" | "trialing"
 
 type PricingDialogContextValue = {
   close: () => void
@@ -34,12 +34,6 @@ type PricingDialogContextValue = {
 const PricingDialogContext = createContext<PricingDialogContextValue | null>(
   null
 )
-
-function isActiveSubscription(
-  status: string
-): status is StripeSubscriptionStatus {
-  return status === "active" || status === "trialing"
-}
 
 function PricingDialogProvider({ children }: { children: ReactNode }) {
   const [isOpen, setOpen] = useState(false)
@@ -111,7 +105,7 @@ function PricingDialog({ currentPlan }: { currentPlan: UserPlan }) {
             features={[
               "月あたり240クレジット付与",
               "画像編集機能",
-              "画像編集機能",
+              "商用利用可能",
               "商用利用可能",
             ]}
           />
@@ -166,31 +160,10 @@ function PlanCard({
     setIsRedirecting(true)
 
     try {
-      const subscriptionId =
-        currentPlan === "free" ? undefined : await getActiveSubscriptionId()
-
-      if (currentPlan !== "free" && !subscriptionId) {
-        toast.error("現在の契約情報を確認できませんでした。")
-        setIsRedirecting(false)
-        return
-      }
-
-      const result = await authClient.subscription.upgrade({
-        plan,
-        ...(subscriptionId ? { subscriptionId } : {}),
-        successUrl: "/home?checkout=success",
-        cancelUrl: "/home?checkout=cancel",
-        returnUrl: "/home",
-        disableRedirect: true,
-      })
-
-      if (result.error) {
-        toast.error("決済ページを開けませんでした。")
-        setIsRedirecting(false)
-        return
-      }
-
-      const url = result.data?.url
+      const url =
+        currentPlan === "basic" && plan === "premium"
+          ? await upgradeToPremium()
+          : await startSubscriptionCheckout(plan)
 
       if (!url) {
         toast.error("決済ページを開けませんでした。")
@@ -245,18 +218,27 @@ function PlanCard({
   )
 }
 
-async function getActiveSubscriptionId() {
-  const result = await authClient.subscription.list()
+async function upgradeToPremium() {
+  const response = await apiClient.billing.subscription.upgrade.$post()
 
-  if (result.error) {
+  if (!response.ok) {
     return
   }
 
-  const activeSubscription = result.data?.find((subscription) =>
-    isActiveSubscription(subscription.status)
-  )
+  const result = await response.json()
+  return result.url
+}
 
-  return activeSubscription?.stripeSubscriptionId ?? undefined
+async function startSubscriptionCheckout(plan: PricingPlan) {
+  const result = await authClient.subscription.upgrade({
+    plan,
+    successUrl: "/home?checkout=success",
+    cancelUrl: "/home?checkout=cancel",
+    returnUrl: "/home",
+    disableRedirect: true,
+  })
+
+  return result.error ? undefined : result.data?.url
 }
 
 export { PricingDialogProvider, usePricingDialog }

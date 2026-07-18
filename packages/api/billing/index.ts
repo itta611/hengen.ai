@@ -43,6 +43,7 @@ async function findCurrentSubscription(userId: string) {
       cancelAtPeriodEnd: subscriptions.cancelAtPeriodEnd,
       id: subscriptions.id,
       periodEnd: subscriptions.periodEnd,
+      plan: subscriptions.plan,
       status: subscriptions.status,
       stripeSubscriptionId: subscriptions.stripeSubscriptionId,
     })
@@ -128,6 +129,106 @@ export const billingRoutes = new Hono<SessionEnv>()
       },
       200
     )
+  })
+  .post("/subscription/upgrade", async (c) => {
+    const session = c.get("session")
+
+    if (!stripe) {
+      return c.json({ message: "Stripe is not configured" }, 503)
+    }
+
+    const subscription = await findCurrentSubscription(session.user.id)
+
+    if (!subscription?.stripeSubscriptionId) {
+      return c.json({ message: "Subscription not found" }, 404)
+    }
+
+    if (subscription.plan !== "basic") {
+      return c.json({ message: "Subscription is not on the basic plan" }, 409)
+    }
+
+    const [basicPrices, premiumPrices, stripeSubscription] = await Promise.all([
+      stripe.prices.list({ active: true, limit: 1, lookup_keys: ["basic"] }),
+      stripe.prices.list({ active: true, limit: 1, lookup_keys: ["premium"] }),
+      stripe.subscriptions.retrieve(subscription.stripeSubscriptionId),
+    ])
+    const basicPrice = basicPrices.data[0]
+    const premiumPrice = premiumPrices.data[0]
+
+    if (!basicPrice || !premiumPrice) {
+      return c.json({ message: "Subscription price not found" }, 503)
+    }
+
+    const subscriptionItem = stripeSubscription.items.data.find(
+      (item) => item.price.id === basicPrice.id
+    )
+
+    if (!subscriptionItem) {
+      return c.json({ message: "Subscription item not found" }, 409)
+    }
+
+    if (stripeSubscription.pending_update) {
+      const pendingInvoiceId =
+        typeof stripeSubscription.latest_invoice === "string"
+          ? stripeSubscription.latest_invoice
+          : stripeSubscription.latest_invoice?.id
+
+      if (!pendingInvoiceId) {
+        return c.json({ message: "Pending invoice not found" }, 409)
+      }
+
+      const pendingInvoice = await stripe.invoices.retrieve(pendingInvoiceId)
+
+      if (!pendingInvoice.hosted_invoice_url) {
+        return c.json({ message: "Invoice payment is required" }, 409)
+      }
+
+      return c.json({ url: pendingInvoice.hosted_invoice_url }, 200)
+    }
+
+    const updatedSubscription = await stripe.subscriptions.update(
+      stripeSubscription.id,
+      {
+        items: [
+          {
+            id: subscriptionItem.id,
+            price: premiumPrice.id,
+            quantity: subscriptionItem.quantity ?? 1,
+          },
+        ],
+        payment_behavior: "pending_if_incomplete",
+        proration_behavior: "always_invoice",
+      }
+    )
+    const invoiceId =
+      typeof updatedSubscription.latest_invoice === "string"
+        ? updatedSubscription.latest_invoice
+        : updatedSubscription.latest_invoice?.id
+
+    if (!invoiceId) {
+      return c.json({ message: "Upgrade invoice not found" }, 502)
+    }
+
+    const invoice = await stripe.invoices.retrieve(invoiceId)
+
+    if (updatedSubscription.pending_update) {
+      if (!invoice.hosted_invoice_url) {
+        return c.json({ message: "Invoice payment is required" }, 409)
+      }
+
+      return c.json({ url: invoice.hosted_invoice_url }, 200)
+    }
+
+    await db
+      .update(subscriptions)
+      .set({
+        plan: "premium",
+        status: updatedSubscription.status,
+        updatedAt: new Date(),
+      })
+      .where(eq(subscriptions.id, subscription.id))
+
+    return c.json({ url: "/home?checkout=success" }, 200)
   })
   .post(
     "/subscription/cancel",
