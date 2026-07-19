@@ -7,6 +7,7 @@ import { toast } from "sonner"
 
 import { editorBoxesAtom } from "@/atom/generate"
 import { Button } from "@/components/ui/button"
+import { useCurrentPlan } from "@/hooks/use-current-plan"
 import { useEditorProjectData } from "@/hooks/use-editor-project"
 import { useExport } from "@/hooks/use-export"
 import { CopyButton } from "./copy-button"
@@ -16,6 +17,7 @@ export function Navbar() {
   const router = useRouter()
   const { projectId } = useParams<{ projectId: string }>()
   const boxes = useAtomValue(editorBoxesAtom)
+  const { data: currentPlan } = useCurrentPlan()
   const { project } = useEditorProjectData(projectId)
   const imageSize = project
     ? ([project.width, project.height] as [number, number])
@@ -49,7 +51,9 @@ export function Navbar() {
         <XIcon />
       </Button>
       <div className="grow w-0 truncate">{projectName}</div>
-      <EditButton disabled={disabled} projectId={projectId} />
+      {currentPlan !== "free" ? (
+        <EditButton disabled={disabled} projectId={projectId} />
+      ) : null}
       <CopyButton
         disabled={disabled}
         onCopyImage={async () => {

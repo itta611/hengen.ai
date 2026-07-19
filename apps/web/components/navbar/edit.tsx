@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogTitle,
 } from "@/components/ui/dialog"
@@ -57,7 +58,7 @@ export function EditButton({
             <DialogTitle>画像を編集</DialogTitle>
             <Textarea
               aria-label="編集内容"
-              className="min-h-26"
+              className="min-h-18"
               onChange={(event) => setValue(event.currentTarget.value)}
               onKeyDown={(event) => {
                 if (event.key === "Enter" && (event.metaKey || event.ctrlKey)) {
@@ -69,6 +70,9 @@ export function EditButton({
               value={value}
             />
             <DialogFooter>
+              <Button onClick={() => setOpen(false)} variant="outline">
+                キャンセル
+              </Button>
               <Button disabled={!canSubmit} type="submit">
                 再生成
               </Button>
