@@ -60,7 +60,7 @@ export function projectImageKey(
   kind: "original" | "cleaned" | "thumbnail"
 ) {
   if (kind === "cleaned") {
-    return `projects/${projectId}/cleaned.jpg`
+    return `projects/${projectId}/erased.png`
   }
   return `projects/${projectId}/${kind}.png`
 }
