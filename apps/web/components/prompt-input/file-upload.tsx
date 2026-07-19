@@ -3,6 +3,13 @@ import { useRef, type Dispatch, type SetStateAction } from "react"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 
+const acceptedImageTypes = new Set([
+  "image/jpeg",
+  "image/png",
+  "image/gif",
+  "image/webp",
+])
+
 export type UploadedImage = {
   dataUrl?: string
   file: File
@@ -13,8 +20,8 @@ export function addImageFiles(
   images: UploadedImage[],
   setImages: Dispatch<SetStateAction<UploadedImage[]>>
 ) {
-  if (files.some((file) => !file.type.startsWith("image/"))) {
-    toast.error("画像ファイルのみアップロードできます。")
+  if (files.some((file) => !acceptedImageTypes.has(file.type))) {
+    toast.error("JPEG、PNG、GIF、WebP形式の画像のみアップロードできます。")
     return
   }
 
@@ -57,7 +64,7 @@ export function FileUpload({
   return (
     <>
       <input
-        accept="image/*"
+        accept="image/jpeg,image/png,image/gif,image/webp"
         className="hidden"
         multiple
         onChange={(event) => {

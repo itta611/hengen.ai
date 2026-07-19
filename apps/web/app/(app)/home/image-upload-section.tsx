@@ -16,6 +16,13 @@ import { useAuthDialog } from "@/hooks/use-auth-dialog"
 import { useGenerateProjectFromImage } from "@/hooks/use-generate-project"
 import { authClient } from "@/lib/auth-client"
 
+const acceptedImageTypes = new Set([
+  "image/jpeg",
+  "image/png",
+  "image/gif",
+  "image/webp",
+])
+
 function fileToDataUrl(file: File) {
   return new Promise<string>((resolve, reject) => {
     const reader = new FileReader()
@@ -37,8 +44,8 @@ export function ImageUploadSection() {
   const user = authClient.useSession().data?.user
 
   async function uploadImage(file: File) {
-    if (!file.type.startsWith("image/")) {
-      toast.error("画像ファイルのみアップロードできます。")
+    if (!acceptedImageTypes.has(file.type)) {
+      toast.error("JPEG、PNG、GIF、WebP形式の画像のみアップロードできます。")
       return
     }
 
@@ -103,7 +110,7 @@ export function ImageUploadSection() {
   return (
     <div className="w-full" ref={sectionRef}>
       <input
-        accept="image/png,image/jpeg,image/webp"
+        accept="image/jpeg,image/png,image/gif,image/webp"
         className="hidden"
         disabled={isGenerating}
         onChange={handleImageChange}
@@ -121,7 +128,7 @@ export function ImageUploadSection() {
         </div>
         <div className="flex flex-col gap-0.5 text-left text-sm">
           <div className="font-bold text-primary">画像を追加</div>
-          <div className="text-muted-foreground">PNG, JPG, WebP形式</div>
+          <div className="text-muted-foreground">PNG, JPG, GIF, WebP形式</div>
         </div>
       </button>
       <InsufficientCreditDialog

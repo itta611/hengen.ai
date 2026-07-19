@@ -8,7 +8,7 @@ import Grainient from "@/components/Grainient"
 import Silk from "@/components/Silk"
 
 const generationCountdownSeconds = 4 * 60
-const imageImportCountdownSeconds = 1 * 60
+const imageImportCountdownSeconds = 1.5 * 60
 
 function getRemainingSeconds(
   countdownSeconds: number,
