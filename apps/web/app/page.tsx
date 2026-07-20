@@ -11,7 +11,7 @@ export default function Page() {
   const { openAuthDialog } = useAuthDialog()
 
   return (
-    <div className="w-full bg-zinc-50">
+    <div className="w-full bg-zinc-50 dark:bg-zinc-900">
       <div className="mx-auto flex w-full max-w-325 flex-col px-5 text-center">
         <div className="py-4 flex items-center justify-between">
           <Logo height={30} />
@@ -63,7 +63,7 @@ export default function Page() {
               speed={0.6}
             />
           </div>
-          <div className="bg-primary grow shadow-[0_40px_40px_0px_var(--primary)] translate-y-px"></div>
+          <div className="bg-[#605FFF] grow shadow-[0_40px_40px_0px_var(--primary)] translate-y-px"></div>
         </div>
         <div className="mx-auto w-full max-w-325 px-20 relative z-20">
           <div className="aspect-video rounded-3xl bg-white outline-16 outline-white/20"></div>
@@ -71,7 +71,7 @@ export default function Page() {
       </div>
       <footer className="bg-background">
         <div className="mx-auto flex w-full max-w-325 flex-col gap-6 px-5 py-10 sm:flex-row sm:items-center sm:justify-between">
-          <Logo className="h-7 w-26" />
+          <Logo className="h-7 w-26 saturate-0 brightness-0 opacity-30" />
           <nav className="flex flex-wrap items-center justify-center gap-5 text-sm text-muted-foreground">
             <a
               className="transition-colors hover:text-foreground"
