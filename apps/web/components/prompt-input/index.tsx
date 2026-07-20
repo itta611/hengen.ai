@@ -19,13 +19,15 @@ import { StyleSelect } from "./style-select"
 type PromptInputController = ReturnType<typeof usePromptForm>
 
 export function PromptInputForm({
+  className,
   controller,
   isInsufficientCreditsOpen,
   setInsufficientCreditsOpen,
 }: {
+  className?: string
   controller: PromptInputController
-  isInsufficientCreditsOpen: boolean
-  setInsufficientCreditsOpen: Dispatch<SetStateAction<boolean>>
+  isInsufficientCreditsOpen?: boolean
+  setInsufficientCreditsOpen?: Dispatch<SetStateAction<boolean>>
 }) {
   const [previewImage, setPreviewImage] = useState<{
     height: number
@@ -54,7 +56,8 @@ export function PromptInputForm({
       <form
         onSubmit={handleSubmit(handleGenerate)}
         className={cn(
-          "rounded-[20px] border-2 shadow-lg/5 border-primary p-2.5 bg-background dark:bg-zinc-900 relative z-20"
+          "rounded-[20px] border-2 shadow-lg/5 border-primary p-2.5 bg-background dark:bg-zinc-900 relative z-20",
+          className
         )}
       >
         <Textarea
@@ -152,10 +155,12 @@ export function PromptInputForm({
           width={previewImage.width}
         />
       ) : null}
-      <InsufficientCreditDialog
-        isOpen={isInsufficientCreditsOpen}
-        onOpenChange={setInsufficientCreditsOpen}
-      />
+      {isInsufficientCreditsOpen !== undefined && setInsufficientCreditsOpen ? (
+        <InsufficientCreditDialog
+          isOpen={isInsufficientCreditsOpen}
+          onOpenChange={setInsufficientCreditsOpen}
+        />
+      ) : null}
     </>
   )
 }
@@ -165,18 +170,12 @@ export function PromptInput({
 }: {
   initialPrompt?: string
 }) {
-  const [isInsufficientCreditsOpen, setInsufficientCreditsOpen] =
-    useState(false)
-  const controller = usePromptForm({
-    initialPrompt,
-    onInsufficientCredits: () => setInsufficientCreditsOpen(true),
-  })
+  const controller = usePromptForm({ initialPrompt })
 
   return (
     <PromptInputForm
       controller={controller}
-      isInsufficientCreditsOpen={isInsufficientCreditsOpen}
-      setInsufficientCreditsOpen={setInsufficientCreditsOpen}
+      className="max-w-[680px] mx-auto"
     />
   )
 }

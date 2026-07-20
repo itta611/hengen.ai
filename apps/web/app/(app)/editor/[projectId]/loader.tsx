@@ -74,7 +74,7 @@ function LoadingPattern({ projectId }: { projectId: string }) {
   return (
     <Grainient
       color1="#A5B4FC"
-      color2="#6366F1"
+      color2="#605FFF"
       color3="#1E1B4B"
       contrast={1.2}
       grainAmount={0.08}
