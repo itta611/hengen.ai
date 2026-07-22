@@ -8,8 +8,8 @@ export function LandingHeader() {
   const { openAuthDialog } = useAuthDialog()
 
   return (
-    <nav className="mx-auto max-w-300">
-      <div className="flex items-center justify-between py-4">
+    <nav className="px-5">
+      <div className="flex items-center justify-between py-4 mx-auto max-w-300">
         <Logo height={30} />
         <div className="hidden items-center gap-8 md:flex">
           <a href="#features">特長</a>
