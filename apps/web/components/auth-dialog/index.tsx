@@ -39,19 +39,6 @@ export function AuthDialog() {
     }
   }, [closeAuthDialog, isAuthDialogOpen, user])
 
-  useEffect(() => {
-    if (!isAuthDialogOpen) {
-      return
-    }
-
-    const previousOverflow = document.body.style.overflow
-    document.body.style.overflow = "hidden"
-
-    return () => {
-      document.body.style.overflow = previousOverflow
-    }
-  }, [isAuthDialogOpen])
-
   if (!isAuthDialogOpen) {
     return null
   }

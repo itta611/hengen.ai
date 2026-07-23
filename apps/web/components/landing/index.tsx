@@ -1,10 +1,11 @@
 import { LandingCta } from "./cta"
-import { LandingFooter } from "./footer"
-import { LandingHeader } from "./header"
 import { LandingFeatures } from "./features"
 import { Features2 } from "./features2"
 import { Features3 } from "./features3"
+import { LandingFooter } from "./footer"
+import { LandingHeader } from "./header"
 import { LandingHero } from "./hero"
+import { UseCases } from "./use-cases"
 import { LandingVideo } from "./video"
 
 export function Landing() {
@@ -23,6 +24,9 @@ export function Landing() {
       </section>
       <section>
         <Features3 />
+      </section>
+      <section>
+        <UseCases />
       </section>
       <section>
         <LandingCta />
