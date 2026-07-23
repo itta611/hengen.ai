@@ -15,7 +15,7 @@ export function LandingHeader() {
           <a href="#workflow">使い方</a>
           <a href="#advantages">特長</a>
           <a href="#editing">編集例</a>
-          <a href="#use-cases">活用例</a>
+          <a href="#use-cases">ユースケース</a>
         </div>
         <Button onClick={() => openAuthDialog()} size="lg">
           Mutarにログイン

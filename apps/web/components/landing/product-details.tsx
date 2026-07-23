@@ -29,12 +29,12 @@ export function ProductDetailsSection() {
   return (
     <div className="mx-auto flex w-full max-w-300 px-5 flex-col gap-30 py-20">
       <Feature
-        title="文字が崩れただけで、その画像をあきらめない。"
-        description="画像全体の雰囲気を保ちながら、文字だけを美しいフォントで描き直します。読みにくい文字や不自然な字形を整え、そのまま使える画像に仕上げます。"
+        title="スマートに貼り付ける"
+        description="パワーポイントに、テキストボックスを維持したまま貼り付けられます。"
       />
       <Feature
-        title="生成したあとも、直したい一言だけを編集。"
-        description="背景のデザインを活かしたまま、文章やフォント、文字サイズ、色、位置を調整できます。誤字の修正も、言い回しの変更も、その場ですぐに完了します。"
+        title="ブランドのスタイルを維持"
+        description="ブランドのフォントや色を指定して、資料のトーンを統一できます。"
         imagePosition="right"
       />
     </div>

@@ -1,18 +1,26 @@
-import { SparklesIcon } from "lucide-react"
+import {
+  ScanTextIcon,
+  SparklesIcon,
+  TextCursorIcon,
+  TypeIcon,
+} from "lucide-react"
+import type React from "react"
 
 function FeatureItem({
   description,
   title,
+  icon: Icon,
 }: {
   description: string
   title: string
+  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>
 }) {
   return (
     <div className="flex items-center gap-6">
       <div className="flex size-20 shrink-0 items-center justify-center rounded-lg border bg-background">
-        <SparklesIcon className="size-8.5 text-primary" />
+        <Icon className="size-8 text-primary" />
       </div>
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-2">
         <h3 className="text-lg font-bold">{title}</h3>
         <p>{description}</p>
       </div>
@@ -31,20 +39,24 @@ export function AdvantagesSection() {
       </p>
       <div className="mt-16 grid gap-x-16 gap-y-16 md:grid-cols-2">
         <FeatureItem
-          description="画像内の文字を自動で検出し、生成した時点から編集できるテキストとして扱えます。"
-          title="文字を編集できる状態で生成"
+          icon={TextCursorIcon}
+          title="テキストを自由に編集"
+          description="画像内の文字を自動で検出し、生成時点からテキストを編集できる状態で出力します。"
         />
         <FeatureItem
-          description="見出しや本文、ラベルを意味のある単位で認識。文章をばらばらにせず編集できます。"
-          title="文章のまとまりを保つ"
+          icon={SparklesIcon}
+          title="高品質な画像生成"
+          description="最先端のChatGPT Images 2.0モデルで高品質な画像を生成します。"
         />
         <FeatureItem
-          description="ゴシック、明朝、丸ゴシックに対応。書体や大きさ、太さ、行間、字間、色も調整できます。"
-          title="美しいフォントで描き直す"
+          icon={ScanTextIcon}
+          title="高精度な文字検出"
+          description="高精度なOCR技術で、画像内の文字を正確に検出し、編集可能なテキストとして出力します。"
         />
         <FeatureItem
-          description="PNGで保存するほか、編集可能なSVGとしてPowerPointなどに貼り付けられます。"
-          title="PNG・SVGで書き出す"
+          icon={TypeIcon}
+          title="文字の歪みなし"
+          description="AI生成画像特有の文字の歪みなしで、フォントで文字を美しく描画します。"
         />
       </div>
     </div>
