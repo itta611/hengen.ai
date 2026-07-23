@@ -37,9 +37,9 @@ const sourceSerif = Source_Serif_4({
 })
 
 export const metadata: Metadata = {
-  title: "Mutar",
+  title: "Mutar | 文字まで編集できるAI画像生成",
   description:
-    "Slide and poster oriented AI image generation with editable text layers.",
+    "文字を編集できる状態で画像を生成。文章やフォント、色を生成後に調整し、PNGや編集可能なSVGで書き出せます。",
 }
 
 const editorSans = Manrope({

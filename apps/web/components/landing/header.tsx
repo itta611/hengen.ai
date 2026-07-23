@@ -12,10 +12,10 @@ export function LandingHeader() {
       <div className="flex items-center justify-between py-4 mx-auto max-w-300">
         <Logo height={30} />
         <div className="hidden items-center gap-8 md:flex">
-          <a href="#features">特長</a>
-          <a href="#how-it-works">使い方</a>
-          <a href="#pricing">価格</a>
-          <a href="#testimonials">レビュー</a>
+          <a href="#workflow">使い方</a>
+          <a href="#advantages">特長</a>
+          <a href="#editing">編集例</a>
+          <a href="#use-cases">活用例</a>
         </div>
         <Button onClick={() => openAuthDialog()} size="lg">
           Mutarにログイン

@@ -3,7 +3,7 @@
 import Aurora from "@/components/Aurora"
 const auroraColorStops = ["#605FFF", "#605FFF", "#605FFF"]
 
-export function LandingVideo() {
+export function ProductDemoSection() {
   return (
     <div className="relative mt-10 pb-22 px-10">
       <div
