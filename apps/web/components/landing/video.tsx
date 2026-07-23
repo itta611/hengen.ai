@@ -18,7 +18,7 @@ export function LandingVideo() {
             speed={0.6}
           />
         </div>
-        <div className="grow from-indigo-500 to-indigo-300 bg-linear-to-t shadow-[0_40px_40px_40px_var(--primary)]" />
+        <div className="grow from-indigo-500 to-white bg-linear-to-t shadow-[0_40px_40px_40px_var(--primary)]" />
       </div>
       <div className="relative z-20 mx-auto w-full max-w-280">
         <div className="aspect-video rounded-3xl bg-white outline-16 outline-white/20" />
