@@ -19,7 +19,10 @@ function FeatureItem() {
 export function Features2() {
   return (
     <div className="mx-auto w-full max-w-300 px-5 py-20">
-      <h2 className="text-3xl font-bold">特長</h2>
+      <h2 className="text-4xl font-bold text-center">タイトル</h2>
+      <h2 className="text-base text-center mt-5">
+        ここに説明ここに説明ここに説明ここに説明ここに説明ここに説明
+      </h2>
       <div className="mt-16 grid gap-x-16 gap-y-16 md:grid-cols-2">
         <FeatureItem />
         <FeatureItem />

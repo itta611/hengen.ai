@@ -20,9 +20,6 @@ export function LandingFeatures() {
   return (
     <div className="space-y-8 py-20 max-w-300 mx-auto px-5">
       <h2 className="text-4xl font-bold">特長</h2>
-      <p>
-        ここにひとこと。ここにひとこと。ここにひとこと。ここにひとこと。ここにひとこと。
-      </p>
       <div className="flex gap-8 sm:flex-row">
         <FeatureCard
           title="手軽な資料生成"
