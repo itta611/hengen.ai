@@ -1,7 +1,9 @@
+import { LandingCta } from "./cta"
 import { LandingFooter } from "./footer"
 import { LandingHeader } from "./header"
 import { LandingFeatures } from "./features"
 import { Features2 } from "./features2"
+import { Features3 } from "./features3"
 import { LandingHero } from "./hero"
 import { LandingVideo } from "./video"
 
@@ -13,13 +15,21 @@ export function Landing() {
         <LandingHero />
         <LandingVideo />
       </div>
-      <div className="px-5">
-        <div className="max-w-300 mx-auto">
-          <Features2 />
-          <LandingFeatures />
-        </div>
-      </div>
-      <LandingFooter />
+      <section>
+        <LandingFeatures />
+      </section>
+      <section>
+        <Features2 />
+      </section>
+      <section>
+        <Features3 />
+      </section>
+      <section>
+        <LandingCta />
+      </section>
+      <footer>
+        <LandingFooter />
+      </footer>
     </div>
   )
 }
