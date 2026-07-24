@@ -12,12 +12,10 @@ export function CtaSection() {
     <div className="px-5 py-20 max-w-300 mx-auto">
       <div className="text-center overflow-hidden rounded-3xl bg-primary py-16 text-primary-foreground px-12">
         <h2 className="mt-5 font-bold tracking-tight text-4xl">
-          すぐに使える資料を作成しよう
+          いつでも修正できる資料画像を生成
         </h2>
         <p className="mx-auto mt-8 max-w-2xl text-sm leading-7 sm:text-base">
-          画像を生成。文字を整える。すぐに使う。
-          <br className="hidden sm:block" />
-          生成したその場で、文章やフォントまできれいに仕上げられます。
+          無料で始められます。まずは4枚までの生成をお試し。
         </p>
         <Button
           className="mt-10 text-primary"

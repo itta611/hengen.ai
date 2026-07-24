@@ -23,7 +23,7 @@ export function UseCasesSection() {
       <div className="mt-14 grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
         <UseCaseCard
           description="読みやすく整えた文字で、スライドにそのまま貼り付け。"
-          title="スライドに使う表や図"
+          title="スライド資料に使う図"
         />
         <UseCaseCard
           description="ポスターを生成したあとに、イベント名や日時、会場を変更。"

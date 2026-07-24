@@ -31,13 +31,8 @@ function FeatureItem({
 export function AdvantagesSection() {
   return (
     <div className="mx-auto w-full max-w-300 px-5 py-20">
-      <h2 className="text-4xl font-bold text-center">
-        生成した文字を、きれいに編集できる形へ。
-      </h2>
-      <p className="text-base text-center mt-5">
-        画像と文字を分けて扱えるから、生成したあとも自由に整えられます。
-      </p>
-      <div className="mt-16 grid gap-x-16 gap-y-16 md:grid-cols-2">
+      <h2 className="text-4xl font-bold text-center">特長</h2>
+      <div className="mt-18 grid gap-x-16 gap-y-16 md:grid-cols-2">
         <FeatureItem
           icon={TextCursorIcon}
           title="テキストを自由に編集"
@@ -51,7 +46,7 @@ export function AdvantagesSection() {
         <FeatureItem
           icon={ScanTextIcon}
           title="高精度な文字検出"
-          description="高精度なOCR技術で、画像内の文字を正確に検出し、編集可能なテキストとして出力します。"
+          description="高精度なOCR技術で、画像内の文字を正確に検出。テキストを位置ズレなく美しく配置します。"
         />
         <FeatureItem
           icon={TypeIcon}

@@ -16,9 +16,9 @@ export function Landing() {
         <HeroSection />
         <ProductDemoSection />
       </div>
-      <section id="workflow">
+      {/* <section id="workflow">
         <WorkflowSection />
-      </section>
+      </section> */}
       <section id="advantages">
         <AdvantagesSection />
       </section>

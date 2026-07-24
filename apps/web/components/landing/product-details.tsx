@@ -19,7 +19,7 @@ function Feature({
         <h2 className="text-3xl font-bold leading-normal sm:text-4xl">
           {title}
         </h2>
-        <p className="mt-3 leading-normal">{description}</p>
+        <p className="mt-3 leading-normal text-lg">{description}</p>
       </div>
     </div>
   )
@@ -29,13 +29,17 @@ export function ProductDetailsSection() {
   return (
     <div className="mx-auto flex w-full max-w-300 px-5 flex-col gap-30 py-20">
       <Feature
-        title="スマートに貼り付ける"
-        description="パワーポイントに、テキストボックスを維持したまま貼り付けられます。"
+        title="いつでも手軽に生成"
+        description="文章のプロンプトだけでなく、手書きのスケッチや印刷物の写真から生成したり、他のAIサービスで作った画像を読み込めます。"
       />
       <Feature
         title="ブランドのスタイルを維持"
-        description="ブランドのフォントや色を指定して、資料のトーンを統一できます。"
+        description="ブランドの色や質感を指定して、資料のトーンを統一できます。"
         imagePosition="right"
+      />
+      <Feature
+        title="すぐ"
+        description="生成した画像は、テキストボックスを維持したままPowerPointやIllustrator等のアプリに貼り付けることもできます。"
       />
     </div>
   )
