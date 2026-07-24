@@ -29,17 +29,17 @@ export function ProductDetailsSection() {
   return (
     <div className="mx-auto flex w-full max-w-300 px-5 flex-col gap-30 py-20">
       <Feature
-        title="いつでも手軽に生成"
+        title="好きな材料から手軽に生成"
         description="文章のプロンプトだけでなく、手書きのスケッチや印刷物の写真から生成したり、他のAIサービスで作った画像を読み込めます。"
       />
       <Feature
         title="ブランドのスタイルを維持"
-        description="ブランドの色や質感を指定して、資料のトーンを統一できます。"
+        description="ブランドカラーや質感、全体の雰囲気を細かく指定して、ブランドらしさを保った統一感のある資料に仕上げられます。"
         imagePosition="right"
       />
       <Feature
-        title="すぐ"
-        description="生成した画像は、テキストボックスを維持したままPowerPointやIllustrator等のアプリに貼り付けることもできます。"
+        title="使い慣れたアプリで編集する"
+        description="生成した画像は、テキストを編集できる状態でPowerPointやIllustrator等のアプリに貼り付けることもできます。"
       />
     </div>
   )

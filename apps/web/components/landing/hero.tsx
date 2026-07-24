@@ -13,7 +13,7 @@ export function HeroSection() {
         <h1 className="text-4xl font-bold leading-normal font-features-['palt'] tracking-wide sm:text-6xl">
           生成して終わりじゃない。
           <br />
-          <span className="text-primary">作り直さず、即座に修正。</span>
+          <span className="text-primary">作り直さず、そのまま修正。</span>
         </h1>
         <p className="mt-8 text-base text-muted-foreground sm:text-lg">
           Mutarは、資料作成に特化したAI画像生成ツールです。
