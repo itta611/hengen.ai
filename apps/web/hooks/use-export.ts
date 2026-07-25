@@ -1,6 +1,7 @@
 "use client"
 
-import { type EditorBox, fontFamilyMap, type ImageSize } from "@/atom/generate"
+import type { EditorBox, ImageSize } from "@/atom/generate"
+import { getFontFamilyCss, loadGoogleFont } from "@/lib/google-fonts"
 
 function getTextWidth(
   context: CanvasRenderingContext2D,
@@ -154,6 +155,9 @@ export function useExport({
     }
 
     const image = await loadImage(`/api/projects/${projectId}/image`)
+    const fontFamilies = await Promise.all(
+      boxes.map((box) => loadGoogleFont(box.fontFamily))
+    )
     const [width, height] = imageSize
     const canvas = document.createElement("canvas")
     canvas.width = width
@@ -166,13 +170,13 @@ export function useExport({
 
     context.drawImage(image, 0, 0, width, height)
 
-    for (const box of boxes) {
+    boxes.forEach((box, index) => {
       const rect = getBoxRect(box)
       const fontSize = box.fontSize
       const letterSpacing = box.letterSpacing ?? 0
       const lineheight = box.lineheight ?? 1.4
       const lineHeight = fontSize * lineheight
-      const fontFamily = fontFamilyMap[box.fontFamily ?? "gothic"]
+      const fontFamily = getFontFamilyCss(fontFamilies[index])
 
       context.font = `${box.bold ? 700 : 400} ${fontSize}px ${fontFamily}`
 
@@ -199,7 +203,7 @@ export function useExport({
           letterSpacing
         )
       })
-    }
+    })
 
     return canvasToBlob(canvas)
   }
@@ -214,18 +218,21 @@ export function useExport({
       (response) => response.blob()
     )
     const imageDataUrl = await blobToDataUrl(imageBlob)
+    const fontFamilies = await Promise.all(
+      boxes.map((box) => loadGoogleFont(box.fontFamily))
+    )
     const canvas = document.createElement("canvas")
     const context = canvas.getContext("2d")
     if (!context) {
       throw new Error("canvas_unavailable")
     }
 
-    const texts = boxes.map((box) => {
+    const texts = boxes.map((box, index) => {
       const rect = getBoxRect(box)
       const fontSize = box.fontSize
       const lineheight = box.lineheight ?? 1.4
       const lineHeight = fontSize * lineheight
-      const fontFamily = fontFamilyMap[box.fontFamily ?? "gothic"]
+      const fontFamily = getFontFamilyCss(fontFamilies[index])
       const align = box.align ?? "center"
       const x =
         align === "left"

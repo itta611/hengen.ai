@@ -18,7 +18,6 @@ import {
   editorSaveBoxesAtom,
   editorSelectedBoxIndexAtom,
   editorSelectedBoxIndexesAtom,
-  fontFamilyMap,
   type ImageSize,
 } from "@/atom/generate"
 import {
@@ -32,6 +31,7 @@ import {
 import { useEditorProject } from "@/hooks/use-editor-project"
 import { useEditorSettings } from "@/hooks/use-editor-settings"
 import { apiClient } from "@/lib/api-client"
+import { getFontFamilyCss } from "@/lib/google-fonts"
 import { EditorStage } from "./editor-stage"
 import { TextEditor } from "./text-editor"
 
@@ -247,9 +247,7 @@ function Editor({ projectId }: { projectId: string }) {
 
           const left = Math.min(...rects.map((rect) => rect.left))
           const top = Math.min(...rects.map((rect) => rect.top))
-          const right = Math.max(
-            ...rects.map((rect) => rect.left + rect.width)
-          )
+          const right = Math.max(...rects.map((rect) => rect.left + rect.width))
           const bottom = Math.max(
             ...rects.map((rect) => rect.top + rect.height)
           )
@@ -807,7 +805,7 @@ function Editor({ projectId }: { projectId: string }) {
         ) : null}
         {boxes.map((box, index) => {
           const rect = getBoxRect(box)
-          const fontFamily = fontFamilyMap[box.fontFamily ?? "gothic"]
+          const fontFamily = getFontFamilyCss(box.fontFamily)
           const textNode = createBoxTextNode(box)
           const textWidth = box.wrapText ? rect.width : textNode.getTextWidth()
           const textX =

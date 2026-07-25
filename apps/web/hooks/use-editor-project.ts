@@ -14,6 +14,7 @@ import {
 import type { GeneratedImage } from "@/components/gallary"
 import { resizeTextBox } from "@/hooks/editor-bbox"
 import { apiClient } from "@/lib/api-client"
+import { loadGoogleFont } from "@/lib/google-fonts"
 
 type ProjectBox = EditorBox & { lineHeight?: number }
 
@@ -115,27 +116,42 @@ export function useEditorProject(projectId: string) {
   }, [projectStatus?.status, projectId, queryClient])
 
   useEffect(() => {
+    let cancelled = false
+
     setSelectedIndex(null)
     setSelectedIndexes([])
+    setBoxes([])
 
     if (!project || isError) {
-      setBoxes([])
       return
     }
 
-    setBoxes(
-      project.analysis.boxes.map(({ lineHeight, ...box }) => {
-        const nextBox = {
-          ...box,
-          lineheight:
-            box.label.split("\n").length === 1
-              ? 1
-              : (box.lineheight ?? lineHeight),
-        }
+    void Promise.all(
+      project.analysis.boxes.map((box) => loadGoogleFont(box.fontFamily))
+    ).then((fontFamilies) => {
+      if (cancelled) {
+        return
+      }
 
-        return resizeTextBox(nextBox, box.label)
-      })
-    )
+      setBoxes(
+        project.analysis.boxes.map(({ lineHeight, ...box }, index) => {
+          const nextBox = {
+            ...box,
+            fontFamily: fontFamilies[index],
+            lineheight:
+              box.label.split("\n").length === 1
+                ? 1
+                : (box.lineheight ?? lineHeight),
+          }
+
+          return resizeTextBox(nextBox, box.label)
+        })
+      )
+    })
+
+    return () => {
+      cancelled = true
+    }
   }, [
     project,
     projectId,

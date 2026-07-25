@@ -2,7 +2,8 @@
 
 import Konva from "konva"
 
-import { fontFamilyMap, type EditorBox } from "@/atom/generate"
+import type { EditorBox } from "@/atom/generate"
+import { getFontFamilyCss } from "@/lib/google-fonts"
 
 type TextStyle = {
   bold: boolean
@@ -110,7 +111,7 @@ export function createBoxTextNode(box: EditorBox, label = box.label) {
   return new Konva.Text({
     align: box.align ?? "center",
     fill: box.color ?? "rgba(0,0,0,1)",
-    fontFamily: fontFamilyMap[box.fontFamily ?? "gothic"],
+    fontFamily: getFontFamilyCss(box.fontFamily),
     fontSize: box.fontSize,
     fontStyle: box.bold ? "bold" : "normal",
     letterSpacing: box.letterSpacing ?? 0,

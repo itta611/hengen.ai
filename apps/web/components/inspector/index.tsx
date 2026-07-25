@@ -1,5 +1,6 @@
 "use client"
 
+import { useQuery } from "@tanstack/react-query"
 import { useAtom, useAtomValue } from "jotai"
 import { AlignCenter, AlignLeft, AlignRight, TypeIcon } from "lucide-react"
 
@@ -11,7 +12,6 @@ import {
 } from "@/atom/generate"
 import { ColorPickerWithInput } from "@/components/ui/color-picker"
 import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
 import {
   Select,
   SelectContent,
@@ -21,13 +21,19 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Textarea } from "@/components/ui/textarea"
 import { resizeTextBox } from "@/hooks/editor-bbox"
+import { loadGoogleFont, normalizeFontFamily } from "@/lib/google-fonts"
 
-const fonts = [
-  { label: "ゴシック", value: "gothic" },
-  { label: "明朝", value: "mincho" },
-  { label: "丸ゴシック", value: "pop" },
-] as const
+async function getGoogleFonts() {
+  const response = await fetch("/api/fonts")
+
+  if (!response.ok) {
+    return []
+  }
+
+  return ((await response.json()) as { fonts: string[] }).fonts
+}
 
 type TextStylePatch = Partial<
   Pick<
@@ -72,16 +78,23 @@ function updateTextBox(
 }
 
 export function Inspector() {
+  const { data: fonts = [] } = useQuery({
+    queryKey: ["google-fonts"],
+    queryFn: getGoogleFonts,
+    staleTime: Number.POSITIVE_INFINITY,
+  })
   const selectedIndexes = useAtomValue(editorSelectedBoxIndexesAtom)
   const saveBoxes = useAtomValue(editorSaveBoxesAtom)
   const [boxes, setBoxes] = useAtom(editorBoxesAtom)
   const selectedBoxes = selectedIndexes.flatMap((index) =>
     boxes[index] ? [boxes[index]] : []
   )
-  const fontFamily = getCommonValue(
-    selectedBoxes,
-    (box) => box.fontFamily ?? "gothic"
+  const fontFamily = getCommonValue(selectedBoxes, (box) =>
+    normalizeFontFamily(box.fontFamily)
   )
+  const fontOptions =
+    fontFamily && !fonts.includes(fontFamily) ? [fontFamily, ...fonts] : fonts
+  const fontItems = fontOptions.map((font) => ({ label: font, value: font }))
   const fontSize = getCommonValue(selectedBoxes, (box) => box.fontSize)
   const lineheight = getCommonValue(
     selectedBoxes,
@@ -132,6 +145,12 @@ export function Inspector() {
     )
   }
 
+  function updateFontFamily(fontFamily: string) {
+    void loadGoogleFont(fontFamily).then((loadedFamily) =>
+      updateBox({ fontFamily: loadedFamily }, true)
+    )
+  }
+
   return (
     <div className="hidden w-80 border-l border-border/70 bg-background px-5 py-3 md:block">
       <div className="mb-5 text-sm font-semibold">インスペクタ</div>
@@ -154,27 +173,22 @@ export function Inspector() {
           <div className="flex items-center justify-between gap-4">
             <span className="text-sm text-muted-foreground">フォント</span>
             <Select
-              items={fonts}
+              items={fontItems}
               onValueChange={(fontFamily) => {
                 if (fontFamily) {
-                  updateBox(
-                    {
-                      fontFamily: fontFamily as EditorBox["fontFamily"],
-                    },
-                    true
-                  )
+                  updateFontFamily(fontFamily)
                 }
               }}
               value={fontFamily}
             >
-              <SelectTrigger className="min-w-27">
+              <SelectTrigger className="w-38">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  {fonts.map((font) => (
-                    <SelectItem key={font.value} value={font.value}>
-                      {font.label}
+                  {fontOptions.map((font) => (
+                    <SelectItem key={font} value={font}>
+                      {font}
                     </SelectItem>
                   ))}
                 </SelectGroup>

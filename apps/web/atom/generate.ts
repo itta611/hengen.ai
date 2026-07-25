@@ -7,21 +7,12 @@ export type EditorBox = {
   bbox: { x?: number; y?: number }[]
   bold?: boolean
   color?: string
-  fontFamily?: "mincho" | "pop" | "gothic"
+  fontFamily?: string
   fontSize: number
   label: string
   letterSpacing?: number
   lineheight?: number
   wrapText?: boolean
-}
-
-export const fontFamilyMap: Record<
-  NonNullable<EditorBox["fontFamily"]>,
-  string
-> = {
-  gothic: '"Noto Sans JP", sans-serif',
-  mincho: '"Noto Serif JP", serif',
-  pop: '"M PLUS Rounded 1c", sans-serif',
 }
 
 export const editorBoxesAtom = atom<EditorBox[]>([])
