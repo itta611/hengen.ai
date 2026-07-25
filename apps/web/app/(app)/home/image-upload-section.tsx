@@ -3,15 +3,20 @@
 import { PlusIcon } from "lucide-react"
 import { useRouter } from "next/navigation"
 import {
+  type ChangeEvent,
   useEffect,
   useEffectEvent,
   useRef,
   useState,
-  type ChangeEvent,
 } from "react"
 import { toast } from "sonner"
 
 import { InsufficientCreditDialog } from "@/components/prompt-input/insufficient-credit-dialog"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 import { useAuthDialog } from "@/hooks/use-auth-dialog"
 import { useGenerateProjectFromImage } from "@/hooks/use-generate-project"
 import { authClient } from "@/lib/auth-client"
@@ -117,20 +122,29 @@ export function ImageUploadSection() {
         ref={inputRef}
         type="file"
       />
-      <button
-        className="mt-6 flex w-full cursor-pointer items-center justify-center gap-4 rounded-lg border border-dashed p-3 transition active:scale-98 disabled:pointer-events-none disabled:opacity-50"
-        disabled={isGenerating}
-        onClick={() => inputRef.current?.click()}
-        type="button"
-      >
-        <div className="flex size-8 items-center justify-center rounded-full bg-muted">
-          <PlusIcon className="size-6 text-muted-foreground" />
-        </div>
-        <div className="flex flex-col gap-0.5 text-left text-sm">
-          <div className="font-bold text-primary">画像を追加</div>
-          <div className="text-muted-foreground">PNG, JPG, GIF, WebP形式</div>
-        </div>
-      </button>
+      <Tooltip>
+        <TooltipTrigger
+          render={
+            <button
+              className="mt-6 flex w-full cursor-pointer items-center justify-center gap-4 rounded-lg border border-dashed p-3 transition active:scale-98 disabled:pointer-events-none disabled:opacity-50"
+              disabled={isGenerating}
+              onClick={() => inputRef.current?.click()}
+              type="button"
+            >
+              <div className="flex size-8 items-center justify-center rounded-full bg-muted">
+                <PlusIcon className="size-6 text-muted-foreground" />
+              </div>
+              <div className="flex flex-col gap-0.5 text-left text-sm">
+                <div className="font-bold text-primary">画像を追加</div>
+                <div className="text-muted-foreground">
+                  PNG, JPG, GIF, WebP形式
+                </div>
+              </div>
+            </button>
+          }
+        />
+        <TooltipContent side="bottom">5クレジット消費</TooltipContent>
+      </Tooltip>
       <InsufficientCreditDialog
         isOpen={isInsufficientCreditsOpen}
         onOpenChange={setInsufficientCreditsOpen}

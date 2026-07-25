@@ -2,11 +2,16 @@
 
 import { SparklesIcon, XIcon } from "lucide-react"
 import Image from "next/image"
-import { useState, type Dispatch, type SetStateAction } from "react"
+import { type Dispatch, type SetStateAction, useState } from "react"
 import { ImagePreview } from "@/components/image-preview"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Textarea } from "@/components/ui/textarea"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 import { usePromptForm } from "@/hooks/use-prompt-form"
 import { cn } from "@/lib/utils"
 import { AspectSelect } from "./aspect-select"
@@ -87,15 +92,22 @@ export function PromptInputForm({
             <CountSelect selectedCount={count} onCountChange={setCount} />
             <StyleSelect style={style} onStyleChange={setStyle} />
           </div>
-          <Button
-            type="submit"
-            size="lg"
-            disabled={!canGenerate}
-            className="border-0"
-          >
-            <SparklesIcon data-icon="inline-end" />
-            {isGenerating ? "生成中" : "生成"}
-          </Button>
+          <Tooltip>
+            <TooltipTrigger
+              render={
+                <Button
+                  type="submit"
+                  size="lg"
+                  disabled={!canGenerate}
+                  className="border-0"
+                >
+                  <SparklesIcon data-icon="inline-end" />
+                  {isGenerating ? "生成中" : "生成"}
+                </Button>
+              }
+            />
+            <TooltipContent side="bottom">10クレジット消費</TooltipContent>
+          </Tooltip>
         </div>
       </form>
       {images.length > 0 ? (
