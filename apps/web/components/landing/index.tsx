@@ -22,9 +22,9 @@ export function Landing() {
       <section id="advantages">
         <AdvantagesSection />
       </section>
-      <section id="editing">
+      {/* <section id="editing">
         <ProductDetailsSection />
-      </section>
+      </section> */}
       <section id="use-cases">
         <UseCasesSection />
       </section>

@@ -95,19 +95,17 @@ function escapeXml(value: string) {
     .replaceAll('"', "&quot;")
 }
 
-function getAlphabeticBaselineY(
+function getTextBaselineOffset(
   context: CanvasRenderingContext2D,
-  text: string,
-  centerY: number,
-  fontSize: number
+  lineHeight: number
 ) {
-  const metrics = context.measureText(text || "M")
+  const metrics = context.measureText("M")
   const ascent =
-    metrics.actualBoundingBoxAscent || metrics.fontBoundingBoxAscent || fontSize
+    metrics.fontBoundingBoxAscent ?? metrics.actualBoundingBoxAscent
   const descent =
-    metrics.actualBoundingBoxDescent || metrics.fontBoundingBoxDescent || 0
+    metrics.fontBoundingBoxDescent ?? metrics.actualBoundingBoxDescent
 
-  return centerY + (ascent - descent) / 2
+  return (ascent - descent) / 2 + lineHeight / 2
 }
 
 function canvasToBlob(canvas: HTMLCanvasElement) {
@@ -186,15 +184,20 @@ export function useExport({
           : align === "right"
             ? rect.left + rect.width
             : rect.left + rect.width / 2
-      const y =
-        rect.top + rect.height / 2 - ((lines.length - 1) * lineHeight) / 2
+      const firstLineY = rect.top + getTextBaselineOffset(context, lineHeight)
 
       context.fillStyle = box.color ?? "rgba(0,0,0,1)"
       context.textAlign = align
-      context.textBaseline = "middle"
+      context.textBaseline = "alphabetic"
 
       lines.forEach((line, index) => {
-        fillText(context, line, x, y + index * lineHeight, letterSpacing)
+        fillText(
+          context,
+          line,
+          x,
+          firstLineY + index * lineHeight,
+          letterSpacing
+        )
       })
     }
 
@@ -235,20 +238,14 @@ export function useExport({
 
       context.font = `${box.bold ? 700 : 400} ${fontSize}px ${fontFamily}`
       const lines = getTextLines(context, box, rect.width)
-      const firstLineCenterY =
-        rect.top + rect.height / 2 - ((lines.length - 1) * lineHeight) / 2
+      const firstLineY = rect.top + getTextBaselineOffset(context, lineHeight)
 
       return `<text fill="${escapeXml(
         box.color ?? "rgba(0,0,0,1)"
       )}" font-family="${escapeXml(fontFamily)}" font-size="${fontSize}" font-weight="${box.bold ? 700 : 400}" letter-spacing="${box.letterSpacing ?? 0}" text-anchor="${textAnchor}" xml:space="preserve">${lines
         .map(
           (line, index) =>
-            `<tspan x="${x}" y="${getAlphabeticBaselineY(
-              context,
-              line,
-              firstLineCenterY + index * lineHeight,
-              fontSize
-            )}">${escapeXml(line)}</tspan>`
+            `<tspan x="${x}" y="${firstLineY + index * lineHeight}">${escapeXml(line)}</tspan>`
         )
         .join("")}</text>`
     })
