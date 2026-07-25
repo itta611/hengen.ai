@@ -12,7 +12,7 @@ export function CtaSection() {
     <div className="px-5 py-20 max-w-300 mx-auto">
       <div className="text-center overflow-hidden rounded-3xl bg-primary py-16 text-primary-foreground px-12">
         <h2 className="mt-5 font-bold tracking-tight text-4xl">
-          いつでも修正できる資料画像を生成
+          いつでも直せる資料画像を生成
         </h2>
         <p className="mx-auto mt-8 max-w-2xl text-sm leading-7 sm:text-base">
           無料で始められます。まずは4枚までの生成をお試し。

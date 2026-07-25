@@ -41,7 +41,7 @@ export function AdvantagesSection() {
         <FeatureItem
           icon={SparklesIcon}
           title="高品質な画像生成"
-          description="最先端のChatGPT Images 2.0モデルで高品質な画像を生成します。"
+          description="最先端のGPT Image 2モデルで高品質な画像を生成します。"
         />
         <FeatureItem
           icon={ScanTextIcon}

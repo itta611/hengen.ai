@@ -1,19 +1,29 @@
+import Image from "next/image"
+
 function Feature({
   title,
   description,
+  imageAlt,
   imagePosition = "left",
+  imageSrc,
 }: {
   title: string
   description: string
+  imageAlt: string
   imagePosition?: "left" | "right"
+  imageSrc: string
 }) {
   const imageOrder = imagePosition === "right" ? "md:order-2" : ""
   const contentOrder = imagePosition === "right" ? "md:order-1" : ""
 
   return (
     <div className="grid items-center gap-10 md:grid-cols-2 md:gap-20">
-      <div
-        className={`aspect-square w-full rounded-2xl bg-gray-100 md:aspect-auto md:h-120 ${imageOrder}`}
+      <Image
+        alt={imageAlt}
+        className={`aspect-square w-full rounded-2xl object-cover md:h-120 ${imageOrder}`}
+        height={640}
+        src={imageSrc}
+        width={640}
       />
       <div className={contentOrder}>
         <h2 className="text-3xl font-bold leading-normal sm:text-4xl">
@@ -31,15 +41,21 @@ export function ProductDetailsSection() {
       <Feature
         title="好きな材料から手軽に生成"
         description="文章のプロンプトだけでなく、手書きのスケッチや印刷物の写真から生成したり、他のAIサービスで作った画像を読み込めます。手元の素材に合わせて、アイデアを手軽にかたちにできます。"
+        imageAlt="文章やスケッチ、写真などの素材からプレゼンテーション画像を生成する画面"
+        imageSrc="/landing/feature-sources.webp"
       />
       <Feature
         title="ブランドのスタイルを維持"
         description="ブランドカラーや質感、全体の雰囲気を細かく指定して、ブランドらしさを保った統一感のある資料に仕上げられます。複数の画像を作る場合も、同じ世界観を保ちながら展開できます。"
+        imageAlt="ブランドカラーと質感を複数の資料へ反映するスタイル設定画面"
         imagePosition="right"
+        imageSrc="/landing/feature-brand-style.webp"
       />
       <Feature
         title="使い慣れたアプリで編集する"
         description="生成した画像は、テキストを編集できる状態でPowerPointやIllustrator等のアプリに貼り付けることもできます。使い慣れた制作環境で、そのまま仕上げの作業を続けられます。"
+        imageAlt="生成した資料のテキストレイヤーを外部のデザインアプリで編集する画面"
+        imageSrc="/landing/feature-editable-export.webp"
       />
     </div>
   )
