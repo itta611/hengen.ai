@@ -6,6 +6,7 @@ import {
   CircleArrowUpIcon,
   HomeIcon,
   LogOutIcon,
+  MailIcon,
   MonitorIcon,
   MoonIcon,
   PaletteIcon,
@@ -236,6 +237,16 @@ export function AppSidebar() {
                     アップグレード
                   </DropdownMenuItem>
                 )}
+                <a
+                  href="https://forms.gle/Lx2icHmeyW4DYrrA9"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <DropdownMenuItem>
+                    <MailIcon />
+                    フィードバックを送る
+                  </DropdownMenuItem>
+                </a>
                 <DropdownMenuItem onClick={() => setSettingsOpen(true)}>
                   <SettingsIcon />
                   設定
