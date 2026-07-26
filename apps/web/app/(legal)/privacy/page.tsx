@@ -1,4 +1,9 @@
 import LogoIcon from "@/components/logo-icon"
+import type { Metadata } from "next"
+
+export const metadata: Metadata = {
+  title: "プライバシーポリシー | Mutar",
+}
 
 function Section({
   children,
