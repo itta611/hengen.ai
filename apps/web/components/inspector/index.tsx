@@ -1,6 +1,5 @@
 "use client"
 
-import { useQuery } from "@tanstack/react-query"
 import { useAtom, useAtomValue } from "jotai"
 import { AlignCenter, AlignLeft, AlignRight, TypeIcon } from "lucide-react"
 
@@ -23,17 +22,11 @@ import {
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Textarea } from "@/components/ui/textarea"
 import { resizeTextBox } from "@/hooks/editor-bbox"
-import { loadGoogleFont, normalizeFontFamily } from "@/lib/google-fonts"
-
-async function getGoogleFonts() {
-  const response = await fetch("/api/fonts")
-
-  if (!response.ok) {
-    return []
-  }
-
-  return ((await response.json()) as { fonts: string[] }).fonts
-}
+import {
+  fontFamilies,
+  loadGoogleFont,
+  normalizeFontFamily,
+} from "@/lib/google-fonts"
 
 type TextStylePatch = Partial<
   Pick<
@@ -78,11 +71,6 @@ function updateTextBox(
 }
 
 export function Inspector() {
-  const { data: fonts = [] } = useQuery({
-    queryKey: ["google-fonts"],
-    queryFn: getGoogleFonts,
-    staleTime: Number.POSITIVE_INFINITY,
-  })
   const selectedIndexes = useAtomValue(editorSelectedBoxIndexesAtom)
   const saveBoxes = useAtomValue(editorSaveBoxesAtom)
   const [boxes, setBoxes] = useAtom(editorBoxesAtom)
@@ -92,9 +80,6 @@ export function Inspector() {
   const fontFamily = getCommonValue(selectedBoxes, (box) =>
     normalizeFontFamily(box.fontFamily)
   )
-  const fontOptions =
-    fontFamily && !fonts.includes(fontFamily) ? [fontFamily, ...fonts] : fonts
-  const fontItems = fontOptions.map((font) => ({ label: font, value: font }))
   const fontSize = getCommonValue(selectedBoxes, (box) => box.fontSize)
   const lineheight = getCommonValue(
     selectedBoxes,
@@ -173,7 +158,7 @@ export function Inspector() {
           <div className="flex items-center justify-between gap-4">
             <span className="text-sm text-muted-foreground">フォント</span>
             <Select
-              items={fontItems}
+              items={fontFamilies}
               onValueChange={(fontFamily) => {
                 if (fontFamily) {
                   updateFontFamily(fontFamily)
@@ -186,9 +171,9 @@ export function Inspector() {
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  {fontOptions.map((font) => (
-                    <SelectItem key={font} value={font}>
-                      {font}
+                  {fontFamilies.map((font) => (
+                    <SelectItem key={font.value} value={font.value}>
+                      {font.label}
                     </SelectItem>
                   ))}
                 </SelectGroup>

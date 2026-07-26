@@ -86,7 +86,7 @@ function createTextMeasurer(style: TextStyle) {
   return new Konva.Text({
     fontFamily: style.fontFamily,
     fontSize: style.fontSize,
-    fontStyle: style.bold ? "bold" : "normal",
+    fontStyle: style.bold ? "700" : "500",
     lineHeight: style.lineheight,
     text: "Hg",
   })
@@ -113,7 +113,7 @@ export function createBoxTextNode(box: EditorBox, label = box.label) {
     fill: box.color ?? "rgba(0,0,0,1)",
     fontFamily: getFontFamilyCss(box.fontFamily),
     fontSize: box.fontSize,
-    fontStyle: box.bold ? "bold" : "normal",
+    fontStyle: box.bold ? "700" : "500",
     letterSpacing: box.letterSpacing ?? 0,
     lineHeight: box.lineheight ?? 1.4,
     text: label,

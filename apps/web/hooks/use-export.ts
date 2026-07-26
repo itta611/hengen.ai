@@ -178,7 +178,7 @@ export function useExport({
       const lineHeight = fontSize * lineheight
       const fontFamily = getFontFamilyCss(fontFamilies[index])
 
-      context.font = `${box.bold ? 700 : 400} ${fontSize}px ${fontFamily}`
+      context.font = `${box.bold ? 700 : 500} ${fontSize}px ${fontFamily}`
 
       const lines = getTextLines(context, box, rect.width)
       const align = box.align ?? "center"
@@ -243,13 +243,13 @@ export function useExport({
       const textAnchor =
         align === "left" ? "start" : align === "right" ? "end" : "middle"
 
-      context.font = `${box.bold ? 700 : 400} ${fontSize}px ${fontFamily}`
+      context.font = `${box.bold ? 700 : 500} ${fontSize}px ${fontFamily}`
       const lines = getTextLines(context, box, rect.width)
       const firstLineY = rect.top + getTextBaselineOffset(context, lineHeight)
 
       return `<text fill="${escapeXml(
         box.color ?? "rgba(0,0,0,1)"
-      )}" font-family="${escapeXml(fontFamily)}" font-size="${fontSize}" font-weight="${box.bold ? 700 : 400}" letter-spacing="${box.letterSpacing ?? 0}" text-anchor="${textAnchor}" xml:space="preserve">${lines
+      )}" font-family="${escapeXml(fontFamily)}" font-size="${fontSize}" font-weight="${box.bold ? 700 : 500}" letter-spacing="${box.letterSpacing ?? 0}" text-anchor="${textAnchor}" xml:space="preserve">${lines
         .map(
           (line, index) =>
             `<tspan x="${x}" y="${firstLineY + index * lineHeight}">${escapeXml(line)}</tspan>`

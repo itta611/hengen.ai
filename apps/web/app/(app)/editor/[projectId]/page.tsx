@@ -828,7 +828,7 @@ function Editor({ projectId }: { projectId: string }) {
                 fill={box.color ?? "rgba(0,0,0,1)"}
                 fontFamily={fontFamily}
                 fontSize={box.fontSize}
-                fontStyle={box.bold ? "bold" : "normal"}
+                fontStyle={box.bold ? "700" : "500"}
                 height={rect.height + bottomInset}
                 letterSpacing={box.letterSpacing ?? 0}
                 lineHeight={box.lineheight ?? 1.4}
@@ -866,7 +866,7 @@ function Editor({ projectId }: { projectId: string }) {
                   color={box.color ?? "rgba(0,0,0,1)"}
                   fontFamily={fontFamily}
                   fontSize={box.fontSize}
-                  fontWeight={box.bold ? 700 : 400}
+                  fontWeight={box.bold ? 700 : 500}
                   height={rect.height}
                   letterSpacing={box.letterSpacing ?? 0}
                   lineheight={box.lineheight ?? 1.4}
