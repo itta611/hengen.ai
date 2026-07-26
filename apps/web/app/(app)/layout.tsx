@@ -6,8 +6,6 @@ import { AppSidebarTrigger } from "./sidebar-trigger"
 
 export const metadata: Metadata = {
   title: "Mutar",
-  description:
-    "Slide and poster oriented AI image generation with editable text layers.",
 }
 
 export default function RootLayout({

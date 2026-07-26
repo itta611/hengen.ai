@@ -12,6 +12,11 @@ export function proxy(request: NextRequest) {
       : NextResponse.next()
   }
 
+
+  if (request.nextUrl.pathname === "/terms" || request.nextUrl.pathname === "/privacy" || request.nextUrl.pathname === "/specified") {
+    return NextResponse.next()
+  }
+
   return isLoggedIn
     ? NextResponse.next()
     : NextResponse.redirect(new URL("/", request.url))
