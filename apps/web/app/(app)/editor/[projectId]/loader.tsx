@@ -126,7 +126,7 @@ export function EditorLoader({
           {loadingMessage}
         </div>
       </div>
-      <div className="hidden h-full w-1/2 overflow-hidden md:block">
+      <div className="hidden h-full w-1/2 overflow-hidden md:block rounded-r-2xl">
         <LoadingPattern projectId={projectId} />
       </div>
     </div>
