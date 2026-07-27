@@ -5,8 +5,6 @@ import * as schema from "@mutar/db/schema"
 import { sendMagicLinkEmail } from "@mutar/email"
 import { betterAuth } from "better-auth"
 import { drizzleAdapter } from "better-auth/adapters/drizzle"
-import { createAuthEndpoint } from "better-auth/api"
-import { setSessionCookie } from "better-auth/cookies"
 import { nextCookies } from "better-auth/next-js"
 import { customSession, magicLink } from "better-auth/plugins"
 import Stripe from "stripe"
@@ -40,33 +38,6 @@ const stripePlugins = env.STRIPE_SECRET_KEY
       }),
     ]
   : []
-
-const betaLogin = {
-  id: "beta-login",
-  endpoints: {
-    betaLogin: createAuthEndpoint(
-      "/beta-login",
-      { method: "POST" },
-      async (ctx) => {
-        const email = "test@test.com"
-        const existingUser =
-          await ctx.context.internalAdapter.findUserByEmail(email)
-        const user =
-          existingUser?.user ??
-          (await ctx.context.internalAdapter.createUser({
-            email,
-            emailVerified: true,
-            name: "Test",
-          }))
-        const session = await ctx.context.internalAdapter.createSession(user.id)
-
-        await setSessionCookie(ctx, { session, user })
-
-        return ctx.json({ success: true })
-      }
-    ),
-  },
-}
 
 export const auth = betterAuth({
   secret: env.AUTH_SECRET,
@@ -112,7 +83,6 @@ export const auth = betterAuth({
   },
   plugins: [
     nextCookies(),
-    betaLogin,
     magicLink({
       sendMagicLink: async ({ email, url }) => {
         await sendMagicLinkEmail({ email, url })

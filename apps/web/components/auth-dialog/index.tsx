@@ -67,23 +67,6 @@ export function AuthDialog() {
     setBusyMode("email")
     setError(null)
 
-    if (email.trim().toLowerCase() === "test@test.com") {
-      const response = await fetch("/api/auth/beta-login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: "{}",
-      })
-
-      if (response.ok) {
-        window.location.href = authCallbackURL
-        return
-      }
-
-      setBusyMode(null)
-      toast.error("ログインできませんでした。")
-      return
-    }
-
     const result = await authClient.signIn.magicLink({
       email: email.trim(),
       name: getNameFromEmail(email),
