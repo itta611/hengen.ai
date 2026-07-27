@@ -16,13 +16,13 @@ export function HeroSection() {
           <span className="text-primary">作り直さず、そのまま修正。</span>
         </h1>
         <p className="mt-8 text-base text-muted-foreground sm:text-lg">
-          Mutarは、資料作成に特化したAI画像生成ツールです。
+          Mutarは、文字を編集できるAI画像生成ツールです。
           <br />
-          ビジネスなどの多様なシーンで、実用に耐える資料画像を生成します。
+          ビジネスをはじめとする多様なシーンで、実用に耐える資料画像を生成します。
         </p>
         <div className="mt-10 flex flex-wrap justify-center gap-2">
           <Button onClick={() => openAuthDialog()} size="xl">
-            無料ではじめる
+            無料で始める
             <ArrowRightIcon />
           </Button>
         </div>

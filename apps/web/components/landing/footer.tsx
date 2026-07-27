@@ -12,6 +12,12 @@ export function LandingFooter() {
           >
             運営者
           </a>
+          <a
+            className="transition-colors hover:text-foreground"
+            href="/specified"
+          >
+            特定商取引法に基づく表記
+          </a>
           <a className="transition-colors hover:text-foreground" href="/terms">
             利用規約
           </a>

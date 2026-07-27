@@ -110,13 +110,13 @@ export function AuthDialog() {
       open={isAuthDialogOpen}
       onOpenChange={(open) => !open && closeAuthDialog()}
     >
-      <DialogContent className="sm:max-w-108 px-10 pb-11 pt-12">
+      <DialogContent className="sm:max-w-120 px-10 pt-11 pt-12">
         <LogoIcon width={40} height={40} className="mx-auto" />
         <DialogTitle className="text-xl font-bold text-center">
           ログイン・新規登録
         </DialogTitle>
         <DialogDescription className="text-center">
-          続行するにはログインまたは新規登録してください。
+          続行するにはログインまたは新規登録が必要です。
         </DialogDescription>
 
         <div className="flex flex-col gap-3">
