@@ -16,7 +16,7 @@ export function HeroSection() {
           <span className="text-primary">作り直さず、そのまま修正。</span>
         </h1>
         <p className="mt-8 text-base text-muted-foreground sm:text-lg">
-          Mutarは、文字を編集できるAI画像生成ツールです。
+          Mutar（ミューター）は、あとから文字を編集できるAI画像生成ツールです。
           <br />
           ビジネスをはじめとする多様なシーンで、実用に耐える資料画像を生成します。
         </p>

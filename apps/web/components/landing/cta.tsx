@@ -10,7 +10,8 @@ export function CtaSection() {
 
   return (
     <div className="px-5 py-20 max-w-300 mx-auto">
-      <div className="text-center overflow-hidden rounded-3xl bg-primary py-16 text-primary-foreground px-12">
+      {/* 円形グラデーション */}
+      <div className="text-center overflow-hidden rounded-3xl bg-indigo-500 py-16 text-white px-12">
         <h2 className="mt-5 font-bold tracking-tight text-4xl">
           いつでも直せる資料画像を生成
         </h2>
@@ -18,7 +19,7 @@ export function CtaSection() {
           無料で始められます。まずは4枚までの生成をお試し。
         </p>
         <Button
-          className="mt-10 text-primary"
+          className="mt-10 bg-white text-indigo-500"
           onClick={() => openAuthDialog()}
           size="xl"
           variant="secondary"
