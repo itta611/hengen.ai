@@ -1,10 +1,11 @@
 "use client"
 
 import { useQueryClient } from "@tanstack/react-query"
-import { CheckIcon, Loader2 } from "lucide-react"
+import { CheckIcon, InfoIcon, Loader2 } from "lucide-react"
 import { createContext, type ReactNode, useContext, useState } from "react"
 import { toast } from "sonner"
 
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -83,7 +84,7 @@ function PricingDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={setOpen}>
-      <DialogContent className="max-h-[calc(100dvh-2rem)] max-w-[680px]! w-[90%] gap-0 overflow-y-auto rounded-3xl p-8!">
+      <DialogContent className="max-h-[calc(100dvh-2rem)] max-w-[740px]! w-[90%] gap-0 overflow-y-auto rounded-3xl p-8!">
         <div className="space-y-3">
           <DialogTitle className="text-2xl font-bold tracking-normal">
             プランを選択
@@ -111,6 +112,16 @@ function PricingDialog({
             subscriptionId={subscriptionId}
           />
         </div>
+
+        {currentPlan === "basic" && (
+          <Alert className="mt-6">
+            <InfoIcon />
+            <AlertTitle>アップグレード時の請求</AlertTitle>
+            <AlertDescription>
+              すぐにプレミアムが適用され、残り期間に応じた差額が請求されます。
+            </AlertDescription>
+          </Alert>
+        )}
 
         <div className="mt-6 text-center">
           <a
@@ -221,6 +232,7 @@ function PlanCard({
       <ul className="mt-4 space-y-2">
         <FeatureItem>{`月あたり${credits}クレジット付与`}</FeatureItem>
         <FeatureItem>画像編集機能</FeatureItem>
+        <FeatureItem>SVGエクスポート</FeatureItem>
         <FeatureItem>商用利用可能</FeatureItem>
         <FeatureItem>
           <a
