@@ -19,7 +19,7 @@ export function CtaSection() {
           無料で始められます。まずは4枚までの生成をお試し。
         </p>
         <Button
-          className="mt-10 bg-white text-indigo-500"
+          className="mt-10 bg-white! text-indigo-500 hover:bg-white/80!"
           onClick={() => openAuthDialog()}
           size="xl"
           variant="secondary"
