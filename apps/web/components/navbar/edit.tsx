@@ -49,16 +49,19 @@ export function EditButton({
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent>
           <form
-            className="grid gap-5.5"
+            className="grid"
             onSubmit={(event) => {
               event.preventDefault()
               submitEditInstruction()
             }}
           >
-            <DialogTitle>画像を編集</DialogTitle>
+            <DialogTitle className="text-lg">画像を編集</DialogTitle>
+            <DialogDescription className="mt-2">
+              画像を再生成します。
+            </DialogDescription>
             <Textarea
               aria-label="編集内容"
-              className="min-h-18"
+              className="min-h-28 mt-3"
               onChange={(event) => setValue(event.currentTarget.value)}
               onKeyDown={(event) => {
                 if (event.key === "Enter" && (event.metaKey || event.ctrlKey)) {
@@ -69,12 +72,12 @@ export function EditButton({
               placeholder="編集内容を入力"
               value={value}
             />
-            <DialogFooter>
+            <DialogFooter className="mt-5">
               <Button onClick={() => setOpen(false)} variant="outline">
                 キャンセル
               </Button>
               <Button disabled={!canSubmit} type="submit">
-                再生成
+                生成
               </Button>
             </DialogFooter>
           </form>
