@@ -26,14 +26,13 @@ export default async function Page() {
   return (
     <div className="sm:px-10 pb-10 px-5 mx-auto">
       <div className="max-w-200 mx-auto">
-        <h2 className="pt-14 mb-10 text-3xl font-bold text-center flex items-center justify-center gap-3.5">
+        <h2 className="pt-14 mb-18 text-3xl font-bold text-center flex items-center justify-center gap-3.5">
           <LogoIcon width={30} />
           利用規約
         </h2>
 
         <div className="leading-7 text-muted-foreground">
-          本利用規約（以下「本規約」といいます。）は、船橋
-          一汰（以下「当方」といいます。）が提供するAI画像生成・編集サービス「Mutar」（以下「本サービス」といいます。）の利用条件を定めるものです。ユーザーは、本サービスを利用することで、本規約に同意したものとみなされます。
+          本利用規約（以下「本規約」といいます。）は、Mutarサービス（以下「本サービス」といいます。）の利用条件を定めるものです。ユーザーは、本サービスを利用することで、本規約に同意したものとみなされます。
         </div>
 
         <Section title="第1条（定義）">

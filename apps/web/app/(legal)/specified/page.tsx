@@ -23,7 +23,7 @@ function Row({
 export default async function Page() {
   return (
     <div>
-      <div className="min-h-full pb-10 sm:px-10 px-5">
+      <div className="min-h-full pb-18 sm:px-10 px-5">
         <div className="max-w-200 mx-auto">
           <h2 className="pt-14 mb-10 text-3xl font-bold text-center flex items-center justify-center gap-3.5">
             <LogoIcon width={30} />
