@@ -10,7 +10,7 @@ export function LandingFooter() {
             className="transition-colors hover:text-foreground"
             href="https://x.com/IttaFunahashi"
           >
-            作者
+            運営者
           </a>
           <a className="transition-colors hover:text-foreground" href="/terms">
             利用規約

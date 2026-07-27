@@ -2,18 +2,17 @@
 
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
-
-import { authClient } from "@/lib/auth-client"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useAuthDialog } from "@/hooks/use-auth-dialog"
+import { authClient } from "@/lib/auth-client"
+import LogoIcon from "../logo-icon"
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogTitle,
 } from "../ui/dialog"
-import LogoIcon from "../logo-icon"
 import GoogleIcon from "./google-icon"
 
 function getNameFromEmail(email: string) {
@@ -160,6 +159,28 @@ export function AuthDialog() {
             </Button>
           </form>
         </div>
+
+        <p className="text-center text-xs leading-5 text-muted-foreground">
+          続けることで、
+          <a
+            className="underline underline-offset-4"
+            href="/terms"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            利用規約
+          </a>
+          および
+          <a
+            className="underline underline-offset-4"
+            href="/privacy"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            プライバシーポリシー
+          </a>
+          に同意したものとします。
+        </p>
 
         {error ? (
           <p className="mt-4 rounded-xl px-4 text-sm leading-6 text-red-500">
