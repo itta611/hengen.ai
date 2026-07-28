@@ -8,7 +8,7 @@ type CreateProjectInput = {
   id: string
   userId: string
   prompt: string
-  title: string
+  title?: string
   aspectRatio: string
   status: string
   width: number
@@ -17,7 +17,9 @@ type CreateProjectInput = {
 }
 
 export async function createProject(input: CreateProjectInput) {
-  await db.insert(projects).values(input)
+  await db
+    .insert(projects)
+    .values({ ...input, title: input.title ?? "新規プロジェクト" })
 }
 
 export async function updateProjectImageByUserId({

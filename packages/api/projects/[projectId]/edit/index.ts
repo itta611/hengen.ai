@@ -75,7 +75,6 @@ export const projectEditRoutes = new Hono<SessionEnv>().post(
         id: projectId,
         userId: session.user.id,
         prompt: instruction,
-        title: "編集プロジェクト",
         aspectRatio: "auto",
         status: "generating",
         width: 0,

@@ -62,7 +62,6 @@ async function startProjectGeneration({
           id: projectId,
           userId,
           prompt,
-          title: "新規プロジェクト",
           aspectRatio,
           status: "generating",
           width: 0,
