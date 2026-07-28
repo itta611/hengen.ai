@@ -4,6 +4,7 @@ import { ChevronDownIcon } from "lucide-react"
 import { useState } from "react"
 import { toast } from "sonner"
 
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { ButtonGroup } from "@/components/ui/button-group"
 import { Command, CommandItem, CommandList } from "@/components/ui/command"
@@ -15,10 +16,12 @@ import {
 
 export function CopyButton({
   disabled,
+  isSvgPaidFeature,
   onCopyImage,
   onCopySvg,
 }: {
   disabled: boolean
+  isSvgPaidFeature: boolean
   onCopyImage: () => Promise<void>
   onCopySvg: () => Promise<void>
 }) {
@@ -61,21 +64,30 @@ export function CopyButton({
         <PopoverContent className="w-75 p-0" align="end">
           <Command>
             <CommandList>
-              <CommandItem onSelect={() => handleCopy(onCopyImage)} className="flex-col items-start gap-0.5 p-2!">
-                  <div className="text-foreground text-xs font-bold">
-                    画像としてコピー
-                  </div>
-                  <div className="text-xs text-muted-foreground">
-                    画像形式でコピーします。
-                  </div>
+              <CommandItem
+                onSelect={() => handleCopy(onCopyImage)}
+                className="flex-col items-start gap-0.5 p-2!"
+              >
+                <div className="text-foreground text-xs font-bold">
+                  画像としてコピー
+                </div>
+                <div className="text-xs text-muted-foreground">
+                  画像形式でコピーします。
+                </div>
               </CommandItem>
-              <CommandItem onSelect={() => handleCopy(onCopySvg)} className="flex-col items-start gap-0.5 p-2!">
-                  <div className="text-foreground text-xs font-bold">
-                    SVG形式でコピー
-                  </div>
-                  <div className="text-xs text-muted-foreground">
-                    Powerpoint等で編集できる形式でコピーします。
-                  </div>
+              <CommandItem
+                onSelect={() => handleCopy(onCopySvg)}
+                className="flex-col items-start gap-0.5 p-2!"
+              >
+                <div className="flex items-center gap-1.5 text-foreground text-xs font-bold">
+                  <span>SVG形式でコピー</span>
+                  {isSvgPaidFeature && (
+                    <Badge className="h-4 px-1.5 text-[10px]">有料プラン</Badge>
+                  )}
+                </div>
+                <div className="text-xs text-muted-foreground">
+                  Powerpoint等で編集できる形式でコピーします。
+                </div>
               </CommandItem>
             </CommandList>
           </Command>

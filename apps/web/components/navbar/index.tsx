@@ -6,6 +6,7 @@ import { useParams, useRouter } from "next/navigation"
 import { toast } from "sonner"
 
 import { editorBoxesAtom } from "@/atom/generate"
+import { usePricingDialog } from "@/components/pricing-dialog"
 import { Button } from "@/components/ui/button"
 import { useCurrentPlan } from "@/hooks/use-current-plan"
 import { useEditorProjectData } from "@/hooks/use-editor-project"
@@ -18,6 +19,7 @@ export function Navbar() {
   const { projectId } = useParams<{ projectId: string }>()
   const boxes = useAtomValue(editorBoxesAtom)
   const { data: currentPlan } = useCurrentPlan()
+  const pricingDialog = usePricingDialog()
   const { project } = useEditorProjectData(projectId)
   const imageSize = project
     ? ([project.width, project.height] as [number, number])
@@ -56,11 +58,17 @@ export function Navbar() {
       ) : null}
       <CopyButton
         disabled={disabled}
+        isSvgPaidFeature={currentPlan === "free"}
         onCopyImage={async () => {
           await copyPng()
           toast("コピーしました")
         }}
         onCopySvg={async () => {
+          if (currentPlan === "free") {
+            pricingDialog.open()
+            return
+          }
+
           await copySvg()
           toast("コピーしました")
         }}
