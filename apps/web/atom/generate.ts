@@ -12,6 +12,8 @@ export type EditorBox = {
   label: string
   letterSpacing?: number
   lineheight?: number
+  verticalAlign?: "top" | "middle" | "bottom"
+  verticalAlignBbox?: { x?: number; y?: number }[]
   wrapText?: boolean
 }
 

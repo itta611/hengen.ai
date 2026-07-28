@@ -22,6 +22,7 @@ export function TextEditor({
   width,
   wrapText,
   x,
+  y,
 }: {
   color: string
   fontFamily: string
@@ -37,9 +38,10 @@ export function TextEditor({
   width: number
   wrapText: boolean
   x: number
+  y: number
 }) {
   return (
-    <Html groupProps={{ x }}>
+    <Html groupProps={{ x, y }}>
       <textarea
         aria-label="Edit text"
         autoFocus

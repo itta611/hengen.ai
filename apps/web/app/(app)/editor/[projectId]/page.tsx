@@ -23,6 +23,7 @@ import {
 import {
   createBoxTextNode,
   getBoxRect,
+  getTextOffsetY,
   getTextStyleBottomInset,
   moveTextBox,
   resizeTextBox,
@@ -692,16 +693,16 @@ function Editor({ projectId }: { projectId: string }) {
       ? snapBoxPosition(boxes, index, {
           ...rect,
           left: rect.left + node.x() - textX,
-          top: rect.top + node.y(),
+          top: rect.top + node.y() - (start?.y ?? 0),
         })
       : {
           guides: [],
           left: rect.left + node.x() - textX,
-          top: rect.top + node.y(),
+          top: rect.top + node.y() - (start?.y ?? 0),
         }
 
     node.x(textX + nextPosition.left - rect.left)
-    node.y(nextPosition.top - rect.top)
+    node.y((start?.y ?? 0) + nextPosition.top - rect.top)
     setSnapGuides(nextPosition.guides)
     getTextTransformer(index)?.forceUpdate()
   }
@@ -807,6 +808,13 @@ function Editor({ projectId }: { projectId: string }) {
           const rect = getBoxRect(box)
           const fontFamily = getFontFamilyCss(box.fontFamily)
           const textNode = createBoxTextNode(box)
+          const lineCount = Math.max(
+            1,
+            Math.round(
+              textNode.height() / (box.fontSize * (box.lineheight ?? 1.4))
+            )
+          )
+          const textY = getTextOffsetY(box, lineCount)
           const textWidth = box.wrapText ? rect.width : textNode.getTextWidth()
           const textX =
             box.wrapText || box.align === "left"
@@ -859,7 +867,7 @@ function Editor({ projectId }: { projectId: string }) {
                 width={textWidth}
                 wrap={box.wrapText ? "char" : "none"}
                 x={textX}
-                y={0}
+                y={textY}
               />
               {editingText?.index === index ? (
                 <TextEditor
@@ -877,6 +885,7 @@ function Editor({ projectId }: { projectId: string }) {
                   width={textWidth}
                   wrapText={box.wrapText ?? false}
                   x={textX}
+                  y={textY}
                 />
               ) : null}
             </Group>

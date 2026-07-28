@@ -13,8 +13,12 @@ type TextStyle = {
 }
 
 export function getBoxRect(box: EditorBox) {
-  const xs = box.bbox.map((point) => point.x ?? 0)
-  const ys = box.bbox.map((point) => point.y ?? 0)
+  return getRect(box.bbox)
+}
+
+function getRect(points: { x?: number; y?: number }[]) {
+  const xs = points.map((point) => point.x ?? 0)
+  const ys = points.map((point) => point.y ?? 0)
   const left = Math.min(...xs)
   const top = Math.min(...ys)
 
@@ -24,6 +28,33 @@ export function getBoxRect(box: EditorBox) {
     top,
     width: Math.max(...xs) - left,
   }
+}
+
+export function getFirstLineCenterY(box: EditorBox, lineCount: number) {
+  const rect = box.verticalAlignBbox?.length
+    ? getRect(box.verticalAlignBbox)
+    : getBoxRect(box)
+  const fontSize = box.fontSize
+  const lineHeight = fontSize * (box.lineheight ?? 1.4)
+  const blockHeight = fontSize + Math.max(0, lineCount - 1) * lineHeight
+
+  if (box.verticalAlign === "top") {
+    return rect.top + fontSize / 2
+  }
+
+  if (box.verticalAlign === "middle") {
+    return rect.top + rect.height / 2 - blockHeight / 2 + fontSize / 2
+  }
+
+  return rect.top + rect.height - blockHeight + fontSize / 2
+}
+
+export function getTextOffsetY(box: EditorBox, lineCount: number) {
+  const lineHeight = box.fontSize * (box.lineheight ?? 1.4)
+
+  return (
+    getFirstLineCenterY(box, lineCount) - lineHeight / 2 - getBoxRect(box).top
+  )
 }
 
 function updateBboxRect(
@@ -136,8 +167,22 @@ export function resizeTextBox(box: EditorBox, label: string) {
 
 export function moveTextBox(box: EditorBox, left: number, top: number) {
   const rect = getBoxRect(box)
+  const x = left - rect.left
+  const y = top - rect.top
 
-  return updateBboxRect(box, { ...rect, left, top })
+  return updateBboxRect(
+    box.verticalAlignBbox
+      ? {
+          ...box,
+          verticalAlignBbox: box.verticalAlignBbox.map((point) => ({
+            ...point,
+            x: (point.x ?? 0) + x,
+            y: (point.y ?? 0) + y,
+          })),
+        }
+      : box,
+    { ...rect, left, top }
+  )
 }
 
 export function resizeWrappedTextBox(

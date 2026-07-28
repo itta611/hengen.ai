@@ -1,6 +1,7 @@
 "use client"
 
 import type { EditorBox, ImageSize } from "@/atom/generate"
+import { getBoxRect, getFirstLineCenterY } from "@/hooks/editor-bbox"
 import { getFontFamilyCss, loadGoogleFont } from "@/lib/google-fonts"
 
 function getTextWidth(
@@ -43,20 +44,6 @@ function fillText(
   context.textAlign = textAlign
 }
 
-function getBoxRect(box: EditorBox) {
-  const xs = box.bbox.map((point) => point.x ?? 0)
-  const ys = box.bbox.map((point) => point.y ?? 0)
-  const left = Math.min(...xs)
-  const top = Math.min(...ys)
-
-  return {
-    height: Math.max(...ys) - top,
-    left,
-    top,
-    width: Math.max(...xs) - left,
-  }
-}
-
 function getTextLines(
   context: CanvasRenderingContext2D,
   box: EditorBox,
@@ -96,17 +83,14 @@ function escapeXml(value: string) {
     .replaceAll('"', "&quot;")
 }
 
-function getTextBaselineOffset(
-  context: CanvasRenderingContext2D,
-  lineHeight: number
-) {
+function getTextBaselineOffset(context: CanvasRenderingContext2D) {
   const metrics = context.measureText("M")
   const ascent =
     metrics.fontBoundingBoxAscent ?? metrics.actualBoundingBoxAscent
   const descent =
     metrics.fontBoundingBoxDescent ?? metrics.actualBoundingBoxDescent
 
-  return (ascent - descent) / 2 + lineHeight / 2
+  return (ascent - descent) / 2
 }
 
 function canvasToBlob(canvas: HTMLCanvasElement) {
@@ -188,7 +172,8 @@ export function useExport({
           : align === "right"
             ? rect.left + rect.width
             : rect.left + rect.width / 2
-      const firstLineY = rect.top + getTextBaselineOffset(context, lineHeight)
+      const firstLineY =
+        getFirstLineCenterY(box, lines.length) + getTextBaselineOffset(context)
 
       context.fillStyle = box.color ?? "rgba(0,0,0,1)"
       context.textAlign = align
@@ -245,7 +230,8 @@ export function useExport({
 
       context.font = `${box.bold ? 700 : 500} ${fontSize}px ${fontFamily}`
       const lines = getTextLines(context, box, rect.width)
-      const firstLineY = rect.top + getTextBaselineOffset(context, lineHeight)
+      const firstLineY =
+        getFirstLineCenterY(box, lines.length) + getTextBaselineOffset(context)
 
       return `<text fill="${escapeXml(
         box.color ?? "rgba(0,0,0,1)"
