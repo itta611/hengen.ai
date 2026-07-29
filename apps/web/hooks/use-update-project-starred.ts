@@ -4,6 +4,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { toast } from "sonner"
 
 import type { ProjectDropdownMenuProject } from "@/components/gallary/project-dropdown-menu"
+import { useTranslation } from "@/i18n/client"
 import { apiClient } from "@/lib/api-client"
 
 async function updateProjectStarred({
@@ -28,6 +29,7 @@ async function updateProjectStarred({
 export function useUpdateProjectStarred(
   onStarredChange?: (input: { id: string; isStarred: boolean }) => void
 ) {
+  const { t } = useTranslation()
   const queryClient = useQueryClient()
 
   return useMutation({
@@ -63,9 +65,7 @@ export function useUpdateProjectStarred(
     },
     onSuccess: (_data, input) => {
       toast.success(
-        input.isStarred
-          ? "お気に入りに追加しました"
-          : "お気に入りから削除しました"
+        input.isStarred ? t("gallery.addStar") : t("gallery.removeStar")
       )
     },
     onSettled: () => {

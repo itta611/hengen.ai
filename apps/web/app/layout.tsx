@@ -12,6 +12,8 @@ import { ThemeProvider } from "@/components/theme-provider"
 import { SidebarProvider } from "@/components/ui/sidebar"
 import { Toaster } from "@/components/ui/sonner"
 import { AuthDialogProvider } from "@/hooks/use-auth-dialog"
+import { LocaleProvider } from "@/i18n/client"
+import { getLocale, getTranslation } from "@/i18n/server"
 import { cn } from "@/lib/utils"
 
 const manrope = Manrope({
@@ -36,10 +38,13 @@ const sourceSerif = Source_Serif_4({
   variable: "--font-editor-serif",
 })
 
-export const metadata: Metadata = {
-  title: "Mutar | 文字まで編集できるAI画像生成",
-  description:
-    "文字を編集できる状態で画像を生成。文章やフォント、色をあとから変更可能。文字の歪み・にじみ無しで、スライドやポスターなどの資料作成に最適なAI画像生成サービスです。",
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getTranslation()
+
+  return {
+    title: t("metadata.title"),
+    description: t("metadata.description"),
+  }
 }
 
 const editorSans = Manrope({
@@ -53,14 +58,16 @@ const editorDisplay = Cormorant_Garamond({
   weight: ["400", "500", "600", "700"],
 })
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const locale = await getLocale()
+
   return (
     <html
-      lang="ja"
+      lang={locale}
       suppressHydrationWarning
       className={cn(
         manrope.variable,
@@ -73,22 +80,24 @@ export default function RootLayout({
       )}
     >
       <body>
-        <SidebarProvider
-          style={
-            {
-              "--sidebar-width": "18.75rem",
-              "--sidebar-width-mobile": "18.75rem",
-            } as React.CSSProperties
-          }
-        >
-          <AuthDialogProvider>
-            <ThemeProvider>
-              {children}
-              <AuthDialog />
-              <Toaster position="bottom-center" />
-            </ThemeProvider>
-          </AuthDialogProvider>
-        </SidebarProvider>
+        <LocaleProvider initialLocale={locale}>
+          <SidebarProvider
+            style={
+              {
+                "--sidebar-width": "18.75rem",
+                "--sidebar-width-mobile": "18.75rem",
+              } as React.CSSProperties
+            }
+          >
+            <AuthDialogProvider>
+              <ThemeProvider>
+                {children}
+                <AuthDialog />
+                <Toaster position="bottom-center" />
+              </ThemeProvider>
+            </AuthDialogProvider>
+          </SidebarProvider>
+        </LocaleProvider>
       </body>
     </html>
   )

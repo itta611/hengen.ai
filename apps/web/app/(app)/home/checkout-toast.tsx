@@ -2,8 +2,10 @@
 
 import { useEffect, useRef } from "react"
 import { toast } from "sonner"
+import { useTranslation } from "@/i18n/client"
 
 export function CheckoutToast({ checkout }: { checkout?: string }) {
+  const { t } = useTranslation()
   const hasShownToast = useRef(false)
 
   useEffect(() => {
@@ -21,13 +23,13 @@ export function CheckoutToast({ checkout }: { checkout?: string }) {
 
       hasShownToast.current = true
       if (checkout === "success") {
-        toast.success("支払いに成功しました。")
+        toast.success(t("home.checkoutSuccess"))
       }
       window.history.replaceState(window.history.state, "", "/home")
     }, 0)
 
     return () => window.clearTimeout(timeoutId)
-  }, [checkout])
+  }, [checkout, t])
 
   return null
 }

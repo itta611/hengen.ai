@@ -3,25 +3,12 @@
 import { useState } from "react"
 
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
+import { useTranslation } from "@/i18n/client"
 import { cn } from "@/lib/utils"
 import { AccountSettingsPage } from "./account"
 import { BillingSettingsPage } from "./billing"
 import { GeneralSettingsPage } from "./general"
 import { CreditCardIcon, Settings2Icon, User2Icon } from "lucide-react"
-
-const navItems = [
-  { title: "アカウント", component: <AccountSettingsPage />, Icon: User2Icon },
-  {
-    title: "一般",
-    component: <GeneralSettingsPage />,
-    Icon: Settings2Icon,
-  },
-  {
-    title: "支払い",
-    component: <BillingSettingsPage />,
-    Icon: CreditCardIcon,
-  },
-]
 
 export function SettingsDialog({
   onOpenChange,
@@ -30,12 +17,30 @@ export function SettingsDialog({
   onOpenChange: (open: boolean) => void
   open: boolean
 }) {
+  const { t } = useTranslation()
   const [activeTab, setActiveTab] = useState(0)
+  const navItems = [
+    {
+      title: t("settings.tabs.account"),
+      component: <AccountSettingsPage />,
+      Icon: User2Icon,
+    },
+    {
+      title: t("settings.tabs.general"),
+      component: <GeneralSettingsPage />,
+      Icon: Settings2Icon,
+    },
+    {
+      title: t("settings.tabs.billing"),
+      component: <BillingSettingsPage />,
+      Icon: CreditCardIcon,
+    },
+  ]
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="grid h-[min(760px,calc(100dvh-4rem))] max-w-250! grid-cols-1 gap-0 overflow-hidden p-0 sm:grid-cols-[240px_1fr]">
-        <DialogTitle className="sr-only">設定</DialogTitle>
+        <DialogTitle className="sr-only">{t("settings.title")}</DialogTitle>
         <aside className="border-b bg-muted/40 p-3 sm:border-r sm:border-b-0">
           <div className="grid gap-1">
             {navItems.map((item, index) => (

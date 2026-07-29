@@ -22,6 +22,7 @@ import {
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Textarea } from "@/components/ui/textarea"
 import { resizeTextBox } from "@/hooks/editor-bbox"
+import { useTranslation } from "@/i18n/client"
 import {
   fontFamilies,
   loadGoogleFont,
@@ -71,6 +72,7 @@ function updateTextBox(
 }
 
 export function Inspector() {
+  const { t } = useTranslation()
   const selectedIndexes = useAtomValue(editorSelectedBoxIndexesAtom)
   const saveBoxes = useAtomValue(editorSaveBoxesAtom)
   const [boxes, setBoxes] = useAtom(editorBoxesAtom)
@@ -138,11 +140,15 @@ export function Inspector() {
 
   return (
     <div className="hidden w-80 border-l border-border/70 bg-background px-5 py-3 md:block">
-      <div className="mb-5 text-sm font-semibold">インスペクタ</div>
+      <div className="mb-5 text-sm font-semibold">
+        {t("editor.inspector.title")}
+      </div>
       {selectedBoxes.length > 0 ? (
         <div className="space-y-5">
           <div className="space-y-2">
-            <div className="text-sm text-muted-foreground">テキスト</div>
+            <div className="text-sm text-muted-foreground">
+              {t("editor.inspector.text")}
+            </div>
             <Textarea
               onBlur={() => saveBoxes?.(boxes)}
               onChange={(event) => updateLabel(event.currentTarget.value)}
@@ -156,7 +162,9 @@ export function Inspector() {
             />
           </div>
           <div className="flex items-center justify-between gap-4">
-            <span className="text-sm text-muted-foreground">フォント</span>
+            <span className="text-sm text-muted-foreground">
+              {t("editor.inspector.font")}
+            </span>
             <Select
               items={fontFamilies}
               onValueChange={(fontFamily) => {
@@ -181,7 +189,9 @@ export function Inspector() {
             </Select>
           </div>
           <div className="flex items-center justify-between gap-4">
-            <span className="text-sm text-muted-foreground">文字サイズ</span>
+            <span className="text-sm text-muted-foreground">
+              {t("editor.inspector.fontSize")}
+            </span>
             <Input
               className="w-27"
               min={1}
@@ -198,7 +208,9 @@ export function Inspector() {
             />
           </div>
           <div className="flex items-center justify-between gap-4">
-            <span className="text-sm text-muted-foreground">行間</span>
+            <span className="text-sm text-muted-foreground">
+              {t("editor.inspector.lineHeight")}
+            </span>
             <Input
               className="w-27"
               min={0.1}
@@ -216,7 +228,9 @@ export function Inspector() {
             />
           </div>
           <div className="flex items-center justify-between gap-4">
-            <span className="text-sm text-muted-foreground">字間</span>
+            <span className="text-sm text-muted-foreground">
+              {t("editor.inspector.letterSpacing")}
+            </span>
             <Input
               className="w-27"
               onChange={(event) => {
@@ -233,11 +247,13 @@ export function Inspector() {
             />
           </div>
           <div className="flex items-center justify-between gap-4">
-            <span className="text-sm text-muted-foreground">字体</span>
+            <span className="text-sm text-muted-foreground">
+              {t("editor.inspector.weight")}
+            </span>
             <Select
               items={[
-                { label: "標準", value: "normal" },
-                { label: "太字", value: "bold" },
+                { label: t("editor.inspector.normal"), value: "normal" },
+                { label: t("editor.inspector.bold"), value: "bold" },
               ]}
               onValueChange={(value) =>
                 updateBox({ bold: value === "bold" }, true)
@@ -251,16 +267,20 @@ export function Inspector() {
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
-                  <SelectItem value="normal">標準</SelectItem>
+                  <SelectItem value="normal">
+                    {t("editor.inspector.normal")}
+                  </SelectItem>
                   <SelectItem value="bold" className="font-bold">
-                    太字
+                    {t("editor.inspector.bold")}
                   </SelectItem>
                 </SelectGroup>
               </SelectContent>
             </Select>
           </div>
           <div className="flex items-center justify-between gap-4">
-            <span className="text-sm text-muted-foreground">文字揃え</span>
+            <span className="text-sm text-muted-foreground">
+              {t("editor.inspector.alignment")}
+            </span>
             <Tabs
               onValueChange={(align) =>
                 updateBox({ align: align as EditorBox["align"] }, true)
@@ -268,20 +288,31 @@ export function Inspector() {
               value={align}
             >
               <TabsList>
-                <TabsTrigger aria-label="左揃え" value="left">
+                <TabsTrigger
+                  aria-label={t("editor.inspector.alignLeft")}
+                  value="left"
+                >
                   <AlignLeft />
                 </TabsTrigger>
-                <TabsTrigger aria-label="中央揃え" value="center">
+                <TabsTrigger
+                  aria-label={t("editor.inspector.alignCenter")}
+                  value="center"
+                >
                   <AlignCenter />
                 </TabsTrigger>
-                <TabsTrigger aria-label="右揃え" value="right">
+                <TabsTrigger
+                  aria-label={t("editor.inspector.alignRight")}
+                  value="right"
+                >
                   <AlignRight />
                 </TabsTrigger>
               </TabsList>
             </Tabs>
           </div>
           <div className="flex items-center justify-between gap-4">
-            <span className="text-sm text-muted-foreground">文字色</span>
+            <span className="text-sm text-muted-foreground">
+              {t("editor.inspector.color")}
+            </span>
             <ColorPickerWithInput
               onValueChange={(color) => updateBox({ color })}
               onBlur={() => saveBoxes?.(boxes)}
@@ -296,10 +327,10 @@ export function Inspector() {
           </div>
           <div className="text-center space-y-2">
             <div className="font-bold text-[14px]">
-              テキストを選択してください
+              {t("editor.inspector.emptyTitle")}
             </div>
             <div className="text-center text-muted-foreground text-[13px]">
-              選択中テキストのフォントや文字サイズなどのスタイルを変更できます。
+              {t("editor.inspector.emptyDescription")}
             </div>
           </div>
         </div>

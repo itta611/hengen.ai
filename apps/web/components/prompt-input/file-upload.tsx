@@ -2,6 +2,7 @@ import { PaperclipIcon } from "lucide-react"
 import { useRef, type Dispatch, type SetStateAction } from "react"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
+import { useTranslation } from "@/i18n/client"
 
 const acceptedImageTypes = new Set([
   "image/jpeg",
@@ -18,10 +19,11 @@ export type UploadedImage = {
 export function addImageFiles(
   files: File[],
   images: UploadedImage[],
-  setImages: Dispatch<SetStateAction<UploadedImage[]>>
+  setImages: Dispatch<SetStateAction<UploadedImage[]>>,
+  invalidTypeMessage: string
 ) {
   if (files.some((file) => !acceptedImageTypes.has(file.type))) {
-    toast.error("JPEG、PNG、GIF、WebP形式の画像のみアップロードできます。")
+    toast.error(invalidTypeMessage)
     return
   }
 
@@ -59,6 +61,7 @@ export function FileUpload({
   images: UploadedImage[]
   setImages: Dispatch<SetStateAction<UploadedImage[]>>
 }) {
+  const { t } = useTranslation()
   const inputRef = useRef<HTMLInputElement>(null)
 
   return (
@@ -71,7 +74,8 @@ export function FileUpload({
           addImageFiles(
             Array.from(event.currentTarget.files ?? []),
             images,
-            setImages
+            setImages,
+            t("common.uploadTypeError")
           )
           event.currentTarget.value = ""
         }}

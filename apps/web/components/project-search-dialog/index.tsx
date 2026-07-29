@@ -9,6 +9,7 @@ import Link from "next/link"
 import { listProjects } from "@/components/gallary"
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
+import { useTranslation } from "@/i18n/client"
 
 export function ProjectSearchDialog({
   onOpenChange,
@@ -17,6 +18,7 @@ export function ProjectSearchDialog({
   onOpenChange: (open: boolean) => void
   open: boolean
 }) {
+  const { t } = useTranslation()
   const [query, setQuery] = useState("")
   const { data: projects = [] } = useQuery({
     queryKey: ["projects"],
@@ -39,14 +41,14 @@ export function ProjectSearchDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="grid h-[min(720px,calc(100dvh-4rem))] max-w-200! grid-rows-[auto_1fr] gap-0 overflow-hidden p-0">
-        <DialogTitle className="sr-only">検索</DialogTitle>
+        <DialogTitle className="sr-only">{t("search.title")}</DialogTitle>
         <div className="flex h-16 items-center gap-3 border-b px-5 pr-13">
           <SearchIcon className="size-4 shrink-0 text-muted-foreground" />
           <Input
             autoFocus
             className="h-auto border-0 px-0 text-lg focus-visible:ring-0 bg-transparent!"
             onChange={(event) => setQuery(event.target.value)}
-            placeholder="検索"
+            placeholder={t("search.placeholder")}
             value={query}
           />
         </div>

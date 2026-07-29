@@ -8,6 +8,7 @@ import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
+import { useTranslation } from "@/i18n/client"
 import { apiClient } from "@/lib/api-client"
 import { authClient } from "@/lib/auth-client"
 import { SettingSection } from "./setting-section"
@@ -18,6 +19,7 @@ type AccountFormValues = {
 }
 
 export function AccountSettingsPage() {
+  const { t } = useTranslation()
   const [confirmOpen, setConfirmOpen] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
   const [isSavingName, setIsSavingName] = useState(false)
@@ -44,12 +46,12 @@ export function AccountSettingsPage() {
     setIsSavingName(false)
 
     if (!response.ok) {
-      setError("名前を変更できませんでした。")
+      setError(t("settings.account.nameUpdateError"))
       return
     }
 
     router.refresh()
-    toast.success("名前を変更しました。")
+    toast.success(t("settings.account.nameUpdateSuccess"))
   })
 
   const handleDeleteAccount = async () => {
@@ -63,7 +65,7 @@ export function AccountSettingsPage() {
     setIsDeleting(false)
 
     if (result.error) {
-      setError("アカウントを削除できませんでした。")
+      setError(t("settings.account.deleteError"))
       return
     }
 
@@ -73,24 +75,27 @@ export function AccountSettingsPage() {
 
   return (
     <div className="space-y-12">
-      <SettingSection title="名前">
+      <SettingSection title={t("settings.account.name")}>
         <form className="space-y-4" onSubmit={handleUpdateAccount}>
           <div className="max-w-90 flex gap-2">
             <Input {...accountForm.register("name")} />
             <Button disabled={isSavingName} type="submit">
-              保存
+              {t("settings.account.save")}
             </Button>
           </div>
           {error && <p className="text-sm text-destructive">{error}</p>}
         </form>
       </SettingSection>
-      <SettingSection title="クレジット使用量">
+      <SettingSection title={t("settings.account.creditUsage")}>
         <UsageCard />
       </SettingSection>
-      <SettingSection title="メールアドレス" description={user?.email} />
       <SettingSection
-        title="ログアウト"
-        description="この端末からログアウトします。"
+        title={t("settings.account.email")}
+        description={user?.email}
+      />
+      <SettingSection
+        title={t("settings.account.logout")}
+        description={t("settings.account.logoutDescription")}
       >
         <Button
           onClick={async () => {
@@ -99,24 +104,24 @@ export function AccountSettingsPage() {
           }}
           variant="outline"
         >
-          ログアウト
+          {t("settings.account.logout")}
         </Button>
       </SettingSection>
       <SettingSection
-        title="アカウント削除"
-        description="アカウント、作成したプロジェクト、契約情報を削除します。"
+        title={t("settings.account.delete")}
+        description={t("settings.account.deleteDescription")}
       >
         <Button onClick={() => setConfirmOpen(true)} variant="destructive">
-          アカウントを削除
+          {t("settings.account.deleteButton")}
         </Button>
       </SettingSection>
       <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
         <DialogContent className="max-w-100!" forceRenderOverlay>
           <DialogTitle className="text-lg">
-            アカウントを削除しますか？
+            {t("settings.account.deleteTitle")}
           </DialogTitle>
           <p className="text-sm text-muted-foreground">
-            作成したプロジェクトはすべて削除されます。この操作は取り消せません。
+            {t("settings.account.deleteWarning")}
           </p>
           {error && <p className="text-sm text-destructive">{error}</p>}
           <div className="flex justify-end gap-2">
@@ -125,14 +130,14 @@ export function AccountSettingsPage() {
               onClick={() => setConfirmOpen(false)}
               variant="outline"
             >
-              キャンセル
+              {t("common.button.cancel")}
             </Button>
             <Button
               disabled={isDeleting}
               onClick={handleDeleteAccount}
               variant="destructive"
             >
-              削除
+              {t("common.button.delete")}
             </Button>
           </div>
         </DialogContent>

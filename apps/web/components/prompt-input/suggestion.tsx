@@ -5,6 +5,7 @@ import {
   DollarSignIcon,
   FileImageIcon,
 } from "lucide-react"
+import { useTranslation } from "@/i18n/client"
 
 const SuggestionButton = ({
   className,
@@ -26,44 +27,27 @@ export function Suggestion({
 }: {
   onSelect: (content: string) => void
 }) {
+  const { t } = useTranslation()
   return (
     <div className="mt-7">
       <div className="flex gap-2 sm:justify-center flex-wrap">
         <SuggestionButton
-          onClick={() =>
-            onSelect(`SaaSの料金プラン比較画像を作成。
-3つのカードを横並びにして、「Starter」「Pro」「Business」と表示。
-各カードに価格、主な機能、CTAボタンを配置。
-一つのテーマカラーで統一されたモダンで見やすいWebデザイン風。`)
-          }
+          onClick={() => onSelect(t("prompt.suggestions.pricingPrompt"))}
         >
           <DollarSignIcon className="w-4 h-4" />
-          SaaS料金プラン表
+          {t("prompt.suggestions.pricingTitle")}
         </SuggestionButton>
         <SuggestionButton
-          onClick={() =>
-            onSelect(
-              `企業の請求書処理を説明する業務フロー図の入った１枚のスライドを作成。
-「受領」「OCR読み取り」「承認」「支払い」「保存」の5ステップを左から右に配置。各ステップに説明文を追加。
-各ステップにアイコンを付け、一つのテーマカラーで統一されたスタイリッシュなデザイン。`
-            )
-          }
+          onClick={() => onSelect(t("prompt.suggestions.workflowPrompt"))}
         >
           <BriefcaseBusinessIcon className="w-4 h-4" />
-          業務フロー説明スライド資料
+          {t("prompt.suggestions.workflowTitle")}
         </SuggestionButton>
         <SuggestionButton
-          onClick={() =>
-            onSelect(
-              `採用広報やイベント告知にも使えるブランドポスターを作成。
-大きなキャッチコピーを主役にし、サブコピー、開催情報またはサービス名、短い紹介文を整理して配置。
-写真を使わず、タイポグラフィと図形表現を中心に構成する。
-モダンで感度の高いデザインにし、スタートアップらしい世界観が伝わるビジュアルにする。`
-            )
-          }
+          onClick={() => onSelect(t("prompt.suggestions.posterPrompt"))}
         >
           <FileImageIcon className="w-4 h-4" />
-          ブランドポスター
+          {t("prompt.suggestions.posterTitle")}
         </SuggestionButton>
       </div>
     </div>

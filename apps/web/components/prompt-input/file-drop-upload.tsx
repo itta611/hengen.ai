@@ -13,6 +13,7 @@ import {
   type UploadedImage,
 } from "@/components/prompt-input/file-upload"
 import { FileIcon } from "lucide-react"
+import { useTranslation } from "@/i18n/client"
 
 type FileDropUploadProps = {
   images: UploadedImage[]
@@ -33,6 +34,7 @@ function isLeavingWindow(event: DragEvent) {
 }
 
 export function FileDropUpload({ images, setImages }: FileDropUploadProps) {
+  const { t } = useTranslation()
   const [isFileDragActive, setIsFileDragActive] = useState(false)
   const [, startTransition] = useTransition()
 
@@ -40,9 +42,9 @@ export function FileDropUpload({ images, setImages }: FileDropUploadProps) {
     (files: File[]) => {
       if (files.length === 0) return
 
-      addImageFiles(files, images, setImages)
+      addImageFiles(files, images, setImages, t("common.uploadTypeError"))
     },
-    [images, setImages]
+    [images, setImages, t]
   )
 
   useEffect(() => {
@@ -103,10 +105,10 @@ export function FileDropUpload({ images, setImages }: FileDropUploadProps) {
           </div>
         </div>
         <div className="text-2xl font-semibold tracking-normal text-zinc-950 dark:text-white">
-          ファイルをアップロード
+          {t("prompt.uploadFile")}
         </div>
         <div className="mt-3 text-sm text-zinc-500 dark:text-zinc-400">
-          ここにファイルをドラッグ&ドロップしてください。
+          {t("prompt.dropFile")}
         </div>
       </div>
     </div>

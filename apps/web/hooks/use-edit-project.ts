@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 
 import { apiClient } from "@/lib/api-client"
+import { useTranslation } from "@/i18n/client"
 
 type EditProjectInput = {
   instruction: string
@@ -29,6 +30,7 @@ async function editProject({ instruction, projectId }: EditProjectInput) {
 }
 
 export function useEditProject() {
+  const { t } = useTranslation()
   const queryClient = useQueryClient()
   const router = useRouter()
   const mutation = useMutation({
@@ -48,8 +50,8 @@ export function useEditProject() {
       } catch (error) {
         toast.error(
           error instanceof Error && error.message === "insufficient_credits"
-            ? "クレジットが不足しています。"
-            : "編集に失敗しました。"
+            ? t("common.insufficientCredits")
+            : t("editor.edit.failed")
         )
       }
     },

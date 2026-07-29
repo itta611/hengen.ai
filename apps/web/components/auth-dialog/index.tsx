@@ -5,6 +5,7 @@ import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useAuthDialog } from "@/hooks/use-auth-dialog"
+import { useLocale, useTranslation } from "@/i18n/client"
 import { authClient } from "@/lib/auth-client"
 import LogoIcon from "../logo-icon"
 import {
@@ -26,6 +27,8 @@ function getNameFromEmail(email: string) {
 }
 
 export function AuthDialog() {
+  const { t } = useTranslation()
+  const { locale } = useLocale()
   const { authCallbackURL, closeAuthDialog, isAuthDialogOpen } = useAuthDialog()
   const user = authClient.useSession().data?.user
   const [email, setEmail] = useState("")
@@ -54,13 +57,13 @@ export function AuthDialog() {
     setBusyMode(null)
 
     if (result.error) {
-      setError("Google ログインを開始できませんでした。")
+      setError(t("auth.googleError"))
     }
   }
 
   async function handleMagicLink() {
     if (!email.trim()) {
-      toast.error("メールアドレスを入力してください。")
+      toast.error(t("auth.emailRequired"))
       return
     }
 
@@ -76,16 +79,12 @@ export function AuthDialog() {
     setBusyMode(null)
 
     if (result.error) {
-      toast.error(
-        "マジックリンクを送信できませんでした。時間をおいて再度お試しください。"
-      )
+      toast.error(t("auth.magicLinkError"))
       return
     }
 
     setEmail("")
-    toast.success(
-      "マジックリンクをメールで送信しました。\n受信ボックスを確認してください。"
-    )
+    toast.success(t("auth.magicLinkSent"))
   }
 
   return (
@@ -96,10 +95,10 @@ export function AuthDialog() {
       <DialogContent className="sm:max-w-120 px-10 pt-11 pt-12">
         <LogoIcon width={40} height={40} className="mx-auto" />
         <DialogTitle className="text-xl font-bold text-center">
-          ログイン・新規登録
+          {t("auth.title")}
         </DialogTitle>
         <DialogDescription className="text-center">
-          続行するにはログインまたは新規登録が必要です。
+          {t("auth.description")}
         </DialogDescription>
 
         <div className="flex flex-col gap-3">
@@ -111,12 +110,14 @@ export function AuthDialog() {
             disabled={busyMode === "google"}
           >
             <GoogleIcon className="size-4.5" />
-            Google アカウントでログイン
+            {t("auth.google")}
           </Button>
 
           <div className="flex items-center h-12">
             <div className="h-px flex-1 bg-border" />
-            <span className="mx-3 text-sm text-muted-foreground">または</span>
+            <span className="mx-3 text-sm text-muted-foreground">
+              {t("auth.or")}
+            </span>
             <div className="h-px flex-1 bg-border" />
           </div>
 
@@ -138,31 +139,33 @@ export function AuthDialog() {
             />
 
             <Button type="submit" size="lg" disabled={busyMode === "email"}>
-              {busyMode === "email" ? "リンクを発行しています..." : "続ける"}
+              {busyMode === "email"
+                ? t("auth.issuingLink")
+                : t("auth.continue")}
             </Button>
           </form>
         </div>
 
         <p className="text-center text-xs leading-5 text-muted-foreground">
-          続けることで、
+          {t("auth.agreementPrefix")}
           <a
             className="underline underline-offset-4"
-            href="/terms"
+            href={locale === "en" ? "/en/terms" : "/terms"}
             rel="noopener noreferrer"
             target="_blank"
           >
-            利用規約
+            {t("auth.terms")}
           </a>
-          および
+          {t("auth.and")}
           <a
             className="underline underline-offset-4"
-            href="/privacy"
+            href={locale === "en" ? "/en/privacy" : "/privacy"}
             rel="noopener noreferrer"
             target="_blank"
           >
-            プライバシーポリシー
+            {t("auth.privacy")}
           </a>
-          に同意したものとします。
+          {t("auth.agreementSuffix")}
         </p>
 
         {error ? (

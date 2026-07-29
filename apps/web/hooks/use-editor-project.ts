@@ -15,6 +15,7 @@ import type { GeneratedImage } from "@/components/gallary"
 import { resizeTextBox } from "@/hooks/editor-bbox"
 import { apiClient } from "@/lib/api-client"
 import { loadGoogleFont } from "@/lib/google-fonts"
+import { useTranslation } from "@/i18n/client"
 
 type ProjectBox = EditorBox & { lineHeight?: number }
 
@@ -95,6 +96,7 @@ export function useEditorProjectData(projectId: string) {
 }
 
 export function useEditorProject(projectId: string) {
+  const { t } = useTranslation()
   const queryClient = useQueryClient()
   const setBoxes = useSetAtom(editorBoxesAtom)
   const setSelectedIndex = useSetAtom(editorSelectedBoxIndexAtom)
@@ -106,14 +108,14 @@ export function useEditorProject(projectId: string) {
       return
     }
 
-    toast.error("生成に失敗しました。", {
+    toast.error(t("common.generationError"), {
       id: `project-generation-error-${projectId}`,
     })
     queryClient.setQueriesData<GeneratedImage[]>(
       { queryKey: ["projects"] },
       (projects) => projects?.filter((project) => project.id !== projectId)
     )
-  }, [projectStatus?.status, projectId, queryClient])
+  }, [projectStatus?.status, projectId, queryClient, t])
 
   useEffect(() => {
     let cancelled = false

@@ -1,11 +1,14 @@
 import { Suspense } from "react"
 import { GallerySkeleton } from "@/components/gallary"
+import { getTranslation } from "@/i18n/server"
 import { ProjectList } from "./project-list"
 
 export default async function Page() {
+  const { t } = await getTranslation()
+
   return (
     <div className="min-h-full pb-10 sm:px-10 px-5">
-      <h1 className="py-10 text-2xl font-bold pl-1">ゴミ箱</h1>
+      <h1 className="py-10 text-2xl font-bold pl-1">{t("home.trash")}</h1>
       <Suspense fallback={<GallerySkeleton />}>
         <ProjectList />
       </Suspense>

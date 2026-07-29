@@ -11,16 +11,17 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
+import { useTranslation } from "@/i18n/client"
 
 const cancellationReasons = [
-  { label: "料金が高い", value: "too_expensive" },
-  { label: "必要な機能がない", value: "missing_features" },
-  { label: "他のサービスへ移行する", value: "switched_service" },
-  { label: "利用する必要がなくなった", value: "unused" },
-  { label: "操作が難しい", value: "too_complex" },
-  { label: "品質に満足できない", value: "low_quality" },
-  { label: "サポートに満足できない", value: "customer_service" },
-  { label: "その他", value: "other" },
+  { key: "tooExpensive", value: "too_expensive" },
+  { key: "missingFeatures", value: "missing_features" },
+  { key: "switchedService", value: "switched_service" },
+  { key: "unused", value: "unused" },
+  { key: "tooComplex", value: "too_complex" },
+  { key: "lowQuality", value: "low_quality" },
+  { key: "customerService", value: "customer_service" },
+  { key: "other", value: "other" },
 ] as const
 
 export type CancellationFeedback = (typeof cancellationReasons)[number]["value"]
@@ -36,6 +37,7 @@ export function CancellationDialog({
   onOpenChange: (open: boolean) => void
   open: boolean
 }) {
+  const { t } = useTranslation()
   const [feedback, setFeedback] = useState<CancellationFeedback | null>(null)
 
   return (
@@ -61,12 +63,12 @@ export function CancellationDialog({
           }}
         >
           <DialogHeader>
-            <DialogTitle>プランを解約しますか？</DialogTitle>
+            <DialogTitle>{t("settings.cancellation.title")}</DialogTitle>
           </DialogHeader>
 
           <fieldset className="space-y-3" disabled={isSubmitting}>
             <legend className="font-medium">
-              解約する理由を選択してください
+              {t("settings.cancellation.description")}
             </legend>
             <div className="grid gap-2 sm:grid-cols-2">
               {cancellationReasons.map((reason) => (
@@ -83,7 +85,9 @@ export function CancellationDialog({
                     type="radio"
                     value={reason.value}
                   />
-                  <span>{reason.label}</span>
+                  <span>
+                    {t(`settings.cancellation.reasons.${reason.key}`)}
+                  </span>
                 </label>
               ))}
             </div>
@@ -96,7 +100,7 @@ export function CancellationDialog({
               variant="destructive"
             >
               {isSubmitting ? <Loader2 className="animate-spin" /> : null}
-              プランを解約する
+              {t("settings.cancellation.submit")}
             </Button>
           </DialogFooter>
         </form>

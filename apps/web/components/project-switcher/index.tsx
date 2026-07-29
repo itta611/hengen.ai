@@ -41,7 +41,7 @@ export function ProjectSwitcher() {
     })
   }, [currentProjectId, projects])
 
-  // プロジェクトの前後３つをprefetchする
+  // Prefetch the three projects on each side of the current project.
   useEffect(() => {
     const currentIndex = projects.findIndex(
       (project) => project.id === currentProjectId

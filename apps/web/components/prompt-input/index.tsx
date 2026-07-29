@@ -13,6 +13,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { usePromptForm } from "@/hooks/use-prompt-form"
+import { useTranslation } from "@/i18n/client"
 import { cn } from "@/lib/utils"
 import { AspectSelect } from "./aspect-select"
 import { CountSelect } from "./count-select"
@@ -34,6 +35,7 @@ export function PromptInputForm({
   isInsufficientCreditsOpen?: boolean
   setInsufficientCreditsOpen?: Dispatch<SetStateAction<boolean>>
 }) {
+  const { t } = useTranslation()
   const [previewImage, setPreviewImage] = useState<{
     height: number
     src: string
@@ -80,10 +82,10 @@ export function PromptInputForm({
             const files = Array.from(event.clipboardData.files)
             if (files.length === 0) return
             event.preventDefault()
-            addImageFiles(files, images, setImages)
+            addImageFiles(files, images, setImages, t("common.uploadTypeError"))
           }}
           className="min-h-14 resize-none rounded-none border-none px-2 pt-1 pb-2 shadow-none ring-0! outline-none leading-relaxed bg-transparent!"
-          placeholder="作りたい資料画像を自然文で書いてください。"
+          placeholder={t("prompt.placeholder")}
         />
         <div className="flex items-end justify-between">
           <div className="flex gap-px">
@@ -102,11 +104,11 @@ export function PromptInputForm({
                   className="border-0"
                 >
                   <SparklesIcon data-icon="inline-end" />
-                  {isGenerating ? "生成中" : "生成"}
+                  {isGenerating ? t("prompt.generating") : t("prompt.generate")}
                 </Button>
               }
             />
-            <TooltipContent side="bottom">10クレジット消費</TooltipContent>
+            <TooltipContent side="bottom">{t("prompt.credits")}</TooltipContent>
           </Tooltip>
         </div>
       </form>
@@ -144,7 +146,7 @@ export function PromptInputForm({
               </button>
               <span className="truncate">{image.file.name}</span>
               <button
-                aria-label={`${image.file.name}を削除`}
+                aria-label={t("prompt.removeImage", { name: image.file.name })}
                 className="shrink-0 cursor-pointer text-muted-foreground hover:text-foreground"
                 onClick={() =>
                   setImages((current) =>

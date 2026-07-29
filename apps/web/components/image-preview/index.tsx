@@ -4,6 +4,7 @@ import { XIcon } from "lucide-react"
 import Image, { type ImageProps } from "next/image"
 
 import { Button } from "@/components/ui/button"
+import { useTranslation } from "@/i18n/client"
 
 type ImagePreviewProps = {
   alt?: string
@@ -20,10 +21,12 @@ export function ImagePreview({
   src,
   width,
 }: ImagePreviewProps) {
+  const { t } = useTranslation()
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80">
       <Button
-        aria-label="閉じる"
+        aria-label={t("common.close")}
         className="absolute top-4 right-4 z-10 text-white hover:bg-white/10 hover:text-white"
         onClick={onClose}
         type="button"

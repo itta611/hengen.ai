@@ -8,6 +8,7 @@ import {
   DialogDescription,
   DialogTitle,
 } from "@/components/ui/dialog"
+import { useTranslation } from "@/i18n/client"
 
 function InsufficientCreditDialog({
   isOpen,
@@ -16,6 +17,7 @@ function InsufficientCreditDialog({
   isOpen: boolean
   onOpenChange: (open: boolean) => void
 }) {
+  const { t } = useTranslation()
   const pricingDialog = usePricingDialog()
 
   return (
@@ -23,10 +25,10 @@ function InsufficientCreditDialog({
       <DialogContent className="gap-6 p-8" showCloseButton={false}>
         <div className="space-y-4">
           <DialogTitle className="text-xl font-bold tracking-normal">
-            クレジットが不足しています
+            {t("prompt.insufficientTitle")}
           </DialogTitle>
           <DialogDescription>
-            生成に必要なクレジットが足りません。プランをアップグレードしてクレジットを追加しましょう。
+            {t("prompt.insufficientDescription")}
           </DialogDescription>
         </div>
         <Button
@@ -38,7 +40,7 @@ function InsufficientCreditDialog({
           size="lg"
           type="button"
         >
-          アップグレードする
+          {t("prompt.upgrade")}
         </Button>
       </DialogContent>
     </Dialog>

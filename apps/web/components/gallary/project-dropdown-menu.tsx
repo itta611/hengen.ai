@@ -18,6 +18,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { useTranslation } from "@/i18n/client"
 import { apiClient } from "@/lib/api-client"
 
 export type ProjectDropdownMenuProject = {
@@ -69,6 +70,7 @@ export function ProjectDropdownMenu({
   ) => void
   project: ProjectDropdownMenuProject
 }) {
+  const { t } = useTranslation()
   const queryClient = useQueryClient()
   const deleteProjectMutation = useMutation({
     mutationFn: deleteProject,
@@ -76,7 +78,7 @@ export function ProjectDropdownMenu({
       onDelete?.(id)
       queryClient.invalidateQueries({ queryKey: ["projects", "starred"] })
       queryClient.invalidateQueries({ queryKey: ["projects", "trash"] })
-      toast.success("プロジェクトを削除しました")
+      toast.success(t("gallery.deleteSuccess"))
     },
   })
   const restoreProjectMutation = useMutation({
@@ -85,7 +87,7 @@ export function ProjectDropdownMenu({
       onRestore?.(id)
       queryClient.invalidateQueries({ queryKey: ["projects"] })
       queryClient.invalidateQueries({ queryKey: ["projects", "starred"] })
-      toast.success("プロジェクトを元に戻しました")
+      toast.success(t("gallery.restoreSuccess"))
     },
   })
   return (
@@ -116,7 +118,7 @@ export function ProjectDropdownMenu({
           }}
         >
           <ClipboardIcon />
-          プロンプトをコピー
+          {t("gallery.copyPrompt")}
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={(event) => {
@@ -126,7 +128,7 @@ export function ProjectDropdownMenu({
           }}
         >
           {project.isStarred ? <StarOffIcon /> : <StarIcon />}
-          {project.isStarred ? "お気に入りから削除" : "お気に入りに追加"}
+          {project.isStarred ? t("gallery.removeStar") : t("gallery.addStar")}
         </DropdownMenuItem>
         {project.deletedAt ? (
           <DropdownMenuItem
@@ -137,7 +139,7 @@ export function ProjectDropdownMenu({
             }}
           >
             <Undo2Icon />
-            元に戻す
+            {t("common.button.restore")}
           </DropdownMenuItem>
         ) : (
           <DropdownMenuItem
@@ -149,7 +151,7 @@ export function ProjectDropdownMenu({
             }}
           >
             <Trash2Icon />
-            削除
+            {t("common.button.delete")}
           </DropdownMenuItem>
         )}
       </DropdownMenuContent>

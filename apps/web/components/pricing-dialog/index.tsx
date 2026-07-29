@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/dialog"
 import { useBillingSubscription } from "@/hooks/use-billing-subscription"
 import type { UserPlan } from "@/hooks/use-current-plan"
+import { useTranslation } from "@/i18n/client"
 import { authClient } from "@/lib/auth-client"
 
 type PricingPlan = "basic" | "premium"
@@ -80,6 +81,7 @@ function PricingDialog({
   currentPlan: UserPlan | undefined
   subscriptionId: string | undefined
 }) {
+  const { t } = useTranslation()
   const { isOpen, setOpen } = usePricingDialog()
 
   return (
@@ -87,10 +89,10 @@ function PricingDialog({
       <DialogContent className="max-h-[calc(100dvh-2rem)] max-w-[740px]! w-[90%] gap-0 overflow-y-auto rounded-3xl p-8!">
         <div className="space-y-3">
           <DialogTitle className="text-2xl font-bold tracking-normal">
-            プランを選択
+            {t("pricing.title")}
           </DialogTitle>
           <DialogDescription className="text-base text-muted-foreground">
-            プランを選択してください。
+            {t("pricing.description")}
           </DialogDescription>
         </div>
 
@@ -98,7 +100,7 @@ function PricingDialog({
           <PlanCard
             currentPlan={currentPlan}
             plan="basic"
-            name="ベーシック"
+            name={t("pricing.basic")}
             price="3000"
             credits="240"
             subscriptionId={subscriptionId}
@@ -106,7 +108,7 @@ function PricingDialog({
           <PlanCard
             currentPlan={currentPlan}
             plan="premium"
-            name="プレミアム"
+            name={t("pricing.premium")}
             price="9000"
             credits="720"
             subscriptionId={subscriptionId}
@@ -116,9 +118,9 @@ function PricingDialog({
         {currentPlan === "basic" && (
           <Alert className="mt-6">
             <InfoIcon />
-            <AlertTitle>アップグレード時の請求</AlertTitle>
+            <AlertTitle>{t("pricing.upgradeBillingTitle")}</AlertTitle>
             <AlertDescription>
-              すぐにプレミアムが適用され、残り期間に応じた差額が請求されます。
+              {t("pricing.upgradeBillingDescription")}
             </AlertDescription>
           </Alert>
         )}
@@ -128,7 +130,7 @@ function PricingDialog({
             className="text-sm text-muted-foreground underline underline-offset-4 transition-colors hover:opacity-80"
             href="/specified"
           >
-            特定商取引に関する表示
+            {t("pricing.commercialTransaction")}
           </a>
         </div>
       </DialogContent>
@@ -160,6 +162,7 @@ function PlanCard({
   credits: string
   subscriptionId: string | undefined
 }) {
+  const { t } = useTranslation()
   const [isRedirecting, setIsRedirecting] = useState(false)
   const { close } = usePricingDialog()
   const queryClient = useQueryClient()
@@ -188,7 +191,7 @@ function PlanCard({
         await queryClient.invalidateQueries({
           queryKey: ["billing-subscription"],
         })
-        toast.error(error.message || "プランを変更できませんでした。")
+        toast.error(error.message || t("pricing.changeError"))
         setIsRedirecting(false)
         return
       }
@@ -198,7 +201,7 @@ function PlanCard({
           queryKey: ["billing-subscription"],
         })
         close()
-        toast.success("ベーシックプランにダウングレードしました")
+        toast.success(t("pricing.downgradeSuccess"))
         setIsRedirecting(false)
         return
       }
@@ -208,10 +211,10 @@ function PlanCard({
         return
       }
 
-      toast.error("決済ページを開けませんでした。")
+      toast.error(t("pricing.checkoutError"))
       setIsRedirecting(false)
     } catch {
-      toast.error("決済ページを開けませんでした。")
+      toast.error(t("pricing.checkoutError"))
       setIsRedirecting(false)
     }
   }
@@ -226,14 +229,16 @@ function PlanCard({
         <span className="text-4xl font-bold mr-1 tracking-tight font-[ui-sans-serif,system-ui,sans-serif]">
           {price}
         </span>
-        <span className="text-lg text-muted-foreground">/月</span>
+        <span className="text-lg text-muted-foreground">
+          {t("pricing.perMonth")}
+        </span>
       </div>
 
       <ul className="mt-4 space-y-2">
-        <FeatureItem>{`月あたり${credits}クレジット付与`}</FeatureItem>
-        <FeatureItem>画像編集機能</FeatureItem>
-        <FeatureItem>SVGエクスポート</FeatureItem>
-        <FeatureItem>商用利用可能</FeatureItem>
+        <FeatureItem>{t("pricing.credits", { credits })}</FeatureItem>
+        <FeatureItem>{t("pricing.imageEditing")}</FeatureItem>
+        <FeatureItem>{t("pricing.svgExport")}</FeatureItem>
+        <FeatureItem>{t("pricing.commercialUse")}</FeatureItem>
         <FeatureItem>
           <a
             href="https://x.com/IttaFunahashi"
@@ -241,9 +246,10 @@ function PlanCard({
             rel="noopener noreferrer"
             className="underline underline-offset-4"
           >
-            開発者
+            {plan === "premium"
+              ? t("pricing.supportDeveloperMore")
+              : t("pricing.supportDeveloper")}
           </a>
-          を{plan === "premium" && "さらに"}応援
         </FeatureItem>
       </ul>
 
@@ -257,10 +263,10 @@ function PlanCard({
         {isCurrentPlan && <CheckIcon />}
         {isRedirecting && <Loader2 className="animate-spin" />}
         {isCurrentPlan
-          ? "現在のプラン"
+          ? t("pricing.current")
           : isDowngrade
-            ? "ダウングレードする"
-            : `${name}プランを開始`}
+            ? t("pricing.downgrade")
+            : t("pricing.start", { name })}
       </Button>
     </div>
   )

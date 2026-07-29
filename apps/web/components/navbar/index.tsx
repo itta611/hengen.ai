@@ -11,10 +11,12 @@ import { Button } from "@/components/ui/button"
 import { useCurrentPlan } from "@/hooks/use-current-plan"
 import { useEditorProjectData } from "@/hooks/use-editor-project"
 import { useExport } from "@/hooks/use-export"
+import { useTranslation } from "@/i18n/client"
 import { CopyButton } from "./copy-button"
 import { EditButton } from "./edit"
 
 export function Navbar() {
+  const { t } = useTranslation()
   const router = useRouter()
   const { projectId } = useParams<{ projectId: string }>()
   const boxes = useAtomValue(editorBoxesAtom)
@@ -37,14 +39,14 @@ export function Navbar() {
     try {
       await downloadPng()
     } catch {
-      toast.error("画像の保存に失敗しました")
+      toast.error(t("editor.saveError"))
     }
   }
 
   return (
     <nav className="shrink-0 flex h-13 items-center bg-sidebar border-b border-border/70 pr-4 pl-2 gap-2">
       <Button
-        aria-label="ホームに戻る"
+        aria-label={t("editor.home")}
         onClick={() => router.push("/home")}
         size="icon-lg"
         type="button"
@@ -61,7 +63,7 @@ export function Navbar() {
         isSvgPaidFeature={currentPlan === "free"}
         onCopyImage={async () => {
           await copyPng()
-          toast("コピーしました")
+          toast(t("editor.copied"))
         }}
         onCopySvg={async () => {
           if (currentPlan === "free") {
@@ -70,12 +72,12 @@ export function Navbar() {
           }
 
           await copySvg()
-          toast("コピーしました")
+          toast(t("editor.copied"))
         }}
       />
       <Button disabled={disabled} onClick={handleDownloadPng} type="button">
         <DownloadIcon />
-        画像を保存
+        {t("editor.saveImage")}
       </Button>
     </nav>
   )

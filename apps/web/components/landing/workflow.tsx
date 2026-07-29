@@ -24,26 +24,29 @@ function WorkflowArrow() {
   )
 }
 
-export function WorkflowSection() {
+export async function WorkflowSection() {
+  const { t } = await getTranslation()
+
   return (
     <div className="space-y-8 py-20 max-w-300 mx-auto px-5">
-      <h2 className="text-4xl font-bold">利用の流れ</h2>
+      <h2 className="text-4xl font-bold">{t("landing.workflow.heading")}</h2>
       <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)_auto_minmax(0,1fr)] gap-x-5">
         <FeatureCard
-          title="画像を生成する"
-          description="つくりたい内容を言葉で伝えるだけ。他のサービスで作った画像を読み込むこともできます。"
+          title={t("landing.workflow.generateTitle")}
+          description={t("landing.workflow.generateDescription")}
         />
         <WorkflowArrow />
         <FeatureCard
-          title="文字を直接編集する"
-          description="画像内の文字は、編集できるテキストボックスに変換されます。本文やフォントを、その場で編集できます。"
+          title={t("landing.workflow.editTitle")}
+          description={t("landing.workflow.editDescription")}
         />
         <WorkflowArrow />
         <FeatureCard
-          title="画像を保存する"
-          description="画像をPNGまたはSVG形式保存します。"
+          title={t("landing.workflow.saveTitle")}
+          description={t("landing.workflow.saveDescription")}
         />
       </div>
     </div>
   )
 }
+import { getTranslation } from "@/i18n/server"

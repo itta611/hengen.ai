@@ -1,6 +1,9 @@
 import { Logo } from "@/components/logo"
+import { getTranslation } from "@/i18n/server"
 
-export function LandingFooter() {
+export async function LandingFooter() {
+  const { locale, t } = await getTranslation()
+
   return (
     <footer className="bg-zinc-50 dark:bg-zinc-900 px-5 py-10">
       <div className="mx-auto flex w-full max-w-300 flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
@@ -10,22 +13,19 @@ export function LandingFooter() {
             className="transition-colors hover:text-foreground"
             href="https://x.com/IttaFunahashi"
           >
-            運営者
+            {t("landing.footer.operator")}
           </a>
           <a
             className="transition-colors hover:text-foreground"
-            href="/specified"
+            href={locale === "en" ? "/en/terms" : "/terms"}
           >
-            特定商取引法に基づく表記
-          </a>
-          <a className="transition-colors hover:text-foreground" href="/terms">
-            利用規約
+            {t("landing.footer.terms")}
           </a>
           <a
             className="transition-colors hover:text-foreground"
-            href="/privacy"
+            href={locale === "en" ? "/en/privacy" : "/privacy"}
           >
-            プライバシーポリシー
+            {t("landing.footer.privacy")}
           </a>
         </nav>
       </div>

@@ -10,6 +10,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 import { useBillingSubscription } from "@/hooks/use-billing-subscription"
 import { useCurrentPlan } from "@/hooks/use-current-plan"
+import { useLocale, useTranslation } from "@/i18n/client"
 import { apiClient } from "@/lib/api-client"
 import { authClient } from "@/lib/auth-client"
 import {
@@ -32,6 +33,8 @@ async function getInvoices() {
 }
 
 export function BillingSettingsPage() {
+  const { t } = useTranslation()
+  const { locale } = useLocale()
   const pricingDialog = usePricingDialog()
   const [isCancellationDialogOpen, setCancellationDialogOpen] = useState(false)
   const [billingAction, setBillingAction] = useState<BillingAction>(null)
@@ -43,7 +46,7 @@ export function BillingSettingsPage() {
   const isPendingDowngrade =
     currentPlan === "premium" && Boolean(subscription?.stripeScheduleId)
   const isPendingCancellation = isSubscriptionPendingCancellation(subscription)
-  const subscriptionEndsAt = getSubscriptionEndsAt(subscription)
+  const subscriptionEndsAt = getSubscriptionEndsAt(subscription, locale)
   const subscriptionId = subscription?.stripeSubscriptionId
 
   const handleCancelSubscription = async (feedback: CancellationFeedback) => {
@@ -55,25 +58,25 @@ export function BillingSettingsPage() {
       })
 
       if (!response.ok) {
-        toast.error("解約できませんでした。")
+        toast.error(t("settings.billing.cancelError"))
         await subscriptionQuery.refetch()
         setBillingAction(null)
         return
       }
 
       const result = await response.json()
-      const endsAt = result.endsAt ? formatDate(result.endsAt) : null
+      const endsAt = result.endsAt ? formatDate(result.endsAt, locale) : null
 
       await subscriptionQuery.refetch()
       setCancellationDialogOpen(false)
       toast.success(
         endsAt
-          ? `${endsAt}まで現在のプランを利用できます。`
-          : "解約を受け付けました。"
+          ? t("settings.billing.availableUntil", { date: endsAt })
+          : t("settings.billing.cancelAccepted")
       )
       setBillingAction(null)
     } catch {
-      toast.error("解約できませんでした。")
+      toast.error(t("settings.billing.cancelError"))
       setBillingAction(null)
     }
   }
@@ -90,7 +93,7 @@ export function BillingSettingsPage() {
       })
 
       if (error) {
-        toast.error(error.message || "プランを再開できませんでした。")
+        toast.error(error.message || t("settings.billing.resumeError"))
         await subscriptionQuery.refetch()
         setBillingAction(null)
         return
@@ -100,29 +103,32 @@ export function BillingSettingsPage() {
       toast.success(successMessage)
       setBillingAction(null)
     } catch {
-      toast.error("プランを再開できませんでした。")
+      toast.error(t("settings.billing.resumeError"))
       setBillingAction(null)
     }
   }
 
   return (
     <div className="space-y-12">
-      <SettingSection title="クレジット使用量">
+      <SettingSection title={t("settings.billing.creditUsage")}>
         <UsageCard />
       </SettingSection>
 
       {isPaidPlan && !isPendingCancellation && (
-        <SettingSection title="プランを変更">
+        <SettingSection title={t("settings.billing.changePlan")}>
           <div className="space-y-3">
             {isPendingDowngrade && subscriptionEndsAt && (
               <Alert>
                 <InfoIcon />
                 <AlertTitle>
-                  {subscriptionEndsAt}までプレミアムプランを利用できます
+                  {t("settings.billing.premiumUntil", {
+                    date: subscriptionEndsAt,
+                  })}
                 </AlertTitle>
                 <AlertDescription>
-                  {subscriptionEndsAt}
-                  に自動でベーシックプランに切り替わります。
+                  {t("settings.billing.switchesToBasic", {
+                    date: subscriptionEndsAt,
+                  })}
                 </AlertDescription>
               </Alert>
             )}
@@ -132,7 +138,7 @@ export function BillingSettingsPage() {
                 onClick={() =>
                   handleRestoreSubscription(
                     "downgrade",
-                    "プレミアムプランを再開しました。"
+                    t("settings.billing.premiumResumeSuccess")
                   )
                 }
                 variant="outline"
@@ -140,11 +146,11 @@ export function BillingSettingsPage() {
                 {billingAction === "downgrade" && (
                   <Loader2 className="animate-spin" />
                 )}
-                プレミアムプランを再開する
+                {t("settings.billing.premiumResumeButton")}
               </Button>
             ) : (
               <Button onClick={pricingDialog.open} variant="outline">
-                プランを変更する
+                {t("settings.billing.changePlanButton")}
               </Button>
             )}
           </div>
@@ -152,42 +158,47 @@ export function BillingSettingsPage() {
       )}
 
       {isPaidPlan && isPendingCancellation ? (
-        <SettingSection title="プランを再開">
+        <SettingSection title={t("settings.billing.resumePlan")}>
           <div className="space-y-3">
             {subscriptionEndsAt && (
               <Alert>
                 <InfoIcon />
                 <AlertTitle>
-                  {subscriptionEndsAt}まで
-                  {formatPlanName(currentPlan)}を利用できます
+                  {t("settings.billing.planUntil", {
+                    date: subscriptionEndsAt,
+                    plan: t(`common.plan.${currentPlan}`),
+                  })}
                 </AlertTitle>
                 <AlertDescription>
-                  {subscriptionEndsAt}に自動でプランが解約されます。
+                  {t("settings.billing.endsOn", { date: subscriptionEndsAt })}
                 </AlertDescription>
               </Alert>
             )}
             <Button
               disabled={billingAction === "restore"}
               onClick={() =>
-                handleRestoreSubscription("restore", "プランを再開しました。")
+                handleRestoreSubscription(
+                  "restore",
+                  t("settings.billing.resumeSuccess")
+                )
               }
             >
               {billingAction === "restore" && (
                 <Loader2 className="animate-spin" />
               )}
-              プランを再開する
+              {t("settings.billing.resumeButton")}
             </Button>
           </div>
         </SettingSection>
       ) : null}
 
       {isPaidPlan && !isPendingCancellation ? (
-        <SettingSection title="プランを解約">
+        <SettingSection title={t("settings.billing.cancelPlan")}>
           <Button
             onClick={() => setCancellationDialogOpen(true)}
             variant="outline"
           >
-            プランを解約する
+            {t("settings.billing.cancelButton")}
           </Button>
         </SettingSection>
       ) : null}
@@ -202,7 +213,7 @@ export function BillingSettingsPage() {
       ) : null}
 
       {isPaidPlan && (
-        <SettingSection title="請求履歴">
+        <SettingSection title={t("settings.billing.invoiceHistory")}>
           <InvoiceHistory />
         </SettingSection>
       )}
@@ -217,11 +228,12 @@ function getSubscriptionEndsAt(
         periodEnd?: Date | string | null
       }
     | null
-    | undefined
+    | undefined,
+  locale: string
 ) {
   const endsAt = subscription?.cancelAt ?? subscription?.periodEnd
 
-  return endsAt ? formatDate(endsAt) : null
+  return endsAt ? formatDate(endsAt, locale) : null
 }
 
 function isSubscriptionPendingCancellation(
@@ -243,61 +255,35 @@ function isSubscriptionPendingCancellation(
   )
 }
 
-function formatDate(value: Date | string) {
-  return new Intl.DateTimeFormat("ja-JP", {
+function formatDate(value: Date | string, locale: string) {
+  return new Intl.DateTimeFormat(locale, {
     day: "numeric",
     month: "long",
     year: "numeric",
   }).format(new Date(value))
 }
 
-function formatPlanName(plan: string) {
-  switch (plan) {
-    case "basic":
-      return "ベーシックプラン"
-    case "premium":
-      return "プレミアムプラン"
-    default:
-      return "無料プラン"
-  }
-}
-
-function formatInvoiceAmount(amount: number, currency: string) {
+function formatInvoiceAmount(amount: number, currency: string, locale: string) {
   const normalizedCurrency = currency.toLowerCase()
   const value = normalizedCurrency === "jpy" ? amount : amount / 100
 
-  return new Intl.NumberFormat("ja-JP", {
+  return new Intl.NumberFormat(locale, {
     currency: currency.toUpperCase(),
     style: "currency",
   }).format(value)
 }
 
-function formatInvoiceDate(created: number) {
-  return new Intl.DateTimeFormat("ja-JP", {
+function formatInvoiceDate(created: number, locale: string) {
+  return new Intl.DateTimeFormat(locale, {
     day: "numeric",
     month: "long",
     year: "numeric",
   }).format(new Date(created * 1000))
 }
 
-function formatInvoiceStatus(status: string | null) {
-  switch (status) {
-    case "draft":
-      return "下書き"
-    case "open":
-      return "未払い"
-    case "paid":
-      return "支払い済み"
-    case "uncollectible":
-      return "回収不能"
-    case "void":
-      return "無効"
-    default:
-      return "不明"
-  }
-}
-
 function InvoiceHistory() {
+  const { t } = useTranslation()
+  const { locale } = useLocale()
   const { data, isError, isLoading } = useQuery({
     queryKey: ["billing-invoices"],
     queryFn: getInvoices,
@@ -307,7 +293,7 @@ function InvoiceHistory() {
     return (
       <div className="flex items-center gap-2 rounded-xl border px-5 py-4 text-sm text-muted-foreground">
         <Loader2 className="size-4 animate-spin" />
-        読み込み中
+        {t("settings.billing.loading")}
       </div>
     )
   }
@@ -315,7 +301,7 @@ function InvoiceHistory() {
   if (isError) {
     return (
       <div className="rounded-xl border px-5 py-4 text-sm text-muted-foreground">
-        請求履歴を取得できませんでした。
+        {t("settings.billing.invoiceError")}
       </div>
     )
   }
@@ -323,7 +309,7 @@ function InvoiceHistory() {
   if (!data?.invoices.length) {
     return (
       <div className="rounded-xl border px-5 py-4 text-sm text-muted-foreground">
-        請求履歴はまだありません。
+        {t("settings.billing.invoiceEmpty")}
       </div>
     )
   }
@@ -341,17 +327,25 @@ function InvoiceHistory() {
             <div className="min-w-0 space-y-1">
               <div className="flex items-center gap-2 text-sm font-medium">
                 <FileTextIcon className="size-4 shrink-0 text-muted-foreground" />
-                <span className="truncate">{invoice.number ?? "請求書"}</span>
+                <span className="truncate">
+                  {invoice.number ?? t("settings.billing.invoice")}
+                </span>
               </div>
               <div className="text-sm text-muted-foreground">
-                {formatInvoiceDate(invoice.created)} ・{" "}
-                {formatInvoiceStatus(invoice.status)}
+                {formatInvoiceDate(invoice.created, locale)} ・{" "}
+                {t(
+                  `settings.billing.invoiceStatus.${invoice.status ?? "unknown"}`
+                )}
               </div>
             </div>
 
             <div className="flex shrink-0 items-center gap-3">
               <span className="text-sm font-medium">
-                {formatInvoiceAmount(invoice.amountPaid, invoice.currency)}
+                {formatInvoiceAmount(
+                  invoice.amountPaid,
+                  invoice.currency,
+                  locale
+                )}
               </span>
               {invoiceUrl && (
                 <Button
@@ -363,7 +357,7 @@ function InvoiceHistory() {
                   variant="outline"
                 >
                   <ArrowUpRightIcon />
-                  表示
+                  {t("common.button.view")}
                 </Button>
               )}
             </div>

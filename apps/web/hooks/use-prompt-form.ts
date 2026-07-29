@@ -15,6 +15,7 @@ import {
   useGenerateProject,
 } from "@/hooks/use-generate-project"
 import { authClient } from "@/lib/auth-client"
+import { useTranslation } from "@/i18n/client"
 
 const promptSettingsCookieName = "prompt-settings"
 const promptSettingsMaxAge = 60 * 60 * 24 * 365
@@ -52,9 +53,7 @@ function parsePromptSettingsCookie(cookieValue: string) {
   }
 
   try {
-    const settings = JSON.parse(
-      decodeURIComponent(cookieValue)
-    ) as {
+    const settings = JSON.parse(decodeURIComponent(cookieValue)) as {
       aspectRatio?: EditorAspectRatio
       count?: GenerateProjectInput["count"]
       style?: PromptStyle
@@ -83,6 +82,7 @@ export function usePromptForm({
   initialPrompt?: string
   onInsufficientCredits?: () => void
 } = {}) {
+  const { t } = useTranslation()
   const generateProject = useGenerateProject()
   const { openAuthDialog } = useAuthDialog()
   const router = useRouter()
@@ -154,7 +154,7 @@ export function usePromptForm({
         return
       }
 
-      toast.error("生成に失敗しました。")
+      toast.error(t("common.generationError"))
     }
   }
 

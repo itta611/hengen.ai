@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dialog"
 import { Textarea } from "@/components/ui/textarea"
 import { useEditProject } from "@/hooks/use-edit-project"
+import { useTranslation } from "@/i18n/client"
 
 export function EditButton({
   disabled,
@@ -20,6 +21,7 @@ export function EditButton({
   disabled: boolean
   projectId: string
 }) {
+  const { t } = useTranslation()
   const [open, setOpen] = useState(false)
   const [value, setValue] = useState("")
   const { editProject, isEditing } = useEditProject()
@@ -44,7 +46,7 @@ export function EditButton({
         type="button"
         variant="outline"
       >
-        編集
+        {t("editor.edit.button")}
       </Button>
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent>
@@ -55,12 +57,14 @@ export function EditButton({
               submitEditInstruction()
             }}
           >
-            <DialogTitle className="text-lg">画像を編集</DialogTitle>
+            <DialogTitle className="text-lg">
+              {t("editor.edit.title")}
+            </DialogTitle>
             <DialogDescription className="mt-2">
-              画像を再生成します。
+              {t("editor.edit.description")}
             </DialogDescription>
             <Textarea
-              aria-label="編集内容"
+              aria-label={t("editor.edit.instruction")}
               className="min-h-28 mt-3"
               onChange={(event) => setValue(event.currentTarget.value)}
               onKeyDown={(event) => {
@@ -69,15 +73,15 @@ export function EditButton({
                   event.currentTarget.form?.requestSubmit()
                 }
               }}
-              placeholder="編集内容を入力"
+              placeholder={t("editor.edit.placeholder")}
               value={value}
             />
             <DialogFooter className="mt-5">
               <Button onClick={() => setOpen(false)} variant="outline">
-                キャンセル
+                {t("common.button.cancel")}
               </Button>
               <Button disabled={!canSubmit} type="submit">
-                生成
+                {t("common.button.generate")}
               </Button>
             </DialogFooter>
           </form>

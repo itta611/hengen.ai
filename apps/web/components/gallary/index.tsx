@@ -7,6 +7,7 @@ import { useState } from "react"
 
 import { Skeleton } from "@/components/ui/skeleton"
 import { useUpdateProjectStarred } from "@/hooks/use-update-project-starred"
+import { useTranslation } from "@/i18n/client"
 import { apiClient } from "@/lib/api-client"
 import { ProjectDropdownMenu } from "./project-dropdown-menu"
 
@@ -50,6 +51,7 @@ export function GallerySkeleton() {
 }
 
 export function Gallery({ initialImages, queryKey }: GeneratedImagesViewProps) {
+  const { t } = useTranslation()
   const [images, setImages] = useState(initialImages)
   const handleStarredChange = (input: { id: string; isStarred: boolean }) =>
     setImages((images) =>
@@ -81,7 +83,7 @@ export function Gallery({ initialImages, queryKey }: GeneratedImagesViewProps) {
           height={187}
           className="hidden dark:block"
         />
-        <p className="text-sm">プロジェクトがありません</p>
+        <p className="text-sm">{t("gallery.empty")}</p>
       </div>
     )
   }
@@ -111,7 +113,7 @@ export function Gallery({ initialImages, queryKey }: GeneratedImagesViewProps) {
             {image.isStarred ? (
               <button
                 type="button"
-                aria-label="お気に入りから削除"
+                aria-label={t("gallery.removeStar")}
                 className="cursor-pointer absolute top-2 right-2 rounded-full p-1.5 text-amber-400"
                 onClick={(event) => {
                   event.preventDefault()

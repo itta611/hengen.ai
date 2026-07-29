@@ -1,4 +1,5 @@
 import { ChevronDown, Layers2Icon } from "lucide-react"
+import { useTranslation } from "@/i18n/client"
 import { Button } from "../ui/button"
 import {
   DropdownMenu,
@@ -16,20 +17,23 @@ export function CountSelect({
   selectedCount: number
   onCountChange: (count: number) => void
 }) {
+  const { t } = useTranslation()
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
         render={
           <Button variant="ghost" size="sm" className="pr-2">
             <Layers2Icon />
-            <span className="not-sm:hidden">{selectedCount}枚</span>
+            <span className="not-sm:hidden">
+              {t("prompt.count", { count: selectedCount })}
+            </span>
             <ChevronDown />
           </Button>
         }
       />
       <DropdownMenuContent className="min-w-48">
         <DropdownMenuGroup>
-          <DropdownMenuLabel>枚数</DropdownMenuLabel>
+          <DropdownMenuLabel>{t("prompt.countLabel")}</DropdownMenuLabel>
           <div className="px-1.5 pb-1.5">
             <Tabs
               onValueChange={(value) => onCountChange(Number(value))}

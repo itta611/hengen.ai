@@ -1,5 +1,6 @@
 import { ChevronDown, ProportionsIcon } from "lucide-react"
 import type { EditorAspectRatio } from "@/atom/generate"
+import { useTranslation } from "@/i18n/client"
 import { Button } from "../ui/button"
 import {
   DropdownMenu,
@@ -24,8 +25,10 @@ export function AspectSelect({
   selectedAspect: EditorAspectRatio
   onAspectChange: (aspect: EditorAspectRatio) => void
 }) {
+  const { t } = useTranslation()
   const selectedAspectLabel =
-    aspects.find((aspect) => aspect.value === selectedAspect)?.label ?? "自動"
+    aspects.find((aspect) => aspect.value === selectedAspect)?.label ??
+    t("prompt.auto")
 
   return (
     <DropdownMenu>
@@ -40,10 +43,10 @@ export function AspectSelect({
       />
       <DropdownMenuContent className="min-w-40">
         <DropdownMenuGroup>
-          <DropdownMenuLabel>アスペクト比</DropdownMenuLabel>
+          <DropdownMenuLabel>{t("prompt.aspectRatio")}</DropdownMenuLabel>
           <DropdownMenuItem onClick={() => onAspectChange("auto")}>
             <ProportionsIcon />
-            自動
+            {t("prompt.auto")}
           </DropdownMenuItem>
           {aspects.map((aspect) => (
             <DropdownMenuItem

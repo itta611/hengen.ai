@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/tooltip"
 import { useAuthDialog } from "@/hooks/use-auth-dialog"
 import { useGenerateProjectFromImage } from "@/hooks/use-generate-project"
+import { useTranslation } from "@/i18n/client"
 import { authClient } from "@/lib/auth-client"
 
 const acceptedImageTypes = new Set([
@@ -38,6 +39,7 @@ function fileToDataUrl(file: File) {
 }
 
 export function ImageUploadSection() {
+  const { t } = useTranslation()
   const inputRef = useRef<HTMLInputElement>(null)
   const sectionRef = useRef<HTMLDivElement>(null)
   const [isGenerating, setIsGenerating] = useState(false)
@@ -50,7 +52,7 @@ export function ImageUploadSection() {
 
   async function uploadImage(file: File) {
     if (!acceptedImageTypes.has(file.type)) {
-      toast.error("JPEG、PNG、GIF、WebP形式の画像のみアップロードできます。")
+      toast.error(t("common.uploadTypeError"))
       return
     }
 
@@ -73,7 +75,7 @@ export function ImageUploadSection() {
         return
       }
 
-      toast.error("生成に失敗しました。")
+      toast.error(t("common.generationError"))
     }
   }
 
@@ -135,15 +137,15 @@ export function ImageUploadSection() {
                 <PlusIcon className="size-6 text-muted-foreground" />
               </div>
               <div className="flex flex-col gap-0.5 text-left text-sm">
-                <div className="font-bold text-primary">画像を追加</div>
+                <div className="font-bold text-primary">{t("home.upload")}</div>
                 <div className="text-muted-foreground">
-                  PNG, JPG, GIF, WebP形式
+                  {t("home.uploadFormats")}
                 </div>
               </div>
             </button>
           }
         />
-        <TooltipContent side="bottom">5クレジット消費</TooltipContent>
+        <TooltipContent side="bottom">{t("home.importCredits")}</TooltipContent>
       </Tooltip>
       <InsufficientCreditDialog
         isOpen={isInsufficientCreditsOpen}

@@ -1,4 +1,5 @@
 import Image from "next/image"
+import { getTranslation } from "@/i18n/server"
 
 function Feature({
   title,
@@ -35,26 +36,28 @@ function Feature({
   )
 }
 
-export function ProductDetailsSection() {
+export async function ProductDetailsSection() {
+  const { t } = await getTranslation()
+
   return (
     <div className="mx-auto flex w-full max-w-300 px-5 flex-col gap-30 py-20">
       <Feature
-        title="好きな材料から手軽に生成"
-        description="文章のプロンプトだけでなく、手書きのスケッチや印刷物の写真から生成したり、他のAIサービスで作った画像を読み込めます。手元の素材に合わせて、アイデアを手軽にかたちにできます。"
-        imageAlt="文章やスケッチ、写真などの素材からプレゼンテーション画像を生成する画面"
+        title={t("landing.details.sourceTitle")}
+        description={t("landing.details.sourceDescription")}
+        imageAlt={t("landing.details.sourceAlt")}
         imageSrc="/landing/feature-sources.webp"
       />
       <Feature
-        title="ブランドのスタイルを維持"
-        description="ブランドカラーや質感、全体の雰囲気を細かく指定して、ブランドらしさを保った統一感のある資料に仕上げられます。複数の画像を作る場合も、同じ世界観を保ちながら展開できます。"
-        imageAlt="ブランドカラーと質感を複数の資料へ反映するスタイル設定画面"
+        title={t("landing.details.brandTitle")}
+        description={t("landing.details.brandDescription")}
+        imageAlt={t("landing.details.brandAlt")}
         imagePosition="right"
         imageSrc="/landing/feature-brand-style.webp"
       />
       <Feature
-        title="使い慣れたアプリで編集する"
-        description="生成した画像は、テキストを編集できる状態でPowerPointやIllustrator等のアプリに貼り付けることもできます。使い慣れた制作環境で、そのまま仕上げの作業を続けられます。"
-        imageAlt="生成した資料のテキストレイヤーを外部のデザインアプリで編集する画面"
+        title={t("landing.details.appsTitle")}
+        description={t("landing.details.appsDescription")}
+        imageAlt={t("landing.details.appsAlt")}
         imageSrc="/landing/feature-editable-export.webp"
       />
     </div>

@@ -1,0 +1,337 @@
+{
+  "common": {
+    "language": { "ja": "日本語", "en": "English" },
+    "button": {
+      "save": "保存",
+      "cancel": "キャンセル",
+      "delete": "削除",
+      "restore": "元に戻す",
+      "generate": "生成",
+      "upgrade": "アップグレード",
+      "view": "表示"
+    },
+    "plan": {
+      "free": "無料プラン",
+      "basic": "ベーシックプラン",
+      "premium": "プレミアムプラン"
+    },
+    "uploadTypeError": "JPEG、PNG、GIF、WebP形式の画像のみアップロードできます。",
+    "generationError": "生成に失敗しました。",
+    "close": "閉じる",
+    "insufficientCredits": "クレジットが不足しています。"
+  },
+  "metadata": {
+    "title": "Mutar | 文字まで編集できるAI画像生成",
+    "description": "文字を編集できる状態で画像を生成。文章やフォント、色をあとから変更可能。文字の歪み・にじみ無しで、スライドやポスターなどの資料作成に最適なAI画像生成サービスです。"
+  },
+  "sidebar": {
+    "general": "一般",
+    "home": "ホーム",
+    "search": "検索",
+    "starred": "お気に入り",
+    "trash": "ゴミ箱",
+    "theme": "テーマ",
+    "upgrade": "アップグレード",
+    "feedback": "フィードバックを送る",
+    "settings": "設定",
+    "logout": "ログアウト"
+  },
+  "auth": {
+    "title": "ログイン・新規登録",
+    "description": "続行するにはログインまたは新規登録が必要です。",
+    "google": "Google アカウントでログイン",
+    "or": "または",
+    "issuingLink": "リンクを発行しています...",
+    "continue": "続ける",
+    "agreementPrefix": "続けることで、",
+    "terms": "利用規約",
+    "and": "および",
+    "privacy": "プライバシーポリシー",
+    "agreementSuffix": "に同意したものとします。",
+    "googleError": "Google ログインを開始できませんでした。",
+    "emailRequired": "メールアドレスを入力してください。",
+    "magicLinkError": "マジックリンクを送信できませんでした。時間をおいて再度お試しください。",
+    "magicLinkSent": "マジックリンクをメールで送信しました。\n受信ボックスを確認してください。"
+  },
+  "home": {
+    "generateTab": "資料を生成",
+    "importTab": "画像を読み込む",
+    "promptHeading": "何を作りますか？",
+    "importDescriptionLine1": "ChatGPT等の外部サービスで生成した画像の",
+    "importDescriptionLine2": "テキストを編集可能にします",
+    "recent": "最近",
+    "starred": "お気に入り",
+    "trash": "ゴミ箱",
+    "upload": "画像を追加",
+    "uploadFormats": "PNG, JPG, GIF, WebP形式",
+    "importCredits": "5クレジット消費",
+    "checkoutSuccess": "支払いに成功しました。"
+  },
+  "gallery": {
+    "empty": "プロジェクトがありません",
+    "removeStar": "お気に入りから削除",
+    "copyPrompt": "プロンプトをコピー",
+    "addStar": "お気に入りに追加",
+    "deleteSuccess": "プロジェクトを削除しました",
+    "restoreSuccess": "プロジェクトを元に戻しました"
+  },
+  "search": {
+    "title": "検索",
+    "placeholder": "検索"
+  },
+  "prompt": {
+    "placeholder": "作りたい資料画像を自然文で書いてください。",
+    "generating": "生成中",
+    "generate": "生成",
+    "credits": "10クレジット消費",
+    "removeImage": "{{name}}を削除",
+    "count": "{{count}}枚",
+    "countLabel": "枚数",
+    "aspectRatio": "アスペクト比",
+    "auto": "自動",
+    "uploadFile": "ファイルをアップロード",
+    "dropFile": "ここにファイルをドラッグ&ドロップしてください。",
+    "insufficientTitle": "クレジットが不足しています",
+    "insufficientDescription": "生成に必要なクレジットが足りません。プランをアップグレードしてクレジットを追加しましょう。",
+    "upgrade": "アップグレードする",
+    "style": {
+      "title": "スタイル",
+      "texture": "図のテクスチャ",
+      "none": "選択しない",
+      "flat": "フラット",
+      "outline": "アウトライン",
+      "soft": "ソフト",
+      "realistic": "リアル",
+      "theme": "テーマ",
+      "background": "背景色",
+      "set": "設定する"
+    },
+    "suggestions": {
+      "pricingTitle": "SaaS料金プラン表",
+      "pricingPrompt": "SaaSの料金プラン比較画像を作成。\n3つのカードを横並びにして、「Starter」「Pro」「Business」と表示。\n各カードに価格、主な機能、CTAボタンを配置。\n一つのテーマカラーで統一されたモダンで見やすいWebデザイン風。",
+      "workflowTitle": "業務フロー説明スライド資料",
+      "workflowPrompt": "企業の請求書処理を説明する業務フロー図の入った１枚のスライドを作成。\n「受領」「OCR読み取り」「承認」「支払い」「保存」の5ステップを左から右に配置。各ステップに説明文を追加。\n各ステップにアイコンを付け、一つのテーマカラーで統一されたスタイリッシュなデザイン。",
+      "posterTitle": "ブランドポスター",
+      "posterPrompt": "採用広報やイベント告知にも使えるブランドポスターを作成。\n大きなキャッチコピーを主役にし、サブコピー、開催情報またはサービス名、短い紹介文を整理して配置。\n写真を使わず、タイポグラフィと図形表現を中心に構成する。\nモダンで感度の高いデザインにし、スタートアップらしい世界観が伝わるビジュアルにする。"
+    }
+  },
+  "editor": {
+    "loading": "画像を生成しています",
+    "takingLonger": "お待たせしています...",
+    "previousProject": "前のプロジェクト",
+    "nextProject": "次のプロジェクト",
+    "home": "ホームに戻る",
+    "saveImage": "画像を保存",
+    "saveError": "画像の保存に失敗しました",
+    "copied": "コピーしました",
+    "copy": {
+      "label": "コピー",
+      "options": "コピーオプション",
+      "image": "画像としてコピー",
+      "imageDescription": "画像形式でコピーします。",
+      "svg": "SVG形式でコピー",
+      "svgDescription": "Powerpoint等で編集できる形式でコピーします。",
+      "paid": "有料プラン",
+      "error": "コピーに失敗しました"
+    },
+    "edit": {
+      "button": "編集",
+      "title": "画像を編集",
+      "description": "画像を再生成します。",
+      "instruction": "編集内容",
+      "placeholder": "編集内容を入力",
+      "failed": "編集に失敗しました。"
+    },
+    "inspector": {
+      "title": "インスペクタ",
+      "text": "テキスト",
+      "font": "フォント",
+      "fontSize": "文字サイズ",
+      "lineHeight": "行間",
+      "letterSpacing": "字間",
+      "weight": "字体",
+      "normal": "標準",
+      "bold": "太字",
+      "alignment": "文字揃え",
+      "alignLeft": "左揃え",
+      "alignCenter": "中央揃え",
+      "alignRight": "右揃え",
+      "color": "文字色",
+      "emptyTitle": "テキストを選択してください",
+      "emptyDescription": "選択中テキストのフォントや文字サイズなどのスタイルを変更できます。"
+    }
+  },
+  "landing": {
+    "header": { "login": "Mutarにログイン" },
+    "hero": {
+      "titleLine1": "生成して終わりじゃない。",
+      "titleLine2": "作り直さず、そのまま修正。",
+      "descriptionLine1": "Mutar（ミューター）は、あとから文字を編集できるAI画像生成ツールです。",
+      "descriptionLine2": "ビジネスをはじめとする多様なシーンで、実用に耐える資料画像を生成します。",
+      "start": "無料で始める"
+    },
+    "advantages": {
+      "heading": "特長",
+      "editTextTitle": "テキストを自由に編集",
+      "editTextDescription": "画像内の文字を自動で検出し、生成時点からテキストを編集できる状態で出力します。",
+      "qualityTitle": "高品質な画像生成",
+      "qualityDescription": "最先端のGPT Image 2モデルで高品質な画像を生成します。",
+      "ocrTitle": "高精度な文字検出",
+      "ocrDescription": "高精度なOCR技術で、画像内の文字を正確に検出。テキストを位置ズレなく美しく配置します。",
+      "typeTitle": "文字の歪みなし",
+      "typeDescription": "AI生成画像特有の文字の歪みなしで、フォントで文字を美しく描画します。"
+    },
+    "useCases": {
+      "heading": "こんなことに使えます",
+      "slideTitle": "スライド資料に使う図",
+      "slideDescription": "読みやすく整えた文字で、スライドにそのまま貼り付け。",
+      "slideAlt": "3つの成長プロセスをまとめたビジネススライド",
+      "posterTitle": "ポスター・チラシ",
+      "posterDescription": "ポスターを生成したあとに、イベント名や日時、会場を変更。",
+      "posterAlt": "デザインフォーラムのイベントポスター",
+      "socialTitle": "SNS・広告クリエイティブ",
+      "socialDescription": "画像を生成してから見出しや訴求を差し替え。",
+      "socialAlt": "見出しと分析画面を組み合わせた広告クリエイティブ",
+      "menuTitle": "メニュー・料金表",
+      "menuDescription": "デザインを生成したあとに、商品名や価格を修正。",
+      "menuAlt": "コーヒーや紅茶の価格を掲載したカフェメニュー表"
+    },
+    "cta": {
+      "title": "いつでも直せる資料画像を生成",
+      "description": "無料で始められます。まずは4枚までの生成をお試し。",
+      "button": "無料で始める"
+    },
+    "footer": {
+      "operator": "運営者",
+      "terms": "利用規約",
+      "privacy": "プライバシーポリシー"
+    },
+    "workflow": {
+      "heading": "利用の流れ",
+      "generateTitle": "画像を生成する",
+      "generateDescription": "つくりたい内容を言葉で伝えるだけ。他のサービスで作った画像を読み込むこともできます。",
+      "editTitle": "文字を直接編集する",
+      "editDescription": "画像内の文字は、編集できるテキストボックスに変換されます。本文やフォントを、その場で編集できます。",
+      "saveTitle": "画像を保存する",
+      "saveDescription": "画像をPNGまたはSVG形式保存します。"
+    },
+    "details": {
+      "sourceTitle": "好きな材料から手軽に生成",
+      "sourceDescription": "文章のプロンプトだけでなく、手書きのスケッチや印刷物の写真から生成したり、他のAIサービスで作った画像を読み込めます。手元の素材に合わせて、アイデアを手軽にかたちにできます。",
+      "sourceAlt": "文章やスケッチ、写真などの素材からプレゼンテーション画像を生成する画面",
+      "brandTitle": "ブランドのスタイルを維持",
+      "brandDescription": "ブランドカラーや質感、全体の雰囲気を細かく指定して、ブランドらしさを保った統一感のある資料に仕上げられます。複数の画像を作る場合も、同じ世界観を保ちながら展開できます。",
+      "brandAlt": "ブランドカラーと質感を複数の資料へ反映するスタイル設定画面",
+      "appsTitle": "使い慣れたアプリで編集する",
+      "appsDescription": "生成した画像は、テキストを編集できる状態でPowerPointやIllustrator等のアプリに貼り付けることもできます。使い慣れた制作環境で、そのまま仕上げの作業を続けられます。",
+      "appsAlt": "生成した資料のテキストレイヤーを外部のデザインアプリで編集する画面"
+    }
+  },
+  "pricing": {
+    "title": "プランを選択",
+    "description": "プランを選択してください。",
+    "basic": "ベーシック",
+    "premium": "プレミアム",
+    "upgradeBillingTitle": "アップグレード時の請求",
+    "upgradeBillingDescription": "すぐにプレミアムが適用され、残り期間に応じた差額が請求されます。",
+    "commercialTransaction": "特定商取引に関する表示",
+    "changeError": "プランを変更できませんでした。",
+    "downgradeSuccess": "ベーシックプランにダウングレードしました",
+    "checkoutError": "決済ページを開けませんでした。",
+    "perMonth": "/月",
+    "credits": "月あたり{{credits}}クレジット付与",
+    "imageEditing": "画像編集機能",
+    "svgExport": "SVGエクスポート",
+    "commercialUse": "商用利用可能",
+    "supportDeveloper": "開発者を応援",
+    "supportDeveloperMore": "開発者をさらに応援",
+    "current": "現在のプラン",
+    "downgrade": "ダウングレードする",
+    "start": "{{name}}プランを開始"
+  },
+  "settings": {
+    "title": "設定",
+    "tabs": { "account": "アカウント", "general": "一般", "billing": "支払い" },
+    "display": {
+      "heading": "表示",
+      "language": "言語",
+      "theme": "テーマ",
+      "themeOptions": { "system": "システム", "dark": "ダーク", "light": "ライト" }
+    },
+    "editor": {
+      "heading": "エディタ",
+      "snapTitle": "ガイドラインにスナップ",
+      "snapDescription": "有効にすると、テキストを近傍のオブジェクトのガイドラインにスナップします。",
+      "updateError": "エディタ設定を変更できませんでした。"
+    },
+    "account": {
+      "name": "名前",
+      "save": "保存",
+      "nameUpdateError": "名前を変更できませんでした。",
+      "nameUpdateSuccess": "名前を変更しました。",
+      "creditUsage": "クレジット使用量",
+      "email": "メールアドレス",
+      "logout": "ログアウト",
+      "logoutDescription": "この端末からログアウトします。",
+      "delete": "アカウント削除",
+      "deleteButton": "アカウントを削除",
+      "deleteDescription": "アカウント、作成したプロジェクト、契約情報を削除します。",
+      "deleteTitle": "アカウントを削除しますか？",
+      "deleteWarning": "作成したプロジェクトはすべて削除されます。この操作は取り消せません。",
+      "deleteError": "アカウントを削除できませんでした。"
+    },
+    "usage": {
+      "used": "{{percent}}% 使用済み",
+      "reset": "毎月1日にリセットされます",
+      "upgrade": "アップグレード"
+    },
+    "billing": {
+      "creditUsage": "クレジット使用量",
+      "changePlan": "プランを変更",
+      "changePlanButton": "プランを変更する",
+      "resumePlan": "プランを再開",
+      "resumeButton": "プランを再開する",
+      "cancelPlan": "プランを解約",
+      "cancelButton": "プランを解約する",
+      "cancelError": "解約できませんでした。",
+      "cancelAccepted": "解約を受け付けました。",
+      "availableUntil": "{{date}}まで現在のプランを利用できます。",
+      "premiumUntil": "{{date}}までプレミアムプランを利用できます",
+      "planUntil": "{{date}}まで{{plan}}を利用できます",
+      "switchesToBasic": "{{date}}に自動でベーシックプランに切り替わります。",
+      "endsOn": "{{date}}に自動でプランが解約されます。",
+      "resumeError": "プランを再開できませんでした。",
+      "premiumResumeSuccess": "プレミアムプランを再開しました。",
+      "premiumResumeButton": "プレミアムプランを再開する",
+      "resumeSuccess": "プランを再開しました。",
+      "invoiceHistory": "請求履歴",
+      "loading": "読み込み中",
+      "invoiceError": "請求履歴を取得できませんでした。",
+      "invoiceEmpty": "請求履歴はまだありません。",
+      "invoice": "請求書",
+      "invoiceStatus": {
+        "draft": "下書き",
+        "open": "未払い",
+        "paid": "支払い済み",
+        "uncollectible": "回収不能",
+        "void": "無効",
+        "unknown": "不明"
+      }
+    },
+    "cancellation": {
+      "title": "プランを解約しますか？",
+      "description": "解約する理由を選択してください",
+      "submit": "プランを解約する",
+      "reasons": {
+        "tooExpensive": "料金が高い",
+        "missingFeatures": "必要な機能がない",
+        "switchedService": "他のサービスへ移行する",
+        "unused": "利用する必要がなくなった",
+        "tooComplex": "操作が難しい",
+        "lowQuality": "品質に満足できない",
+        "customerService": "サポートに満足できない",
+        "other": "その他"
+      }
+    }
+  }
+}

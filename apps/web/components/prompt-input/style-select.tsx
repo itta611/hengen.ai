@@ -5,6 +5,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover"
 import Image from "next/image"
 import { useState } from "react"
 import { cn } from "@/lib/utils"
+import { useTranslation } from "@/i18n/client"
 
 type RGB = [number, number, number]
 
@@ -125,13 +126,6 @@ export type PromptStyle = {
   backgroundColor?: string
 }
 
-const textureLabels = {
-  flat: "フラット",
-  outline: "アウトライン",
-  soft: "ソフト",
-  realistic: "リアル",
-} satisfies Record<NonNullable<PromptStyle["texture"]>, string>
-
 export function StyleSelect({
   style,
   onStyleChange,
@@ -139,6 +133,13 @@ export function StyleSelect({
   style: PromptStyle
   onStyleChange: (style: PromptStyle) => void
 }) {
+  const { t } = useTranslation()
+  const textureLabels = {
+    flat: t("prompt.style.flat"),
+    outline: t("prompt.style.outline"),
+    soft: t("prompt.style.soft"),
+    realistic: t("prompt.style.realistic"),
+  } satisfies Record<NonNullable<PromptStyle["texture"]>, string>
   const [open, setOpen] = useState(false)
   const [colorPickerOpen, setColorPickerOpen] = useState(false)
   const themeColor = style.themeColor ?? "#6366F1"
@@ -175,7 +176,9 @@ export function StyleSelect({
           <Button variant="ghost" size="sm" className="pr-2">
             <PaletteIcon />
             <span className="not-sm:hidden">
-              {style.texture ? textureLabels[style.texture] : "スタイル"}
+              {style.texture
+                ? textureLabels[style.texture]
+                : t("prompt.style.title")}
             </span>
             <ChevronDown />
           </Button>
@@ -193,11 +196,13 @@ export function StyleSelect({
             />
           </filter>
         </svg>
-        <span className="text-sm text-muted-foreground">図のテクスチャ</span>
+        <span className="text-sm text-muted-foreground">
+          {t("prompt.style.texture")}
+        </span>
         <div className="grid grid-cols-3 gap-4 pb-1">
           <MenuItem
             selected={!style.texture}
-            label="選択しない"
+            label={t("prompt.style.none")}
             onClick={() => onStyleChange({ ...style, texture: undefined })}
           >
             <CircleSlashIcon
@@ -209,7 +214,7 @@ export function StyleSelect({
           <MenuItem
             backgroundColor={backgroundColor}
             selected={style.texture === "flat"}
-            label="フラット"
+            label={t("prompt.style.flat")}
             onClick={() => onStyleChange({ ...style, texture: "flat" })}
           >
             <TextureImage src="/knight-flat.png" />
@@ -217,7 +222,7 @@ export function StyleSelect({
           <MenuItem
             backgroundColor={backgroundColor}
             selected={style.texture === "outline"}
-            label="アウトライン"
+            label={t("prompt.style.outline")}
             onClick={() => onStyleChange({ ...style, texture: "outline" })}
           >
             <TextureImage src="/knight-outline.png" />
@@ -225,7 +230,7 @@ export function StyleSelect({
           <MenuItem
             backgroundColor={backgroundColor}
             selected={style.texture === "soft"}
-            label="ソフト"
+            label={t("prompt.style.soft")}
             onClick={() => onStyleChange({ ...style, texture: "soft" })}
           >
             <TextureImage src="/knight-gradient.png" hasShadow />
@@ -233,7 +238,7 @@ export function StyleSelect({
           <MenuItem
             backgroundColor={backgroundColor}
             selected={style.texture === "realistic"}
-            label="リアル"
+            label={t("prompt.style.realistic")}
             onClick={() => onStyleChange({ ...style, texture: "realistic" })}
           >
             <TextureImage src="/knight-realistic.png" hasShadow />
@@ -244,7 +249,7 @@ export function StyleSelect({
             className="text-sm text-muted-foreground"
             htmlFor="theme-color"
           >
-            テーマ
+            {t("prompt.style.theme")}
           </label>
           {style.themeColor ? (
             <ColorPickerWithInput
@@ -266,7 +271,7 @@ export function StyleSelect({
               type="button"
               onClick={() => onStyleChange({ ...style, themeColor: "#6366F1" })}
             >
-              設定する
+              {t("prompt.style.set")}
             </Button>
           )}
         </div>
@@ -275,7 +280,7 @@ export function StyleSelect({
             className="text-sm text-muted-foreground"
             htmlFor="background-color"
           >
-            背景色
+            {t("prompt.style.background")}
           </label>
           {style.backgroundColor ? (
             <ColorPickerWithInput
@@ -299,7 +304,7 @@ export function StyleSelect({
                 onStyleChange({ ...style, backgroundColor: "#FFFFFF" })
               }
             >
-              設定する
+              {t("prompt.style.set")}
             </Button>
           )}
         </div>

@@ -1,0 +1,330 @@
+{
+  "common": {
+    "language": { "ja": "日本語", "en": "English" },
+    "button": {
+      "save": "Save",
+      "cancel": "Cancel",
+      "delete": "Delete",
+      "restore": "Restore",
+      "generate": "Generate",
+      "upgrade": "Upgrade",
+      "view": "View"
+    },
+    "plan": { "free": "Free plan", "basic": "Basic plan", "premium": "Premium plan" },
+    "uploadTypeError": "Only JPEG, PNG, GIF, and WebP images are supported.",
+    "generationError": "Generation failed.",
+    "close": "Close",
+    "insufficientCredits": "You don't have enough credits."
+  },
+  "metadata": {
+    "title": "Mutar | AI image generation with editable text",
+    "description": "Generate images with editable text. Revise the copy, font, and color without distorted lettering—ideal for presentations, posters, and business visuals."
+  },
+  "sidebar": {
+    "general": "General",
+    "home": "Home",
+    "search": "Search",
+    "starred": "Favorites",
+    "trash": "Trash",
+    "theme": "Theme",
+    "upgrade": "Upgrade",
+    "feedback": "Send feedback",
+    "settings": "Settings",
+    "logout": "Log out"
+  },
+  "auth": {
+    "title": "Log in or sign up",
+    "description": "Log in or create an account to continue.",
+    "google": "Continue with Google",
+    "or": "or",
+    "issuingLink": "Sending link...",
+    "continue": "Continue",
+    "agreementPrefix": "By continuing, you agree to the ",
+    "terms": "Terms of Service",
+    "and": " and ",
+    "privacy": "Privacy Policy",
+    "agreementSuffix": ".",
+    "googleError": "Could not start Google login.",
+    "emailRequired": "Enter your email address.",
+    "magicLinkError": "Could not send the magic link. Please try again later.",
+    "magicLinkSent": "We sent a magic link to your email.\nCheck your inbox."
+  },
+  "home": {
+    "generateTab": "Generate a design",
+    "importTab": "Import an image",
+    "promptHeading": "What would you like to create?",
+    "importDescriptionLine1": "Import an image generated with ChatGPT or another service",
+    "importDescriptionLine2": "and make its text editable.",
+    "recent": "Recent",
+    "starred": "Favorites",
+    "trash": "Trash",
+    "upload": "Add image",
+    "uploadFormats": "PNG, JPG, GIF, or WebP",
+    "importCredits": "Uses 5 credits",
+    "checkoutSuccess": "Payment completed successfully."
+  },
+  "gallery": {
+    "empty": "No projects yet",
+    "removeStar": "Remove from favorites",
+    "copyPrompt": "Copy prompt",
+    "addStar": "Add to favorites",
+    "deleteSuccess": "Project deleted",
+    "restoreSuccess": "Project restored"
+  },
+  "search": { "title": "Search", "placeholder": "Search" },
+  "prompt": {
+    "placeholder": "Describe the design you want to create.",
+    "generating": "Generating",
+    "generate": "Generate",
+    "credits": "Uses 10 credits",
+    "removeImage": "Remove {{name}}",
+    "count": "{{count}} images",
+    "countLabel": "Number of images",
+    "aspectRatio": "Aspect ratio",
+    "auto": "Auto",
+    "uploadFile": "Upload a file",
+    "dropFile": "Drag and drop a file here.",
+    "insufficientTitle": "Not enough credits",
+    "insufficientDescription": "You don't have enough credits to generate this image. Upgrade your plan to add more credits.",
+    "upgrade": "Upgrade",
+    "style": {
+      "title": "Style",
+      "texture": "Illustration style",
+      "none": "None",
+      "flat": "Flat",
+      "outline": "Outline",
+      "soft": "Soft",
+      "realistic": "Realistic",
+      "theme": "Theme",
+      "background": "Background color",
+      "set": "Set"
+    },
+    "suggestions": {
+      "pricingTitle": "SaaS pricing table",
+      "pricingPrompt": "Create a SaaS pricing comparison graphic.\nPlace three cards side by side labeled Starter, Pro, and Business.\nInclude the price, key features, and a CTA button on each card.\nUse a cohesive theme color and a clean, modern web design.",
+      "workflowTitle": "Business workflow slide",
+      "workflowPrompt": "Create a single slide with a workflow diagram explaining invoice processing.\nArrange five steps from left to right: Receipt, OCR, Approval, Payment, and Archive. Add a short description to each step.\nAdd an icon to every step and use one cohesive theme color with a polished design.",
+      "posterTitle": "Brand poster",
+      "posterPrompt": "Create a brand poster suitable for recruiting or event promotion.\nMake a large headline the focal point, then organize a subheading, event information or service name, and a short description.\nUse typography and geometric shapes instead of photography.\nGive it a modern, design-forward visual identity suited to a startup."
+    }
+  },
+  "editor": {
+    "loading": "Generating image",
+    "takingLonger": "This is taking a little longer...",
+    "previousProject": "Previous project",
+    "nextProject": "Next project",
+    "home": "Back to home",
+    "saveImage": "Save image",
+    "saveError": "Could not save the image",
+    "copied": "Copied",
+    "copy": {
+      "label": "Copy",
+      "options": "Copy options",
+      "image": "Copy as image",
+      "imageDescription": "Copy in image format.",
+      "svg": "Copy as SVG",
+      "svgDescription": "Copy in a format editable in PowerPoint and similar apps.",
+      "paid": "Paid plan",
+      "error": "Copy failed"
+    },
+    "edit": {
+      "button": "Edit",
+      "title": "Edit image",
+      "description": "Regenerate the image with your changes.",
+      "instruction": "Edit instructions",
+      "placeholder": "Describe your changes",
+      "failed": "Editing failed."
+    },
+    "inspector": {
+      "title": "Inspector",
+      "text": "Text",
+      "font": "Font",
+      "fontSize": "Font size",
+      "lineHeight": "Line height",
+      "letterSpacing": "Letter spacing",
+      "weight": "Weight",
+      "normal": "Medium",
+      "bold": "Bold",
+      "alignment": "Alignment",
+      "alignLeft": "Align left",
+      "alignCenter": "Align center",
+      "alignRight": "Align right",
+      "color": "Text color",
+      "emptyTitle": "Select a text layer",
+      "emptyDescription": "Select text to change its font, size, color, and other styles."
+    }
+  },
+  "landing": {
+    "header": { "login": "Log in to Mutar" },
+    "hero": {
+      "titleLine1": "Generation is just the beginning.",
+      "titleLine2": "Fix it directly. No starting over.",
+      "descriptionLine1": "Mutar is an AI image generator that keeps every word editable.",
+      "descriptionLine2": "Create polished, practical visuals for presentations, posters, and more.",
+      "start": "Start for free"
+    },
+    "advantages": {
+      "heading": "Why Mutar",
+      "editTextTitle": "Edit text freely",
+      "editTextDescription": "Mutar automatically detects text and delivers every generated image with editable text layers.",
+      "qualityTitle": "High-quality generation",
+      "qualityDescription": "Generate high-quality visuals with the latest GPT Image 2 model.",
+      "ocrTitle": "Accurate text detection",
+      "ocrDescription": "Precise OCR detects text and places it cleanly without shifting its position.",
+      "typeTitle": "Crisp, undistorted text",
+      "typeDescription": "Text is rendered with real fonts, avoiding the warped lettering common in AI-generated images."
+    },
+    "useCases": {
+      "heading": "Made for your everyday visuals",
+      "slideTitle": "Presentation graphics",
+      "slideDescription": "Add clear, polished graphics directly to your slides.",
+      "slideAlt": "Business slide showing a three-stage growth process",
+      "posterTitle": "Posters and flyers",
+      "posterDescription": "Generate a poster, then update the event name, date, or venue.",
+      "posterAlt": "Event poster for a design forum",
+      "socialTitle": "Social and ad creative",
+      "socialDescription": "Generate the visual first, then swap the headline or message.",
+      "socialAlt": "Advertising creative combining a headline and analytics dashboard",
+      "menuTitle": "Menus and pricing",
+      "menuDescription": "Generate the design, then correct product names and prices.",
+      "menuAlt": "Cafe menu listing coffee and tea prices"
+    },
+    "cta": {
+      "title": "Generate visuals you can always revise",
+      "description": "Start free and try generating up to four images.",
+      "button": "Start for free"
+    },
+    "footer": {
+      "operator": "Operator",
+      "terms": "Terms of Service",
+      "privacy": "Privacy Policy"
+    },
+    "workflow": {
+      "heading": "How it works",
+      "generateTitle": "Generate an image",
+      "generateDescription": "Describe what you want, or import an image made with another service.",
+      "editTitle": "Edit text directly",
+      "editDescription": "Text in the image becomes editable text boxes, so you can change copy and fonts in place.",
+      "saveTitle": "Save your image",
+      "saveDescription": "Export your image as PNG or SVG."
+    },
+    "details": {
+      "sourceTitle": "Create from any starting point",
+      "sourceDescription": "Start with a text prompt, a hand-drawn sketch, a photo of printed material, or an image made with another AI service. Turn whatever you have into a finished visual.",
+      "sourceAlt": "Screen generating a presentation graphic from text, sketches, and photos",
+      "brandTitle": "Keep your brand consistent",
+      "brandDescription": "Specify brand colors, texture, and overall mood to create cohesive materials. Carry the same visual identity across multiple images.",
+      "brandAlt": "Style settings applying brand colors and texture across several materials",
+      "appsTitle": "Continue in the apps you know",
+      "appsDescription": "Paste generated images into PowerPoint, Illustrator, and other apps with editable text intact, then finish the work in your familiar tools.",
+      "appsAlt": "Editing text layers from a generated visual in an external design app"
+    }
+  },
+  "pricing": {
+    "title": "Choose a plan",
+    "description": "Select the plan that works for you.",
+    "basic": "Basic",
+    "premium": "Premium",
+    "upgradeBillingTitle": "Upgrade billing",
+    "upgradeBillingDescription": "Premium starts immediately, and you'll be charged the prorated difference for the remaining period.",
+    "commercialTransaction": "Commercial transaction disclosure",
+    "changeError": "Could not change your plan.",
+    "downgradeSuccess": "Downgraded to the Basic plan",
+    "checkoutError": "Could not open the checkout page.",
+    "perMonth": "/month",
+    "credits": "{{credits}} credits per month",
+    "imageEditing": "Image editing",
+    "svgExport": "SVG export",
+    "commercialUse": "Commercial use",
+    "supportDeveloper": "Support the developer",
+    "supportDeveloperMore": "Support the developer even more",
+    "current": "Current plan",
+    "downgrade": "Downgrade",
+    "start": "Start {{name}}"
+  },
+  "settings": {
+    "title": "Settings",
+    "tabs": { "account": "Account", "general": "General", "billing": "Billing" },
+    "display": {
+      "heading": "Appearance",
+      "language": "Language",
+      "theme": "Theme",
+      "themeOptions": { "system": "System", "dark": "Dark", "light": "Light" }
+    },
+    "editor": {
+      "heading": "Editor",
+      "snapTitle": "Snap to guidelines",
+      "snapDescription": "Snap text to nearby object guidelines when enabled.",
+      "updateError": "Could not update the editor settings."
+    },
+    "account": {
+      "name": "Name",
+      "save": "Save",
+      "nameUpdateError": "Could not update your name.",
+      "nameUpdateSuccess": "Name updated.",
+      "creditUsage": "Credit usage",
+      "email": "Email address",
+      "logout": "Log out",
+      "logoutDescription": "Log out on this device.",
+      "delete": "Delete account",
+      "deleteButton": "Delete account",
+      "deleteDescription": "Delete your account, projects, and subscription information.",
+      "deleteTitle": "Delete your account?",
+      "deleteWarning": "All of your projects will be deleted. This action cannot be undone.",
+      "deleteError": "Could not delete your account."
+    },
+    "usage": {
+      "used": "{{percent}}% used",
+      "reset": "Resets on the first day of every month",
+      "upgrade": "Upgrade"
+    },
+    "billing": {
+      "creditUsage": "Credit usage",
+      "changePlan": "Change plan",
+      "changePlanButton": "Change plan",
+      "resumePlan": "Resume plan",
+      "resumeButton": "Resume plan",
+      "cancelPlan": "Cancel plan",
+      "cancelButton": "Cancel plan",
+      "cancelError": "Could not cancel your plan.",
+      "cancelAccepted": "Your cancellation has been scheduled.",
+      "availableUntil": "You can use your current plan until {{date}}.",
+      "premiumUntil": "You can use the Premium plan until {{date}}.",
+      "planUntil": "You can use {{plan}} until {{date}}.",
+      "switchesToBasic": "Your plan will automatically switch to Basic on {{date}}.",
+      "endsOn": "Your plan will automatically end on {{date}}.",
+      "resumeError": "Could not resume your plan.",
+      "premiumResumeSuccess": "Premium plan resumed.",
+      "premiumResumeButton": "Resume Premium plan",
+      "resumeSuccess": "Plan resumed.",
+      "invoiceHistory": "Billing history",
+      "loading": "Loading",
+      "invoiceError": "Could not load your billing history.",
+      "invoiceEmpty": "No invoices yet.",
+      "invoice": "Invoice",
+      "invoiceStatus": {
+        "draft": "Draft",
+        "open": "Unpaid",
+        "paid": "Paid",
+        "uncollectible": "Uncollectible",
+        "void": "Void",
+        "unknown": "Unknown"
+      }
+    },
+    "cancellation": {
+      "title": "Cancel your plan?",
+      "description": "Tell us why you're cancelling",
+      "submit": "Cancel plan",
+      "reasons": {
+        "tooExpensive": "It's too expensive",
+        "missingFeatures": "It doesn't have the features I need",
+        "switchedService": "I'm switching to another service",
+        "unused": "I no longer need it",
+        "tooComplex": "It's difficult to use",
+        "lowQuality": "I'm not satisfied with the quality",
+        "customerService": "I'm not satisfied with support",
+        "other": "Other"
+      }
+    }
+  }
+}

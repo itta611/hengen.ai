@@ -3,9 +3,11 @@
 import { Logo } from "@/components/logo"
 import { Button } from "@/components/ui/button"
 import { useAuthDialog } from "@/hooks/use-auth-dialog"
+import { useTranslation } from "@/i18n/client"
 import Link from "next/link"
 
 export function LandingHeader() {
+  const { t } = useTranslation()
   const { openAuthDialog } = useAuthDialog()
 
   return (
@@ -14,14 +16,8 @@ export function LandingHeader() {
         <Link href="/">
           <Logo height={30} />
         </Link>
-        {/* <div className="hidden items-center gap-8 md:flex">
-          <a href="#workflow">使い方</a>
-          <a href="#advantages">特長</a>
-          <a href="#editing">編集例</a>
-          <a href="#use-cases">ユースケース</a>
-        </div> */}
         <Button onClick={() => openAuthDialog()} size="lg">
-          Mutarにログイン
+          {t("landing.header.login")}
         </Button>
       </div>
     </nav>

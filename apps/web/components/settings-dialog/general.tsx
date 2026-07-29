@@ -8,6 +8,8 @@ import {
   useEditorSettings,
   useUpdateEditorSettings,
 } from "@/hooks/use-editor-settings"
+import { useLocale, useTranslation } from "@/i18n/client"
+import type { Locale } from "@/i18n/settings"
 import {
   Select,
   SelectContent,
@@ -20,18 +22,24 @@ import { SettingSection } from "./setting-section"
 
 export function GeneralSettingsPage() {
   const { setTheme, theme } = useTheme()
+  const { locale, setLocale } = useLocale()
+  const { t } = useTranslation()
   const { data } = useEditorSettings()
   const updateEditorSettings = useUpdateEditorSettings()
 
   return (
     <div className="space-y-12">
       <div className="space-y-5">
-        <h3 className="text-lg font-bold">表示</h3>
-        <SettingSection title="言語">
+        <h3 className="text-lg font-bold">{t("settings.display.heading")}</h3>
+        <SettingSection title={t("settings.display.language")}>
           <Select
+            value={locale}
+            onValueChange={(value) => {
+              if (value) void setLocale(value as Locale)
+            }}
             items={[
-              { label: "日本語", value: "ja" },
-              { label: "English", value: "en" },
+              { label: t("common.language.ja"), value: "ja" },
+              { label: t("common.language.en"), value: "en" },
             ]}
           >
             <SelectTrigger className="w-40">
@@ -39,20 +47,26 @@ export function GeneralSettingsPage() {
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                <SelectItem value="ja">日本語</SelectItem>
-                <SelectItem value="en">English</SelectItem>
+                <SelectItem value="ja">{t("common.language.ja")}</SelectItem>
+                <SelectItem value="en">{t("common.language.en")}</SelectItem>
               </SelectGroup>
             </SelectContent>
           </Select>
         </SettingSection>
-        <SettingSection title="テーマ">
+        <SettingSection title={t("settings.display.theme")}>
           <Select
             value={theme}
             onValueChange={(value) => setTheme(value!)}
             items={[
-              { label: "システム", value: "system" },
-              { label: "ダーク", value: "dark" },
-              { label: "ライト", value: "light" },
+              {
+                label: t("settings.display.themeOptions.system"),
+                value: "system",
+              },
+              { label: t("settings.display.themeOptions.dark"), value: "dark" },
+              {
+                label: t("settings.display.themeOptions.light"),
+                value: "light",
+              },
             ]}
           >
             <SelectTrigger className="w-40">
@@ -60,19 +74,25 @@ export function GeneralSettingsPage() {
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                <SelectItem value="system">システム</SelectItem>
-                <SelectItem value="dark">ダーク</SelectItem>
-                <SelectItem value="light">ライト</SelectItem>
+                <SelectItem value="system">
+                  {t("settings.display.themeOptions.system")}
+                </SelectItem>
+                <SelectItem value="dark">
+                  {t("settings.display.themeOptions.dark")}
+                </SelectItem>
+                <SelectItem value="light">
+                  {t("settings.display.themeOptions.light")}
+                </SelectItem>
               </SelectGroup>
             </SelectContent>
           </Select>
         </SettingSection>
       </div>
       <div className="space-y-5">
-        <h3 className="text-lg font-bold">エディタ</h3>
+        <h3 className="text-lg font-bold">{t("settings.editor.heading")}</h3>
         <SettingSection
-          title="ガイドラインにスナップ"
-          description="有効にすると、テキストを近傍のオブジェクトのガイドラインにスナップします。"
+          title={t("settings.editor.snapTitle")}
+          description={t("settings.editor.snapDescription")}
           horizontal
         >
           <Switch
@@ -82,8 +102,7 @@ export function GeneralSettingsPage() {
               updateEditorSettings.mutate(
                 { snapToGrid },
                 {
-                  onError: () =>
-                    toast.error("エディタ設定を変更できませんでした。"),
+                  onError: () => toast.error(t("settings.editor.updateError")),
                 }
               )
             }

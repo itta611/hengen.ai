@@ -6,6 +6,7 @@ import { useEffect, useState } from "react"
 import Beams from "@/components/Beams"
 import Grainient from "@/components/Grainient"
 import Silk from "@/components/Silk"
+import { useTranslation } from "@/i18n/client"
 
 const generationCountdownSeconds = 4 * 60
 const imageImportCountdownSeconds = 1.5 * 60
@@ -95,6 +96,7 @@ export function EditorLoader({
   projectId: string
   prompt: string | null
 }) {
+  const { t } = useTranslation()
   const [now, setNow] = useState(() => Date.now())
   const countdownSeconds =
     prompt?.trim().length === 0
@@ -103,7 +105,7 @@ export function EditorLoader({
   const remainingSeconds = getRemainingSeconds(countdownSeconds, createdAt, now)
   const remainingTime = formatRemainingTime(remainingSeconds)
   const loadingMessage =
-    remainingSeconds === 0 ? "お待たせしています..." : "画像を生成しています"
+    remainingSeconds === 0 ? t("editor.takingLonger") : t("editor.loading")
 
   useEffect(() => {
     const intervalId = window.setInterval(() => {

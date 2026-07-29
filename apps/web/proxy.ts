@@ -1,25 +1,36 @@
 import { getSessionCookie } from "better-auth/cookies"
 import { type NextRequest, NextResponse } from "next/server"
 
+const publicPaths = new Set([
+  "/privacy",
+  "/terms",
+  "/specified",
+  "/en/privacy",
+  "/en/terms",
+])
+
 export function proxy(request: NextRequest) {
+  const pathname = request.nextUrl.pathname
   const isLoggedIn = Boolean(
     getSessionCookie(request, { cookiePrefix: "mutar" })
   )
+  const requestHeaders = new Headers(request.headers)
 
-  if (request.nextUrl.pathname === "/") {
+  if (pathname.startsWith("/en/")) {
+    requestHeaders.set("x-mutar-locale", "en")
+  }
+
+  if (pathname === "/") {
     return isLoggedIn
       ? NextResponse.redirect(new URL("/home", request.url))
-      : NextResponse.next()
+      : NextResponse.next({ request: { headers: requestHeaders } })
   }
 
-
-  if (request.nextUrl.pathname === "/terms" || request.nextUrl.pathname === "/privacy" || request.nextUrl.pathname === "/specified") {
-    return NextResponse.next()
+  if (publicPaths.has(pathname) || isLoggedIn) {
+    return NextResponse.next({ request: { headers: requestHeaders } })
   }
 
-  return isLoggedIn
-    ? NextResponse.next()
-    : NextResponse.redirect(new URL("/", request.url))
+  return NextResponse.redirect(new URL("/", request.url))
 }
 
 export const config = {

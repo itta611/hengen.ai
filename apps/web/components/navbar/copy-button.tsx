@@ -13,6 +13,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
+import { useTranslation } from "@/i18n/client"
 
 export function CopyButton({
   disabled,
@@ -25,6 +26,7 @@ export function CopyButton({
   onCopyImage: () => Promise<void>
   onCopySvg: () => Promise<void>
 }) {
+  const { t } = useTranslation()
   const [open, setOpen] = useState(false)
 
   async function handleCopy(action: () => Promise<void>) {
@@ -32,25 +34,25 @@ export function CopyButton({
       await action()
       setOpen(false)
     } catch {
-      toast.error("コピーに失敗しました")
+      toast.error(t("editor.copy.error"))
     }
   }
 
   return (
-    <ButtonGroup aria-label="コピー">
+    <ButtonGroup aria-label={t("editor.copy.label")}>
       <Button
         disabled={disabled}
         onClick={() => handleCopy(onCopyImage)}
         type="button"
         variant="outline"
       >
-        コピー
+        {t("editor.copy.label")}
       </Button>
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger
           render={
             <Button
-              aria-label="コピーオプション"
+              aria-label={t("editor.copy.options")}
               className="w-7"
               disabled={disabled}
               size="icon"
@@ -69,10 +71,10 @@ export function CopyButton({
                 className="flex-col items-start gap-0.5 p-2!"
               >
                 <div className="text-foreground text-xs font-bold">
-                  画像としてコピー
+                  {t("editor.copy.image")}
                 </div>
                 <div className="text-xs text-muted-foreground">
-                  画像形式でコピーします。
+                  {t("editor.copy.imageDescription")}
                 </div>
               </CommandItem>
               <CommandItem
@@ -80,13 +82,15 @@ export function CopyButton({
                 className="flex-col items-start gap-0.5 p-2!"
               >
                 <div className="flex items-center gap-1.5 text-foreground text-xs font-bold">
-                  <span>SVG形式でコピー</span>
+                  <span>{t("editor.copy.svg")}</span>
                   {isSvgPaidFeature && (
-                    <Badge className="h-4 px-1.5 text-[10px]">有料プラン</Badge>
+                    <Badge className="h-4 px-1.5 text-[10px]">
+                      {t("editor.copy.paid")}
+                    </Badge>
                   )}
                 </div>
                 <div className="text-xs text-muted-foreground">
-                  Powerpoint等で編集できる形式でコピーします。
+                  {t("editor.copy.svgDescription")}
                 </div>
               </CommandItem>
             </CommandList>

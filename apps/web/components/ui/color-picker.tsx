@@ -7,6 +7,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
+import { useTranslation } from "@/i18n/client"
 import { cn } from "@/lib/utils"
 import { XIcon } from "lucide-react"
 
@@ -27,6 +28,8 @@ function ColorPickerWithInput({
   showX?: boolean
   onXClick?: () => void
 }) {
+  const { t } = useTranslation()
+
   return (
     <div
       className={cn(
@@ -45,7 +48,7 @@ function ColorPickerWithInput({
         <PopoverTrigger
           render={
             <button
-              aria-label="カラー"
+              aria-label={t("editor.inspector.color")}
               className="border size-5! rounded-xs"
               style={{ backgroundColor: value }}
               type="button"

@@ -6,8 +6,10 @@ import { useParams, useRouter } from "next/navigation"
 
 import { listProjects } from "@/components/gallary"
 import { Button } from "@/components/ui/button"
+import { useTranslation } from "@/i18n/client"
 
 export function EditorNavigationButtons() {
+  const { t } = useTranslation()
   const { projectId } = useParams<{ projectId: string }>()
   const router = useRouter()
   const { data: projects = [] } = useQuery({
@@ -24,7 +26,7 @@ export function EditorNavigationButtons() {
   return (
     <>
       <Button
-        aria-label="前のプロジェクト"
+        aria-label={t("editor.previousProject")}
         className="absolute left-5 top-[calc(50%-48px)] z-10 size-11 -translate-y-1/2 rounded-full text-foreground shadow-xs bg-background!"
         disabled={!previousProject}
         onClick={() =>
@@ -37,7 +39,7 @@ export function EditorNavigationButtons() {
         <ChevronLeftIcon className="size-5" />
       </Button>
       <Button
-        aria-label="次のプロジェクト"
+        aria-label={t("editor.nextProject")}
         className="absolute right-5 top-[calc(50%-48px)] z-10 size-11 -translate-y-1/2 rounded-full text-foreground shadow-xs bg-background!"
         disabled={!nextProject}
         onClick={() => nextProject && router.push(`/editor/${nextProject.id}`)}

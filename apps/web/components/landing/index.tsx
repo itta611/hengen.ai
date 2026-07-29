@@ -1,7 +1,5 @@
 import { CtaSection } from "./cta"
-import { WorkflowSection } from "./workflow"
 import { AdvantagesSection } from "./advantages"
-import { ProductDetailsSection } from "./product-details"
 import { LandingFooter } from "./footer"
 import { LandingHeader } from "./header"
 import { HeroSection } from "./hero"
@@ -16,15 +14,9 @@ export function Landing() {
         <HeroSection />
         <ProductDemoSection />
       </div>
-      {/* <section id="workflow">
-        <WorkflowSection />
-      </section> */}
       <section id="advantages">
         <AdvantagesSection />
       </section>
-      {/* <section id="editing">
-        <ProductDetailsSection />
-      </section> */}
       <section id="use-cases">
         <UseCasesSection />
       </section>

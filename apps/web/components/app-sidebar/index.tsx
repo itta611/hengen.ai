@@ -46,6 +46,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton"
 import { useCurrentPlan } from "@/hooks/use-current-plan"
 import { useUpdateProjectStarred } from "@/hooks/use-update-project-starred"
+import { useTranslation } from "@/i18n/client"
 import { apiClient } from "@/lib/api-client"
 import { authClient } from "@/lib/auth-client"
 import { Tabs, TabsList, TabsTrigger } from "../ui/tabs"
@@ -65,6 +66,7 @@ async function listStarredProjects() {
 }
 
 export function AppSidebar() {
+  const { t } = useTranslation()
   const [searchOpen, setSearchOpen] = useState(false)
   const [settingsOpen, setSettingsOpen] = useState(false)
   const pathname = usePathname()
@@ -109,7 +111,7 @@ export function AppSidebar() {
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>一般</SidebarGroupLabel>
+          <SidebarGroupLabel>{t("sidebar.general")}</SidebarGroupLabel>
           <SidebarMenu>
             <SidebarMenuItem>
               <SidebarMenuButton
@@ -117,13 +119,13 @@ export function AppSidebar() {
                 render={<Link href="/home" />}
               >
                 <HomeIcon />
-                ホーム
+                {t("sidebar.home")}
               </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
               <SidebarMenuButton onClick={() => setSearchOpen(true)}>
                 <SearchIcon />
-                検索
+                {t("sidebar.search")}
               </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
@@ -132,7 +134,7 @@ export function AppSidebar() {
                 render={<Link href="/starred" />}
               >
                 <StarIcon />
-                お気に入り
+                {t("sidebar.starred")}
               </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
@@ -141,14 +143,14 @@ export function AppSidebar() {
                 render={<Link href="/trash" />}
               >
                 <Trash2Icon />
-                ゴミ箱
+                {t("sidebar.trash")}
               </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>
         </SidebarGroup>
         {starredProjects.length !== 0 && (
           <SidebarGroup>
-            <SidebarGroupLabel>お気に入り</SidebarGroupLabel>
+            <SidebarGroupLabel>{t("sidebar.starred")}</SidebarGroupLabel>
             <SidebarMenu>
               {starredProjects.map((project) => (
                 <SidebarMenuItem key={project.id}>
@@ -215,7 +217,7 @@ export function AppSidebar() {
               <DropdownMenuContent>
                 <div className="text-muted-foreground relative flex cursor-default items-center gap-2 pl-2 text-sm">
                   <PaletteIcon size={16} />
-                  <div className="grow">テーマ</div>
+                  <div className="grow">{t("sidebar.theme")}</div>
                   <Tabs onValueChange={(value) => setTheme(value)}>
                     <TabsList>
                       <TabsTrigger value="system">
@@ -234,7 +236,7 @@ export function AppSidebar() {
                 {canUpgrade && (
                   <DropdownMenuItem onClick={pricingDialog.open}>
                     <CircleArrowUpIcon />
-                    アップグレード
+                    {t("sidebar.upgrade")}
                   </DropdownMenuItem>
                 )}
                 <a
@@ -244,12 +246,12 @@ export function AppSidebar() {
                 >
                   <DropdownMenuItem>
                     <MailIcon />
-                    フィードバックを送る
+                    {t("sidebar.feedback")}
                   </DropdownMenuItem>
                 </a>
                 <DropdownMenuItem onClick={() => setSettingsOpen(true)}>
                   <SettingsIcon />
-                  設定
+                  {t("sidebar.settings")}
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={async () => {
@@ -258,7 +260,7 @@ export function AppSidebar() {
                   }}
                 >
                   <LogOutIcon />
-                  ログアウト
+                  {t("sidebar.logout")}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
