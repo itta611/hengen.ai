@@ -12,7 +12,7 @@ export function HeroSection() {
   return (
     <div className="mx-auto flex w-full max-w-300 flex-col px-10 text-center">
       <div className="flex flex-col items-center py-36">
-        <h1 className="text-4xl font-bold leading-normal font-features-['palt'] tracking-tight sm:text-6xl">
+        <h1 className="text-4xl font-extrabold leading-normal font-features-['palt'] tracking-tight sm:text-6xl">
           {t("landing.hero.titleLine1")}
           <br />
           <span className="text-primary">{t("landing.hero.titleLine2")}</span>

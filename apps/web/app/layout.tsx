@@ -19,23 +19,13 @@ import { cn } from "@/lib/utils"
 const manrope = Manrope({
   subsets: ["latin"],
   variable: "--font-sans",
+  weight: ["400", "500", "600", "700", "800"],
 })
 
 const cormorant = Cormorant_Garamond({
   subsets: ["latin"],
   variable: "--font-display",
   weight: ["400", "500", "600", "700"],
-})
-
-const ibmPlexSans = IBM_Plex_Sans({
-  subsets: ["latin"],
-  variable: "--font-editor-plex",
-  weight: ["400", "500", "600"],
-})
-
-const sourceSerif = Source_Serif_4({
-  subsets: ["latin"],
-  variable: "--font-editor-serif",
 })
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -74,8 +64,6 @@ export default async function RootLayout({
         cormorant.variable,
         editorSans.variable,
         editorDisplay.variable,
-        ibmPlexSans.variable,
-        sourceSerif.variable,
         "antialiased"
       )}
     >
