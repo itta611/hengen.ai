@@ -31,7 +31,11 @@ async function editProject({ instruction, projectId }: EditProjectInput) {
 export function useEditProject() {
   const queryClient = useQueryClient()
   const router = useRouter()
-  const mutation = useMutation({ mutationFn: editProject })
+  const mutation = useMutation({
+    mutationFn: editProject,
+    onSettled: () =>
+      queryClient.invalidateQueries({ queryKey: ["credit-usage"] }),
+  })
 
   return {
     isEditing: mutation.isPending,

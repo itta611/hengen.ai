@@ -1,6 +1,6 @@
 "use client"
 
-import { useMutation } from "@tanstack/react-query"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { apiClient } from "@/lib/api-client"
 
 export type GenerateProjectInput = NonNullable<
@@ -24,7 +24,12 @@ async function createProject(input: GenerateProjectInput) {
 }
 
 export function useGenerateProject() {
-  const createProjectMutation = useMutation({ mutationFn: createProject })
+  const queryClient = useQueryClient()
+  const createProjectMutation = useMutation({
+    mutationFn: createProject,
+    onSettled: () =>
+      queryClient.invalidateQueries({ queryKey: ["credit-usage"] }),
+  })
 
   return async function generateProject(input: GenerateProjectInput) {
     const data = await createProjectMutation.mutateAsync(input)
@@ -55,7 +60,12 @@ async function createProjectFromImage(referenceImage: string) {
 }
 
 export function useGenerateProjectFromImage() {
-  const mutation = useMutation({ mutationFn: createProjectFromImage })
+  const queryClient = useQueryClient()
+  const mutation = useMutation({
+    mutationFn: createProjectFromImage,
+    onSettled: () =>
+      queryClient.invalidateQueries({ queryKey: ["credit-usage"] }),
+  })
 
   return async function generateProjectFromImage(referenceImage: string) {
     const data = await mutation.mutateAsync(referenceImage)
