@@ -52,6 +52,7 @@ export const projectEditRoutes = new Hono<SessionEnv>().post(
 
     const projectId = randomUUID()
     const reservation = await reserveCreditsForProjects({
+      creditsPerProject: 10,
       projectIds: [projectId],
       userId: session.user.id,
     })
