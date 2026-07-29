@@ -92,7 +92,7 @@ export function AuthDialog() {
       open={isAuthDialogOpen}
       onOpenChange={(open) => !open && closeAuthDialog()}
     >
-      <DialogContent className="sm:max-w-120 px-10 pt-11 pt-12">
+      <DialogContent className="max-w-92! px-10 pt-14">
         <LogoIcon width={40} height={40} className="mx-auto" />
         <DialogTitle className="text-xl font-bold text-center">
           {t("auth.title")}
@@ -113,15 +113,15 @@ export function AuthDialog() {
             {t("auth.google")}
           </Button>
 
-          <div className="flex items-center h-12">
+          {/* <div className="flex items-center h-12">
             <div className="h-px flex-1 bg-border" />
             <span className="mx-3 text-sm text-muted-foreground">
               {t("auth.or")}
             </span>
             <div className="h-px flex-1 bg-border" />
-          </div>
+          </div> */}
 
-          <form
+          {/* <form
             className="flex flex-col gap-3"
             onSubmit={(event) => {
               event.preventDefault()
@@ -143,7 +143,7 @@ export function AuthDialog() {
                 ? t("auth.issuingLink")
                 : t("auth.continue")}
             </Button>
-          </form>
+          </form> */}
         </div>
 
         <p className="text-center text-xs leading-5 text-muted-foreground">
