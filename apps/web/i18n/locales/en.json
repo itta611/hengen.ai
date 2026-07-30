@@ -1,6 +1,9 @@
 {
   "common": {
-    "language": { "ja": "日本語", "en": "English" },
+    "language": {
+      "ja": "日本語",
+      "en": "English"
+    },
     "button": {
       "save": "Save",
       "cancel": "Cancel",
@@ -10,15 +13,19 @@
       "upgrade": "Upgrade",
       "view": "View"
     },
-    "plan": { "free": "Free plan", "basic": "Basic plan", "premium": "Premium plan" },
+    "plan": {
+      "free": "Free plan",
+      "basic": "Basic plan",
+      "premium": "Premium plan"
+    },
     "uploadTypeError": "Only JPEG, PNG, GIF, and WebP images are supported.",
-    "generationError": "Generation failed.",
+    "generationError": "Couldn’t generate the image.",
     "close": "Close",
     "insufficientCredits": "You don't have enough credits."
   },
   "metadata": {
-    "title": "Mutar | AI image generation with editable text",
-    "description": "Generate images with editable text. Revise the copy, font, and color without distorted lettering—ideal for presentations, posters, and business visuals."
+    "title": "Mutar | AI visuals with editable text",
+    "description": "Generate polished AI visuals with editable text layers. Change the wording, font, size, or color without starting over."
   },
   "sidebar": {
     "general": "General",
@@ -53,15 +60,15 @@
     "generateTab": "Generate a design",
     "importTab": "Import an image",
     "promptHeading": "What would you like to create?",
-    "importDescriptionLine1": "Import an image generated with ChatGPT or another service",
-    "importDescriptionLine2": "and make its text editable.",
+    "importDescriptionLine1": "Import an image made with ChatGPT or another service",
+    "importDescriptionLine2": "and turn its text into editable layers.",
     "recent": "Recent",
     "starred": "Favorites",
     "trash": "Trash",
-    "upload": "Add image",
+    "upload": "Upload an image",
     "uploadFormats": "PNG, JPG, GIF, or WebP",
-    "importCredits": "Uses 5 credits",
-    "checkoutSuccess": "Payment completed successfully."
+    "importCredits": "5 credits",
+    "checkoutSuccess": "Payment successful."
   },
   "gallery": {
     "empty": "No projects yet",
@@ -71,12 +78,15 @@
     "deleteSuccess": "Project deleted",
     "restoreSuccess": "Project restored"
   },
-  "search": { "title": "Search", "placeholder": "Search" },
+  "search": {
+    "title": "Search",
+    "placeholder": "Search"
+  },
   "prompt": {
     "placeholder": "Describe the design you want to create.",
     "generating": "Generating",
     "generate": "Generate",
-    "credits": "Uses 10 credits",
+    "credits": "10 credits",
     "removeImage": "Remove {{name}}",
     "count": "{{count}} images",
     "countLabel": "Number of images",
@@ -89,7 +99,7 @@
     "upgrade": "Upgrade",
     "style": {
       "title": "Style",
-      "texture": "Illustration style",
+      "texture": "Visual style",
       "none": "None",
       "flat": "Flat",
       "outline": "Outline",
@@ -121,9 +131,9 @@
       "label": "Copy",
       "options": "Copy options",
       "image": "Copy as image",
-      "imageDescription": "Copy in image format.",
+      "imageDescription": "Copy the image to your clipboard.",
       "svg": "Copy as SVG",
-      "svgDescription": "Copy in a format editable in PowerPoint and similar apps.",
+      "svgDescription": "Copy as an editable SVG for PowerPoint and other design tools.",
       "paid": "Paid plan",
       "error": "Copy failed"
     },
@@ -143,7 +153,7 @@
       "lineHeight": "Line height",
       "letterSpacing": "Letter spacing",
       "weight": "Weight",
-      "normal": "Medium",
+      "normal": "Regular",
       "bold": "Bold",
       "alignment": "Alignment",
       "alignLeft": "Align left",
@@ -155,44 +165,46 @@
     }
   },
   "landing": {
-    "header": { "login": "Log in to Mutar" },
+    "header": {
+      "login": "Log in to Mutar"
+    },
     "hero": {
-      "titleLine1": "Generation is just the beginning.",
-      "titleLine2": "Fix it directly. No starting over.",
-      "descriptionLine1": "Mutar is an AI image generator that keeps every word editable.",
-      "descriptionLine2": "Create polished, practical visuals for presentations, posters, and more.",
-      "start": "Start for free"
+      "titleLine1": "Generate it.",
+      "titleLine2": "Make it yours.",
+      "descriptionLine1": "Mutar creates AI visuals with editable text layers.",
+      "descriptionLine2": "Change the wording, font, or color—without generating the whole image again.",
+      "start": "Start creating for free"
     },
     "advantages": {
-      "heading": "Why Mutar",
-      "editTextTitle": "Edit text freely",
-      "editTextDescription": "Mutar automatically detects text and delivers every generated image with editable text layers.",
-      "qualityTitle": "High-quality generation",
-      "qualityDescription": "Generate high-quality visuals with the latest GPT Image 2 model.",
-      "ocrTitle": "Accurate text detection",
-      "ocrDescription": "Precise OCR detects text and places it cleanly without shifting its position.",
-      "typeTitle": "Crisp, undistorted text",
-      "typeDescription": "Text is rendered with real fonts, avoiding the warped lettering common in AI-generated images."
+      "heading": "Built to be edited",
+      "editTextTitle": "Edit text after generation",
+      "editTextDescription": "Mutar detects text automatically and turns it into editable text layers.",
+      "qualityTitle": "Powered by GPT Image 2",
+      "qualityDescription": "Create polished, high-quality visuals with the latest GPT Image model.",
+      "ocrTitle": "Precise text detection",
+      "ocrDescription": "Accurate OCR identifies text while preserving its original position.",
+      "typeTitle": "Real fonts. No warped text.",
+      "typeDescription": "Mutar renders text with real fonts, avoiding the distorted lettering often found in AI-generated images."
     },
     "useCases": {
-      "heading": "Made for your everyday visuals",
+      "heading": "Made for visuals that need to stay editable",
       "slideTitle": "Presentation graphics",
-      "slideDescription": "Add clear, polished graphics directly to your slides.",
+      "slideDescription": "Create polished graphics you can drop straight into your slides.",
       "slideAlt": "Business slide showing a three-stage growth process",
       "posterTitle": "Posters and flyers",
-      "posterDescription": "Generate a poster, then update the event name, date, or venue.",
+      "posterDescription": "Generate the design first, then update the event name, date, or venue.",
       "posterAlt": "Event poster for a design forum",
       "socialTitle": "Social and ad creative",
-      "socialDescription": "Generate the visual first, then swap the headline or message.",
+      "socialDescription": "Create the visual once, then update the headline whenever you need.",
       "socialAlt": "Advertising creative combining a headline and analytics dashboard",
       "menuTitle": "Menus and pricing",
-      "menuDescription": "Generate the design, then correct product names and prices.",
+      "menuDescription": "Generate the layout, then revise product names and prices directly.",
       "menuAlt": "Cafe menu listing coffee and tea prices"
     },
     "cta": {
-      "title": "Generate visuals you can always revise",
-      "description": "Start free and try generating up to four images.",
-      "button": "Start for free"
+      "title": "Create once. Edit anytime.",
+      "description": "Start for free and create up to four images.",
+      "button": "Start creating for free"
     },
     "footer": {
       "operator": "Operator",
@@ -201,22 +213,22 @@
     },
     "workflow": {
       "heading": "How it works",
-      "generateTitle": "Generate an image",
-      "generateDescription": "Describe what you want, or import an image made with another service.",
-      "editTitle": "Edit text directly",
-      "editDescription": "Text in the image becomes editable text boxes, so you can change copy and fonts in place.",
-      "saveTitle": "Save your image",
-      "saveDescription": "Export your image as PNG or SVG."
+      "generateTitle": "Generate or import",
+      "generateDescription": "Describe what you want to create, or import an image made with another AI tool.",
+      "editTitle": "Edit the text",
+      "editDescription": "Text becomes editable text boxes, so you can change the wording and fonts directly.",
+      "saveTitle": "Export your work",
+      "saveDescription": "Export your finished visual as a PNG or editable SVG."
     },
     "details": {
-      "sourceTitle": "Create from any starting point",
-      "sourceDescription": "Start with a text prompt, a hand-drawn sketch, a photo of printed material, or an image made with another AI service. Turn whatever you have into a finished visual.",
+      "sourceTitle": "Start with whatever you have",
+      "sourceDescription": "Begin with a prompt, sketch, photo, or image from another AI tool. Mutar turns it into a polished visual you can keep editing.",
       "sourceAlt": "Screen generating a presentation graphic from text, sketches, and photos",
       "brandTitle": "Keep your brand consistent",
-      "brandDescription": "Specify brand colors, texture, and overall mood to create cohesive materials. Carry the same visual identity across multiple images.",
+      "brandDescription": "Set your brand colors, visual style, and overall mood to create consistent materials across multiple images.",
       "brandAlt": "Style settings applying brand colors and texture across several materials",
-      "appsTitle": "Continue in the apps you know",
-      "appsDescription": "Paste generated images into PowerPoint, Illustrator, and other apps with editable text intact, then finish the work in your familiar tools.",
+      "appsTitle": "Keep working in your favorite tools",
+      "appsDescription": "Export to PowerPoint, Illustrator, and other tools as an editable SVG, then continue working in the apps you already know.",
       "appsAlt": "Editing text layers from a generated visual in an external design app"
     }
   },
@@ -225,8 +237,8 @@
     "description": "Select the plan that works for you.",
     "basic": "Basic",
     "premium": "Premium",
-    "upgradeBillingTitle": "Upgrade billing",
-    "upgradeBillingDescription": "Premium starts immediately, and you'll be charged the prorated difference for the remaining period.",
+    "upgradeBillingTitle": "Billing when you upgrade",
+    "upgradeBillingDescription": "Your Premium plan starts immediately, and you'll be charged the prorated difference for the remaining period.",
     "commercialTransaction": "Commercial transaction disclosure",
     "changeError": "Could not change your plan.",
     "downgradeSuccess": "Downgraded to the Basic plan",
@@ -244,12 +256,20 @@
   },
   "settings": {
     "title": "Settings",
-    "tabs": { "account": "Account", "general": "General", "billing": "Billing" },
+    "tabs": {
+      "account": "Account",
+      "general": "General",
+      "billing": "Billing"
+    },
     "display": {
       "heading": "Appearance",
       "language": "Language",
       "theme": "Theme",
-      "themeOptions": { "system": "System", "dark": "Dark", "light": "Light" }
+      "themeOptions": {
+        "system": "System",
+        "dark": "Dark",
+        "light": "Light"
+      }
     },
     "editor": {
       "heading": "Editor",
