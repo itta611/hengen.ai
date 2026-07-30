@@ -138,6 +138,7 @@ export function getTextStyleBottomInset(style: TextStyle) {
 
 export function createBoxTextNode(box: EditorBox, label = box.label) {
   const rect = getBoxRect(box)
+  const letterSpacing = box.letterSpacing ?? 0
 
   return new Konva.Text({
     align: box.align ?? "center",
@@ -145,12 +146,19 @@ export function createBoxTextNode(box: EditorBox, label = box.label) {
     fontFamily: getFontFamilyCss(box.fontFamily),
     fontSize: box.fontSize,
     fontStyle: box.bold ? "700" : "500",
-    letterSpacing: box.letterSpacing ?? 0,
+    letterSpacing,
     lineHeight: box.lineheight ?? 1.4,
     text: label,
-    width: box.wrapText ? rect.width : undefined,
+    width: box.wrapText ? rect.width + letterSpacing : undefined,
     wrap: box.wrapText ? "char" : "none",
   })
+}
+
+export function getBoxTextWidth(box: EditorBox, label = box.label) {
+  const width = createBoxTextNode(box, label).getTextWidth()
+  const hasText = label.split("\n").some((line) => line.length > 0)
+
+  return hasText ? width - (box.letterSpacing ?? 0) : width
 }
 
 export function resizeTextBox(box: EditorBox, label: string) {
@@ -160,7 +168,7 @@ export function resizeTextBox(box: EditorBox, label: string) {
   return resizeBboxHeight(
     nextBox.wrapText
       ? nextBox
-      : resizeBboxWidth(nextBox, textNode.getTextWidth()),
+      : resizeBboxWidth(nextBox, getBoxTextWidth(nextBox, label)),
     textNode.height()
   )
 }

@@ -92,28 +92,27 @@ export function AuthDialog() {
       open={isAuthDialogOpen}
       onOpenChange={(open) => !open && closeAuthDialog()}
     >
-      <DialogContent className="max-w-92! px-10 pt-14">
+      <DialogContent className="w-[360px]! px-10 pt-14 pb-8! gap-0">
         <LogoIcon width={40} height={40} className="mx-auto" />
-        <DialogTitle className="text-xl font-bold text-center">
-          {t("auth.title")}
-        </DialogTitle>
-        <DialogDescription className="text-center">
-          {t("auth.description")}
-        </DialogDescription>
+        <div className="space-y-5 mt-7">
+          <DialogTitle className="text-xl font-bold text-center">
+            {t("auth.title")}
+          </DialogTitle>
+          <DialogDescription>{t("auth.description")}</DialogDescription>
 
-        <div className="flex flex-col gap-3">
-          <Button
-            type="button"
-            size="lg"
-            variant="outline"
-            onClick={handleGoogleLogin}
-            disabled={busyMode === "google"}
-          >
-            <GoogleIcon className="size-4.5" />
-            {t("auth.google")}
-          </Button>
+          <div className="flex flex-col gap-3">
+            <Button
+              type="button"
+              size="lg"
+              variant="outline"
+              onClick={handleGoogleLogin}
+              disabled={busyMode === "google"}
+            >
+              <GoogleIcon className="size-4.5" />
+              {t("auth.google")}
+            </Button>
 
-          {/* <div className="flex items-center h-12">
+            {/* <div className="flex items-center h-12">
             <div className="h-px flex-1 bg-border" />
             <span className="mx-3 text-sm text-muted-foreground">
               {t("auth.or")}
@@ -121,7 +120,7 @@ export function AuthDialog() {
             <div className="h-px flex-1 bg-border" />
           </div> */}
 
-          {/* <form
+            {/* <form
             className="flex flex-col gap-3"
             onSubmit={(event) => {
               event.preventDefault()
@@ -144,35 +143,36 @@ export function AuthDialog() {
                 : t("auth.continue")}
             </Button>
           </form> */}
-        </div>
+          </div>
 
-        <p className="text-center text-xs leading-5 text-muted-foreground">
-          {t("auth.agreementPrefix")}
-          <a
-            className="underline underline-offset-4"
-            href={locale === "en" ? "/en/terms" : "/terms"}
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            {t("auth.terms")}
-          </a>
-          {t("auth.and")}
-          <a
-            className="underline underline-offset-4"
-            href={locale === "en" ? "/en/privacy" : "/privacy"}
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            {t("auth.privacy")}
-          </a>
-          {t("auth.agreementSuffix")}
-        </p>
+          <p className="text-xs leading-5 text-muted-foreground">
+            {t("auth.agreementPrefix")}
+            <a
+              className="underline underline-offset-4"
+              href={locale === "en" ? "/en/terms" : "/terms"}
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              {t("auth.terms")}
+            </a>
+            {t("auth.and")}
+            <a
+              className="underline underline-offset-4"
+              href={locale === "en" ? "/en/privacy" : "/privacy"}
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              {t("auth.privacy")}
+            </a>
+            {t("auth.agreementSuffix")}
+          </p>
 
-        {error ? (
+          {/* {error ? (
           <p className="mt-4 rounded-xl px-4 text-sm leading-6 text-red-500">
             {error}
           </p>
-        ) : null}
+        ) : null} */}
+        </div>
       </DialogContent>
     </Dialog>
   )

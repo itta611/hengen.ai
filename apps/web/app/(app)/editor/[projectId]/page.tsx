@@ -23,6 +23,7 @@ import {
 import {
   createBoxTextNode,
   getBoxRect,
+  getBoxTextWidth,
   getTextOffsetY,
   getTextStyleBottomInset,
   moveTextBox,
@@ -815,10 +816,17 @@ function Editor({ projectId }: { projectId: string }) {
             )
           )
           const textY = getTextOffsetY(box, lineCount)
-          const textWidth = box.wrapText ? rect.width : textNode.getTextWidth()
+          const letterSpacing = box.letterSpacing ?? 0
+          const textWidth = box.wrapText ? rect.width : getBoxTextWidth(box)
+          const hasText = box.label.split("\n").some((line) => line.length > 0)
+          const renderWidth = hasText ? textWidth + letterSpacing : textWidth
           const textX =
             box.wrapText || box.align === "left"
-              ? 0
+              ? box.wrapText && box.align === "center"
+                ? -letterSpacing / 2
+                : box.wrapText && box.align === "right"
+                  ? -letterSpacing
+                  : 0
               : box.align === "right"
                 ? rect.width - textWidth
                 : rect.width / 2 - textWidth / 2
@@ -864,7 +872,7 @@ function Editor({ projectId }: { projectId: string }) {
                 }}
                 text={box.label}
                 visible={editingText?.index !== index}
-                width={textWidth}
+                width={renderWidth}
                 wrap={box.wrapText ? "char" : "none"}
                 x={textX}
                 y={textY}
@@ -882,7 +890,7 @@ function Editor({ projectId }: { projectId: string }) {
                   onClose={(value) => updateLabel(index, value)}
                   textAlign={box.align ?? "center"}
                   value={box.label}
-                  width={textWidth}
+                  width={renderWidth}
                   wrapText={box.wrapText ?? false}
                   x={textX}
                   y={textY}

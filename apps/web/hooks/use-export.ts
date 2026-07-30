@@ -10,7 +10,8 @@ function getTextWidth(
   letterSpacing: number
 ) {
   return (
-    context.measureText(text).width + Array.from(text).length * letterSpacing
+    context.measureText(text).width +
+    Math.max(0, Array.from(text).length - 1) * letterSpacing
   )
 }
 
@@ -227,6 +228,13 @@ export function useExport({
             : rect.left + rect.width / 2
       const textAnchor =
         align === "left" ? "start" : align === "right" ? "end" : "middle"
+      const letterSpacing = box.letterSpacing ?? 0
+      const anchorOffset =
+        align === "right"
+          ? letterSpacing
+          : align === "center"
+            ? letterSpacing / 2
+            : 0
 
       context.font = `${box.bold ? 700 : 500} ${fontSize}px ${fontFamily}`
       const lines = getTextLines(context, box, rect.width)
@@ -235,10 +243,10 @@ export function useExport({
 
       return `<text fill="${escapeXml(
         box.color ?? "rgba(0,0,0,1)"
-      )}" font-family="${escapeXml(fontFamily)}" font-size="${fontSize}" font-weight="${box.bold ? 700 : 500}" letter-spacing="${box.letterSpacing ?? 0}" text-anchor="${textAnchor}" xml:space="preserve">${lines
+      )}" font-family="${escapeXml(fontFamily)}" font-size="${fontSize}" font-weight="${box.bold ? 700 : 500}" letter-spacing="${letterSpacing}" text-anchor="${textAnchor}" xml:space="preserve">${lines
         .map(
           (line, index) =>
-            `<tspan x="${x}" y="${firstLineY + index * lineHeight}">${escapeXml(line)}</tspan>`
+            `<tspan x="${x + anchorOffset}" y="${firstLineY + index * lineHeight}">${escapeXml(line)}</tspan>`
         )
         .join("")}</text>`
     })

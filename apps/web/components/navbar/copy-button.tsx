@@ -68,7 +68,7 @@ export function CopyButton({
             <CommandList>
               <CommandItem
                 onSelect={() => handleCopy(onCopyImage)}
-                className="flex-col items-start gap-0.5 p-2!"
+                className="flex-col items-start gap-1 px-2.5! py-2!"
               >
                 <div className="text-foreground text-xs font-bold">
                   {t("editor.copy.image")}
@@ -79,14 +79,14 @@ export function CopyButton({
               </CommandItem>
               <CommandItem
                 onSelect={() => handleCopy(onCopySvg)}
-                className="flex-col items-start gap-0.5 p-2!"
+                className="flex-col items-start gap-1 px-2.5! py-2!"
               >
-                <div className="flex items-center gap-1.5 text-foreground text-xs font-bold">
+                <div className="flex items-center gap-2.5 text-foreground text-xs font-bold">
                   <span>{t("editor.copy.svg")}</span>
-                  {isSvgPaidFeature && (
-                    <Badge className="h-4 px-1.5 text-[10px]">
+                  {true && (
+                    <div className="h-4 inline-block px-1.5 text-[10px] bg-primary text-primary-foreground leading-4 rounded-[3px]">
                       {t("editor.copy.paid")}
-                    </Badge>
+                    </div>
                   )}
                 </div>
                 <div className="text-xs text-muted-foreground">
