@@ -2,7 +2,11 @@
 
 import type { EditorBox, ImageSize } from "@/atom/generate"
 import { getBoxRect, getFirstLineCenterY } from "@/hooks/editor-bbox"
-import { getFontFamilyCss, loadGoogleFont } from "@/lib/google-fonts"
+import {
+  getFontFamilyCss,
+  loadGoogleFont,
+  normalizeFontFamily,
+} from "@/lib/google-fonts"
 
 function getTextWidth(
   context: CanvasRenderingContext2D,
@@ -104,6 +108,29 @@ function canvasToBlob(canvas: HTMLCanvasElement) {
       }
     }, "image/png")
   })
+}
+
+function downloadBlob(blob: Blob, filename: string) {
+  const link = document.createElement("a")
+  link.href = URL.createObjectURL(blob)
+  link.download = filename
+  link.click()
+  URL.revokeObjectURL(link.href)
+}
+
+function toHexColor(color: string) {
+  const values = color
+    .match(/[\d.]+/g)
+    ?.slice(0, 3)
+    .map(Number)
+
+  if (!values || values.length !== 3) {
+    return color.replace("#", "")
+  }
+
+  return values
+    .map((value) => Math.round(value).toString(16).padStart(2, "0"))
+    .join("")
 }
 
 async function loadImage(src: string) {
@@ -261,22 +288,97 @@ export function useExport({
         new ClipboardItem({ [blob.type]: blob }),
       ])
     },
-    copySvg: async () => {
-      const svg = await exportSvgText()
-      await navigator.clipboard.write([
-        new ClipboardItem({
-          "text/html": new Blob([svg], { type: "text/html" }),
-          "text/plain": new Blob([svg], { type: "text/plain" }),
-        }),
-      ])
-    },
     downloadPng: async () => {
       const blob = await exportPngBlob()
-      const link = document.createElement("a")
-      link.href = URL.createObjectURL(blob)
-      link.download = `${projectName || "image"}.png`
-      link.click()
-      URL.revokeObjectURL(link.href)
+      downloadBlob(blob, `${projectName || "image"}.png`)
+    },
+    downloadSvg: async () => {
+      const svg = await exportSvgText()
+      downloadBlob(
+        new Blob([svg], { type: "image/svg+xml" }),
+        `${projectName || "image"}.svg`
+      )
+    },
+    downloadPptx: async () => {
+      if (!projectId || !imageSize) {
+        throw new Error("project_not_ready")
+      }
+
+      const [{ default: PptxGenJS }, imageBlob, fontFamilies] =
+        await Promise.all([
+          import("pptxgenjs"),
+          fetch(`/api/projects/${projectId}/image`).then((response) =>
+            response.blob()
+          ),
+          Promise.all(boxes.map((box) => loadGoogleFont(box.fontFamily))),
+        ])
+      const [width, height] = imageSize
+      const slideWidth = 10
+      const slideHeight = (slideWidth * height) / width
+      const inchesPerPixel = slideWidth / width
+      const pointsPerPixel = inchesPerPixel * 72
+      const imageDataUrl = await blobToDataUrl(imageBlob)
+      const canvas = document.createElement("canvas")
+      const context = canvas.getContext("2d")
+      if (!context) {
+        throw new Error("canvas_unavailable")
+      }
+
+      const pptx = new PptxGenJS()
+      pptx.defineLayout({
+        name: "HENGEN",
+        width: slideWidth,
+        height: slideHeight,
+      })
+      pptx.layout = "HENGEN"
+      pptx.author = "Hengen"
+      pptx.subject = projectName
+      pptx.title = projectName
+
+      const slide = pptx.addSlide()
+      slide.addImage({
+        data: imageDataUrl,
+        x: 0,
+        y: 0,
+        w: slideWidth,
+        h: slideHeight,
+      })
+
+      boxes.forEach((box, index) => {
+        const rect = getBoxRect(box)
+        const fontFamily = normalizeFontFamily(fontFamilies[index])
+        const lineheight = box.lineheight ?? 1.4
+
+        context.font = `${box.bold ? 700 : 500} ${box.fontSize}px ${getFontFamilyCss(fontFamily)}`
+        const lines = getTextLines(context, box, rect.width)
+        const blockHeight =
+          box.fontSize +
+          Math.max(0, lines.length - 1) * box.fontSize * lineheight
+        const top = getFirstLineCenterY(box, lines.length) - box.fontSize / 2
+
+        slide.addText(lines.join("\n"), {
+          x: rect.left * inchesPerPixel,
+          y: top * inchesPerPixel,
+          w: rect.width * inchesPerPixel,
+          h: blockHeight * inchesPerPixel,
+          align: box.align ?? "center",
+          bold: box.bold ?? false,
+          breakLine: false,
+          charSpacing: (box.letterSpacing ?? 0) * pointsPerPixel,
+          color: toHexColor(box.color ?? "rgba(0,0,0,1)"),
+          fontFace: fontFamily,
+          fontSize: box.fontSize * pointsPerPixel,
+          isTextBox: true,
+          lineSpacing: box.fontSize * lineheight * pointsPerPixel,
+          margin: 0,
+          valign: "top",
+          wrap: false,
+        })
+      })
+
+      await pptx.writeFile({
+        fileName: `${projectName || "image"}.pptx`,
+      })
     },
   }
 }

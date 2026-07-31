@@ -125,16 +125,20 @@
     "nextProject": "Next project",
     "home": "Back to home",
     "saveImage": "Save image",
-    "saveError": "Could not save the image",
+    "saveError": "Could not save",
+    "save": {
+      "options": "Save options",
+      "paid": "Paid plan",
+      "png": "Save as PNG",
+      "pngDescription": "Save as an image.",
+      "svg": "Save as SVG",
+      "svgDescription": "Save as an editable SVG for design tools.",
+      "pptx": "Save as PPTX",
+      "pptxDescription": "Save as a PowerPoint file with editable text."
+    },
     "copied": "Copied",
     "copy": {
       "label": "Copy",
-      "options": "Copy options",
-      "image": "Copy as image",
-      "imageDescription": "Copy the image to your clipboard.",
-      "svg": "Copy as SVG",
-      "svgDescription": "Copy as an editable SVG for PowerPoint and other design tools.",
-      "paid": "Paid plan",
       "error": "Copy failed"
     },
     "edit": {

@@ -1,7 +1,7 @@
 "use client"
 
 import { useAtomValue } from "jotai"
-import { DownloadIcon, XIcon } from "lucide-react"
+import { XIcon } from "lucide-react"
 import { useParams, useRouter } from "next/navigation"
 import { toast } from "sonner"
 
@@ -14,6 +14,7 @@ import { useExport } from "@/hooks/use-export"
 import { useTranslation } from "@/i18n/client"
 import { CopyButton } from "./copy-button"
 import { EditButton } from "./edit"
+import { SaveButton } from "./save-button"
 
 export function Navbar() {
   const { t } = useTranslation()
@@ -27,21 +28,13 @@ export function Navbar() {
     ? ([project.width, project.height] as [number, number])
     : null
   const projectName = project?.title ?? ""
-  const { copyPng, copySvg, downloadPng } = useExport({
+  const { copyPng, downloadPng, downloadPptx, downloadSvg } = useExport({
     boxes,
     imageSize,
     projectId,
     projectName,
   })
   const disabled = !projectId || !imageSize
-
-  async function handleDownloadPng() {
-    try {
-      await downloadPng()
-    } catch {
-      toast.error(t("editor.saveError"))
-    }
-  }
 
   return (
     <nav className="shrink-0 flex h-13 items-center bg-sidebar border-b border-border/70 pr-4 pl-2 gap-2">
@@ -60,25 +53,32 @@ export function Navbar() {
       ) : null}
       <CopyButton
         disabled={disabled}
-        isSvgPaidFeature={currentPlan === "free"}
         onCopyImage={async () => {
           await copyPng()
           toast(t("editor.copied"))
         }}
-        onCopySvg={async () => {
+      />
+      <SaveButton
+        disabled={disabled}
+        isEditableExportPaidFeature={currentPlan === "free"}
+        onSavePng={downloadPng}
+        onSavePptx={async () => {
           if (currentPlan === "free") {
             pricingDialog.open()
             return
           }
 
-          await copySvg()
-          toast(t("editor.copied"))
+          await downloadPptx()
+        }}
+        onSaveSvg={async () => {
+          if (currentPlan === "free") {
+            pricingDialog.open()
+            return
+          }
+
+          await downloadSvg()
         }}
       />
-      <Button disabled={disabled} onClick={handleDownloadPng} type="button">
-        <DownloadIcon />
-        {t("editor.saveImage")}
-      </Button>
     </nav>
   )
 }

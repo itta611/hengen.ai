@@ -122,16 +122,20 @@
     "nextProject": "次のプロジェクト",
     "home": "ホームに戻る",
     "saveImage": "画像を保存",
-    "saveError": "画像の保存に失敗しました",
+    "saveError": "保存に失敗しました",
+    "save": {
+      "options": "保存オプション",
+      "paid": "有料プラン",
+      "png": "PNG形式で保存",
+      "pngDescription": "画像として保存します。",
+      "svg": "SVG形式で保存",
+      "svgDescription": "デザインツールで編集できるSVGとして保存します。",
+      "pptx": "PPTX形式で保存",
+      "pptxDescription": "文字を編集できるPowerPointファイルとして保存します。"
+    },
     "copied": "コピーしました",
     "copy": {
       "label": "コピー",
-      "options": "コピーオプション",
-      "image": "画像としてコピー",
-      "imageDescription": "画像形式でコピーします。",
-      "svg": "SVG形式でコピー",
-      "svgDescription": "Powerpoint等で編集できる形式でコピーします。",
-      "paid": "有料プラン",
       "error": "コピーに失敗しました"
     },
     "edit": {
