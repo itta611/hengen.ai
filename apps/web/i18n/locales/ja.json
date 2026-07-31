@@ -234,7 +234,7 @@
     "premium": "プレミアム",
     "upgradeBillingTitle": "アップグレード時の請求",
     "upgradeBillingDescription": "すぐにプレミアムが適用され、残り期間に応じた差額が請求されます。",
-    "commercialTransaction": "特定商取引に関する表示",
+    "commercialTransaction": "特定商取引法に基づく表記",
     "changeError": "プランを変更できませんでした。",
     "downgradeSuccess": "ベーシックプランにダウングレードしました",
     "checkoutError": "決済ページを開けませんでした。",
@@ -256,7 +256,11 @@
       "heading": "表示",
       "language": "言語",
       "theme": "テーマ",
-      "themeOptions": { "system": "システム", "dark": "ダーク", "light": "ライト" }
+      "themeOptions": {
+        "system": "システム",
+        "dark": "ダーク",
+        "light": "ライト"
+      }
     },
     "editor": {
       "heading": "エディタ",

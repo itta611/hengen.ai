@@ -6,7 +6,7 @@ import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
+// import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { useTranslation } from "@/i18n/client"
 import { apiClient } from "@/lib/api-client"
@@ -20,8 +20,8 @@ type AccountFormValues = {
 
 export function AccountSettingsPage() {
   const { t } = useTranslation()
-  const [confirmOpen, setConfirmOpen] = useState(false)
-  const [isDeleting, setIsDeleting] = useState(false)
+  // const [confirmOpen, setConfirmOpen] = useState(false)
+  // const [isDeleting, setIsDeleting] = useState(false)
   const [isSavingName, setIsSavingName] = useState(false)
   const [error, setError] = useState("")
   const session = authClient.useSession()
@@ -54,24 +54,24 @@ export function AccountSettingsPage() {
     toast.success(t("settings.account.nameUpdateSuccess"))
   })
 
-  const handleDeleteAccount = async () => {
-    setIsDeleting(true)
-    setError("")
-
-    const result = await authClient.deleteUser({
-      callbackURL: "/",
-    })
-
-    setIsDeleting(false)
-
-    if (result.error) {
-      setError(t("settings.account.deleteError"))
-      return
-    }
-
-    router.push("/")
-    router.refresh()
-  }
+  // const handleDeleteAccount = async () => {
+  //   setIsDeleting(true)
+  //   setError("")
+  //
+  //   const result = await authClient.deleteUser({
+  //     callbackURL: "/",
+  //   })
+  //
+  //   setIsDeleting(false)
+  //
+  //   if (result.error) {
+  //     setError(t("settings.account.deleteError"))
+  //     return
+  //   }
+  //
+  //   router.push("/")
+  //   router.refresh()
+  // }
 
   return (
     <div className="space-y-12">
@@ -107,7 +107,7 @@ export function AccountSettingsPage() {
           {t("settings.account.logout")}
         </Button>
       </SettingSection>
-      <SettingSection
+      {/* <SettingSection
         title={t("settings.account.delete")}
         description={t("settings.account.deleteDescription")}
       >
@@ -141,7 +141,7 @@ export function AccountSettingsPage() {
             </Button>
           </div>
         </DialogContent>
-      </Dialog>
+      </Dialog> */}
     </div>
   )
 }
