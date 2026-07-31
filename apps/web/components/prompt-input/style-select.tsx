@@ -97,13 +97,7 @@ function getDisplayColor(
   return rgbOffsets.map((value) => value + hsvMatch) as RGB
 }
 
-function TextureImage({
-  src,
-  hasShadow,
-}: {
-  src: string
-  hasShadow?: boolean
-}) {
+function TextureImage({ src }: { src: string }) {
   return (
     <Image
       src={src}
@@ -112,9 +106,7 @@ function TextureImage({
       height={30}
       className="pointer-events-none"
       style={{
-        filter: hasShadow
-          ? "url(#texture-color-filter) drop-shadow(0px 0px 8px rgb(0 0 0 / 10%))"
-          : "url(#texture-color-filter)",
+        filter: "url(#texture-color-filter)",
       }}
     />
   )
@@ -233,7 +225,7 @@ export function StyleSelect({
             label={t("prompt.style.soft")}
             onClick={() => onStyleChange({ ...style, texture: "soft" })}
           >
-            <TextureImage src="/knight-gradient.png" hasShadow />
+            <TextureImage src="/knight-gradient.png" />
           </MenuItem>
           <MenuItem
             backgroundColor={backgroundColor}
@@ -241,7 +233,7 @@ export function StyleSelect({
             label={t("prompt.style.realistic")}
             onClick={() => onStyleChange({ ...style, texture: "realistic" })}
           >
-            <TextureImage src="/knight-realistic.png" hasShadow />
+            <TextureImage src="/knight-realistic.png" />
           </MenuItem>
         </div>
         <div className="flex items-center justify-between h-9">
