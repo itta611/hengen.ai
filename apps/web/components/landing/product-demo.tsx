@@ -21,7 +21,19 @@ export function ProductDemoSection() {
         <div className="grow from-indigo-500 to-background bg-linear-to-t shadow-[0_40px_40px_40px_var(--primary)]" />
       </div>
       <div className="relative z-20 mx-auto w-full max-w-280">
-        <div className="aspect-video rounded-3xl bg-background outline-16 outline-background/20" />
+        <div className="aspect-video overflow-hidden rounded-3xl bg-background outline-16 outline-background/20">
+          <video
+            aria-hidden="true"
+            autoPlay
+            className="size-full object-cover"
+            loop
+            muted
+            playsInline
+            preload="metadata"
+          >
+            <source src="/landing/product-demo.mp4" type="video/mp4" />
+          </video>
+        </div>
       </div>
     </div>
   )
