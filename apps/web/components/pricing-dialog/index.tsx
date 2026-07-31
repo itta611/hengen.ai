@@ -91,10 +91,22 @@ function PricingDialog({
           <DialogTitle className="text-2xl font-bold tracking-normal">
             {t("pricing.title")}
           </DialogTitle>
-          <DialogDescription className="text-base text-muted-foreground">
-            {t("pricing.description")}
-          </DialogDescription>
+          {currentPlan !== "basic" && (
+            <DialogDescription className="text-base text-muted-foreground">
+              {t("pricing.description")}
+            </DialogDescription>
+          )}
         </div>
+
+        {currentPlan === "basic" && (
+          <Alert className="mt-6">
+            <InfoIcon />
+            <AlertTitle>{t("pricing.upgradeBillingTitle")}</AlertTitle>
+            <AlertDescription>
+              {t("pricing.upgradeBillingDescription")}
+            </AlertDescription>
+          </Alert>
+        )}
 
         <div className="mt-6 grid gap-5 md:grid-cols-2">
           <PlanCard
@@ -114,16 +126,6 @@ function PricingDialog({
             subscriptionId={subscriptionId}
           />
         </div>
-
-        {currentPlan === "basic" && (
-          <Alert className="mt-6">
-            <InfoIcon />
-            <AlertTitle>{t("pricing.upgradeBillingTitle")}</AlertTitle>
-            <AlertDescription>
-              {t("pricing.upgradeBillingDescription")}
-            </AlertDescription>
-          </Alert>
-        )}
 
         <div className="mt-6 text-center">
           <a
