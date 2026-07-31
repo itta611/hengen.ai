@@ -166,69 +166,69 @@
   },
   "landing": {
     "header": {
-      "login": "Log in to Mutar"
+      "login": "Log in"
     },
     "hero": {
-      "titleLine1": "Generate it.",
-      "titleLine2": "Make it yours.",
-      "descriptionLine1": "Mutar creates AI visuals with editable text layers.",
-      "descriptionLine2": "Change the wording, font, or color—without generating the whole image again.",
-      "start": "Start creating for free"
+      "titleLine1": "Create it. Keep editing.",
+      "titleLine2": "No need to start over.",
+      "descriptionLine1": "Mutar creates AI images with editable text.",
+      "descriptionLine2": "Polished, practical visuals for business and beyond.",
+      "start": "Start for free"
     },
     "advantages": {
-      "heading": "Built to be edited",
-      "editTextTitle": "Edit text after generation",
-      "editTextDescription": "Mutar detects text automatically and turns it into editable text layers.",
-      "qualityTitle": "Powered by GPT Image 2",
-      "qualityDescription": "Create polished, high-quality visuals with the latest GPT Image model.",
+      "heading": "Features",
+      "editTextTitle": "Edit text freely",
+      "editTextDescription": "Mutar detects text automatically, making it editable from the start.",
+      "qualityTitle": "High-quality images",
+      "qualityDescription": "Create polished visuals with GPT Image 2.",
       "ocrTitle": "Precise text detection",
-      "ocrDescription": "Accurate OCR identifies text while preserving its original position.",
-      "typeTitle": "Real fonts. No warped text.",
-      "typeDescription": "Mutar renders text with real fonts, avoiding the distorted lettering often found in AI-generated images."
+      "ocrDescription": "Accurate OCR keeps text exactly where it belongs.",
+      "typeTitle": "No warped text",
+      "typeDescription": "Real fonts keep every word crisp and clean."
     },
     "useCases": {
-      "heading": "Made for visuals that need to stay editable",
+      "heading": "What you can make",
       "slideTitle": "Presentation graphics",
-      "slideDescription": "Create polished graphics you can drop straight into your slides.",
+      "slideDescription": "Clear, polished text—ready for your slides.",
       "slideAlt": "Business slide showing a three-stage growth process",
-      "posterTitle": "Posters and flyers",
-      "posterDescription": "Generate the design first, then update the event name, date, or venue.",
+      "posterTitle": "Posters & flyers",
+      "posterDescription": "Change the event name, date, or venue anytime.",
       "posterAlt": "Event poster for a design forum",
-      "socialTitle": "Social and ad creative",
-      "socialDescription": "Create the visual once, then update the headline whenever you need.",
+      "socialTitle": "Social & ad creative",
+      "socialDescription": "Swap headlines or key messages anytime.",
       "socialAlt": "Advertising creative combining a headline and analytics dashboard",
-      "menuTitle": "Menus and pricing",
-      "menuDescription": "Generate the layout, then revise product names and prices directly.",
+      "menuTitle": "Menus & price lists",
+      "menuDescription": "Update item names and prices anytime.",
       "menuAlt": "Cafe menu listing coffee and tea prices"
     },
     "cta": {
-      "title": "Create once. Edit anytime.",
-      "description": "Start for free and create up to four images.",
-      "button": "Start creating for free"
+      "title": "Create now. Edit anytime.",
+      "description": "Create up to four images for free.",
+      "button": "Start for free"
     },
     "footer": {
-      "operator": "Operator",
+      "operator": "Creator",
       "terms": "Terms of Service",
       "privacy": "Privacy Policy"
     },
     "workflow": {
       "heading": "How it works",
-      "generateTitle": "Generate or import",
-      "generateDescription": "Describe what you want to create, or import an image made with another AI tool.",
+      "generateTitle": "Create an image",
+      "generateDescription": "Describe what you need, or import an image from another service.",
       "editTitle": "Edit the text",
-      "editDescription": "Text becomes editable text boxes, so you can change the wording and fonts directly.",
-      "saveTitle": "Export your work",
-      "saveDescription": "Export your finished visual as a PNG or editable SVG."
+      "editDescription": "Text becomes editable text boxes. Change the copy or font right on the canvas.",
+      "saveTitle": "Save your image",
+      "saveDescription": "Download it as a PNG or SVG."
     },
     "details": {
-      "sourceTitle": "Start with whatever you have",
-      "sourceDescription": "Begin with a prompt, sketch, photo, or image from another AI tool. Mutar turns it into a polished visual you can keep editing.",
+      "sourceTitle": "Start with anything",
+      "sourceDescription": "Use a prompt, hand-drawn sketch, photo of printed material, or image from another AI service. Turn whatever you have into a polished visual.",
       "sourceAlt": "Screen generating a presentation graphic from text, sketches, and photos",
-      "brandTitle": "Keep your brand consistent",
-      "brandDescription": "Set your brand colors, visual style, and overall mood to create consistent materials across multiple images.",
+      "brandTitle": "Stay on brand",
+      "brandDescription": "Set colors, textures, and mood to keep every visual consistent—even across a full series.",
       "brandAlt": "Style settings applying brand colors and texture across several materials",
-      "appsTitle": "Keep working in your favorite tools",
-      "appsDescription": "Export to PowerPoint, Illustrator, and other tools as an editable SVG, then continue working in the apps you already know.",
+      "appsTitle": "Use the tools you know",
+      "appsDescription": "Bring your image into PowerPoint, Illustrator, and more with editable text intact. Finish it in the tools you know.",
       "appsAlt": "Editing text layers from a generated visual in an external design app"
     }
   },
