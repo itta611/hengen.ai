@@ -57,8 +57,8 @@
     "magicLinkSent": "We sent a magic link to your email.\nCheck your inbox."
   },
   "home": {
-    "generateTab": "Generate a design",
-    "importTab": "Import an image",
+    "generateTab": "Generate",
+    "importTab": "Import",
     "promptHeading": "What would you like to create?",
     "importDescriptionLine1": "Import an image made with ChatGPT or another service",
     "importDescriptionLine2": "and turn its text into editable layers.",

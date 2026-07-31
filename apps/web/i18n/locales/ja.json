@@ -165,35 +165,35 @@
     "header": { "login": "Mutarにログイン" },
     "hero": {
       "titleLine1": "生成して終わりじゃない。",
-      "titleLine2": "作り直さず、そのまま修正。",
-      "descriptionLine1": "Mutar（ミューター）は、あとから文字を編集できるAI画像生成ツールです。",
+      "titleLine2": "作り直さず、そのまま編集。",
+      "descriptionLine1": "Mutar（ミューター）は、生成後も文字を編集できるAI画像生成ツールです。",
       "descriptionLine2": "ビジネスをはじめとする多様なシーンで、実用に耐える資料画像を生成します。",
       "start": "無料で始める"
     },
     "advantages": {
       "heading": "特長",
       "editTextTitle": "テキストを自由に編集",
-      "editTextDescription": "画像内の文字を自動で検出し、生成時点からテキストを編集できる状態で出力します。",
+      "editTextDescription": "画像内の文字を自動で検出し、生成した時点からすぐに編集できる状態で出力します。",
       "qualityTitle": "高品質な画像生成",
-      "qualityDescription": "最先端のGPT Image 2モデルで高品質な画像を生成します。",
+      "qualityDescription": "最新のGPT Image 2で、高品質な画像を生成します。",
       "ocrTitle": "高精度な文字検出",
-      "ocrDescription": "高精度なOCR技術で、画像内の文字を正確に検出。テキストを位置ズレなく美しく配置します。",
+      "ocrDescription": "高精度なOCRで画像内の文字を正確に検出し、位置をずらさず美しく配置します。",
       "typeTitle": "文字の歪みなし",
-      "typeDescription": "AI生成画像特有の文字の歪みなしで、フォントで文字を美しく描画します。"
+      "typeDescription": "AI画像にありがちな文字の歪みをなくし、実際のフォントで美しく描画します。"
     },
     "useCases": {
-      "heading": "こんなことに使えます",
-      "slideTitle": "スライド資料に使う図",
-      "slideDescription": "読みやすく整えた文字で、スライドにそのまま貼り付け。",
+      "heading": "こんな場面で使えます",
+      "slideTitle": "プレゼン資料の図解",
+      "slideDescription": "読みやすく整えた文字で、スライドにそのまま使える図を作成。",
       "slideAlt": "3つの成長プロセスをまとめたビジネススライド",
       "posterTitle": "ポスター・チラシ",
-      "posterDescription": "ポスターを生成したあとに、イベント名や日時、会場を変更。",
+      "posterDescription": "生成したあとでも、イベント名や日時、会場をいつでも変更。",
       "posterAlt": "デザインフォーラムのイベントポスター",
       "socialTitle": "SNS・広告クリエイティブ",
-      "socialDescription": "画像を生成してから見出しや訴求を差し替え。",
+      "socialDescription": "画像を生成したあとでも、見出しや訴求メッセージを差し替え。",
       "socialAlt": "見出しと分析画面を組み合わせた広告クリエイティブ",
       "menuTitle": "メニュー・料金表",
-      "menuDescription": "デザインを生成したあとに、商品名や価格を修正。",
+      "menuDescription": "デザインを生成したあとでも、商品名や価格をその場で修正。",
       "menuAlt": "コーヒーや紅茶の価格を掲載したカフェメニュー表"
     },
     "cta": {
@@ -209,21 +209,21 @@
     "workflow": {
       "heading": "利用の流れ",
       "generateTitle": "画像を生成する",
-      "generateDescription": "つくりたい内容を言葉で伝えるだけ。他のサービスで作った画像を読み込むこともできます。",
+      "generateDescription": "作りたいイメージを言葉で伝えるだけ。他のサービスで作った画像も読み込めます。",
       "editTitle": "文字を直接編集する",
-      "editDescription": "画像内の文字は、編集できるテキストボックスに変換されます。本文やフォントを、その場で編集できます。",
+      "editDescription": "画像内の文字は、編集可能なテキストボックスに変換。文章やフォントを、その場で変更できます。",
       "saveTitle": "画像を保存する",
-      "saveDescription": "画像をPNGまたはSVG形式保存します。"
+      "saveDescription": "画像はPNGまたはSVG形式で保存できます。"
     },
     "details": {
-      "sourceTitle": "好きな材料から手軽に生成",
-      "sourceDescription": "文章のプロンプトだけでなく、手書きのスケッチや印刷物の写真から生成したり、他のAIサービスで作った画像を読み込めます。手元の素材に合わせて、アイデアを手軽にかたちにできます。",
+      "sourceTitle": "手元の素材から、かんたん生成",
+      "sourceDescription": "文章のプロンプトはもちろん、手描きのスケッチや印刷物の写真、他のAIサービスで作った画像も使えます。手元の素材から、アイデアをすぐにかたちにできます。",
       "sourceAlt": "文章やスケッチ、写真などの素材からプレゼンテーション画像を生成する画面",
-      "brandTitle": "ブランドのスタイルを維持",
-      "brandDescription": "ブランドカラーや質感、全体の雰囲気を細かく指定して、ブランドらしさを保った統一感のある資料に仕上げられます。複数の画像を作る場合も、同じ世界観を保ちながら展開できます。",
+      "brandTitle": "ブランドらしさを、そのまま",
+      "brandDescription": "ブランドカラーや質感、全体の雰囲気まで細かく指定し、統一感のある資料に仕上げられます。複数の画像でも、同じ世界観を保ちながら展開できます。",
       "brandAlt": "ブランドカラーと質感を複数の資料へ反映するスタイル設定画面",
-      "appsTitle": "使い慣れたアプリで編集する",
-      "appsDescription": "生成した画像は、テキストを編集できる状態でPowerPointやIllustrator等のアプリに貼り付けることもできます。使い慣れた制作環境で、そのまま仕上げの作業を続けられます。",
+      "appsTitle": "使い慣れたアプリで仕上げる",
+      "appsDescription": "生成した画像は、テキストを編集できる状態のままPowerPointやIllustratorなどに貼り付けられます。いつもの制作環境で、そのまま仕上げられます。",
       "appsAlt": "生成した資料のテキストレイヤーを外部のデザインアプリで編集する画面"
     }
   },
