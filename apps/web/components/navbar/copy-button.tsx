@@ -83,7 +83,7 @@ export function CopyButton({
               >
                 <div className="flex items-center gap-2.5 text-foreground text-xs font-bold">
                   <span>{t("editor.copy.svg")}</span>
-                  {true && (
+                  {isSvgPaidFeature && (
                     <div className="h-4 inline-block px-1.5 text-[10px] bg-primary text-primary-foreground leading-4 rounded-[3px]">
                       {t("editor.copy.paid")}
                     </div>
