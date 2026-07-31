@@ -26,6 +26,7 @@ import {
   getBoxTextWidth,
   getTextOffsetY,
   getTextStyleBottomInset,
+  getTextTrailingSpacing,
   moveTextBox,
   resizeTextBox,
   resizeWrappedTextBox,
@@ -61,6 +62,31 @@ const textTransformerStyle = {
   borderStrokeWidth: 1.5,
   flipEnabled: false,
   rotateEnabled: false,
+}
+const adjustedTextNodes = new WeakSet<Konva.Text>()
+const textTrailingSpacings = new WeakMap<Konva.Text, number>()
+
+function setTextNodeTrailingSpacing(node: Konva.Text, trailingSpacing: number) {
+  textTrailingSpacings.set(node, trailingSpacing)
+
+  if (adjustedTextNodes.has(node)) {
+    return
+  }
+
+  const getSelfRect = node.getSelfRect.bind(node)
+  adjustedTextNodes.add(node)
+  node.getSelfRect = () => {
+    const rect = getSelfRect()
+
+    return {
+      ...rect,
+      width: Math.max(0, rect.width - (textTrailingSpacings.get(node) ?? 0)),
+    }
+  }
+}
+
+function getTextNodeWidth(node: Konva.Text, box: EditorBox) {
+  return Math.max(1, node.width() - getTextTrailingSpacing(box))
 }
 
 function getSnapStops(boxes: EditorBox[], skipIndex: number) {
@@ -719,7 +745,7 @@ function Editor({ projectId }: { projectId: string }) {
     const node = event.target as Konva.Text
     const rect = getBoxRect(box)
     const left = rect.left + node.x() - textX
-    const width = Math.max(1, node.width() * node.scaleX())
+    const width = getTextNodeWidth(node, box) * node.scaleX()
     const nextRect = snapToGrid
       ? snapBoxWidth(
           boxes,
@@ -734,7 +760,7 @@ function Editor({ projectId }: { projectId: string }) {
     node.scaleX(1)
     node.scaleY(1)
     node.x(textX + nextRect.left - rect.left)
-    node.width(nextRect.width)
+    node.width(nextRect.width + getTextTrailingSpacing(box))
     node.height(getBoxRect(nextBox).height)
     node.wrap("char")
     setSnapGuides(nextRect.guides)
@@ -758,7 +784,7 @@ function Editor({ projectId }: { projectId: string }) {
 
         const rect = getBoxRect(currentBox)
         const left = rect.left + node.x() - textX
-        const width = Math.max(1, node.width() * node.scaleX())
+        const width = getTextNodeWidth(node, currentBox) * node.scaleX()
         const nextRect = snapToGrid
           ? snapBoxWidth(
               current,
@@ -818,8 +844,8 @@ function Editor({ projectId }: { projectId: string }) {
           const textY = getTextOffsetY(box, lineCount)
           const letterSpacing = box.letterSpacing ?? 0
           const textWidth = box.wrapText ? rect.width : getBoxTextWidth(box)
-          const hasText = box.label.split("\n").some((line) => line.length > 0)
-          const renderWidth = hasText ? textWidth + letterSpacing : textWidth
+          const trailingSpacing = getTextTrailingSpacing(box)
+          const renderWidth = textWidth + trailingSpacing
           const textX =
             box.wrapText || box.align === "left"
               ? box.wrapText && box.align === "center"
@@ -865,6 +891,7 @@ function Editor({ projectId }: { projectId: string }) {
                 }
                 ref={(node) => {
                   if (node) {
+                    setTextNodeTrailingSpacing(node, trailingSpacing)
                     textRefs.current.set(index, node)
                   } else {
                     textRefs.current.delete(index)

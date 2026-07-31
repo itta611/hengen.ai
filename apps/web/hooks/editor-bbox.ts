@@ -136,9 +136,16 @@ export function getTextStyleBottomInset(style: TextStyle) {
   return Math.max(0, baseline + metrics.actualBoundingBoxDescent - lineHeight)
 }
 
+export function getTextTrailingSpacing(box: EditorBox, label = box.label) {
+  return label.split("\n").some((line) => line.length > 0)
+    ? (box.letterSpacing ?? 0)
+    : 0
+}
+
 export function createBoxTextNode(box: EditorBox, label = box.label) {
   const rect = getBoxRect(box)
   const letterSpacing = box.letterSpacing ?? 0
+  const trailingSpacing = getTextTrailingSpacing(box, label)
 
   return new Konva.Text({
     align: box.align ?? "center",
@@ -149,16 +156,15 @@ export function createBoxTextNode(box: EditorBox, label = box.label) {
     letterSpacing,
     lineHeight: box.lineheight ?? 1.4,
     text: label,
-    width: box.wrapText ? rect.width + letterSpacing : undefined,
+    width: box.wrapText ? rect.width + trailingSpacing : undefined,
     wrap: box.wrapText ? "char" : "none",
   })
 }
 
 export function getBoxTextWidth(box: EditorBox, label = box.label) {
   const width = createBoxTextNode(box, label).getTextWidth()
-  const hasText = label.split("\n").some((line) => line.length > 0)
 
-  return hasText ? width - (box.letterSpacing ?? 0) : width
+  return width - getTextTrailingSpacing(box, label)
 }
 
 export function resizeTextBox(box: EditorBox, label: string) {
