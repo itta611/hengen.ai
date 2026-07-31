@@ -174,7 +174,7 @@ export function resizeTextBox(box: EditorBox, label: string) {
   return resizeBboxHeight(
     nextBox.wrapText
       ? nextBox
-      : resizeBboxWidth(nextBox, getBoxTextWidth(nextBox, label)),
+      : resizeBboxWidth(nextBox, getBoxTextWidth(nextBox, label) + 1),
     textNode.height()
   )
 }
