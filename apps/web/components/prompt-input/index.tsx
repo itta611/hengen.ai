@@ -84,7 +84,7 @@ export function PromptInputForm({
             event.preventDefault()
             addImageFiles(files, images, setImages, t("common.uploadTypeError"))
           }}
-          className="min-h-14 resize-none rounded-none border-none px-2 pt-1 pb-2 shadow-none ring-0! outline-none leading-relaxed bg-transparent!"
+          className="min-h-15 resize-none rounded-none border-none px-2 pt-1 pb-2 shadow-none ring-0! outline-none leading-relaxed bg-transparent!"
           placeholder={t("prompt.placeholder")}
         />
         <div className="flex items-end justify-between">
